@@ -55,10 +55,11 @@ public class MongoDBConnection {
 		DBCursor cursor = collection.find();
 		List<DBObject> dbObjects=cursor.toArray();
 		List<Item> items=new ArrayList<Item>();
-		Item item=new Item();
+		
 		
 		for(DBObject dbObject:dbObjects){
 		//	item.setItemId((String)dbObject.get("_id"));
+			Item item=new Item();
 			item.setItemName((String)dbObject.get("itemName"));
 			item.setPrice((Double)dbObject.get("price"));
 			item.setQuantity((double)dbObject.get("quantity"));
