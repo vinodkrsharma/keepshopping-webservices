@@ -2,28 +2,22 @@ package com.keepshopping.model;
 
 public class Item{
     
-    private String itemName;
-    private long quantity;
-    private long quantityLeft;
-    private double price;
     private String itemId;
+    private String itemName;
+    private double price;
+    private double quantity;
+    private double quantityLeft;
+	public String getItemId() {
+		return itemId;
+	}
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
 	public String getItemName() {
 		return itemName;
 	}
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
-	}
-	public long getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(long quantity) {
-		this.quantity = quantity;
-	}
-	public long getQuantityLeft() {
-		return quantityLeft;
-	}
-	public void setQuantityLeft(long quantityLeft) {
-		this.quantityLeft = quantityLeft;
 	}
 	public double getPrice() {
 		return price;
@@ -31,12 +25,20 @@ public class Item{
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public String getItemId() {
-		return itemId;
+	public double getQuantity() {
+		return quantity;
 	}
-	public void setItemId(String itemId) {
-		this.itemId = itemId;
+	public void setQuantity(double quantity) {
+		this.quantity = quantity;
+	}
+	public double getQuantityLeft() {
+		return quantityLeft;
+	}
+	public void setQuantityLeft(double quantityLeft) {
+		this.quantityLeft = quantityLeft;
 	}
     
-    
+    public String toString(){
+    	return this.itemName+" "+this.price+" "+" "+this.quantity+" "+this.quantityLeft;
+    }
 }
