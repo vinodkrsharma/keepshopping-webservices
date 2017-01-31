@@ -1,0 +1,989 @@
+
+
+
+
+
+FUNCTIONAL REQUIREMENTS – 
+BDP PHASE 5 – BDP FOR ERISA, NRA, PWM, GIM II AND BSA ACCOUNTS WITHOUT SWEEP OPTION
+
+Author:	Prakash Venkataraman
+Version:	V 6.0
+Version Date:	February 24, 2008
+
+ 
+Table of Contents
+
+1.0	GENERAL INFORMATION	5
+1.1	VERSION MANAGEMENT	5
+1.2	RELATED DOCUMENTS	5
+1.3	DOCUMENT REVIEW AND APPROVAL	5
+2.0	INTRODUCTION	6
+2.1	OVERVIEW	6
+2.2	DEFINITIONS/TERMS:	6
+2.3	HIGH-LEVEL RULES FOR BDP PHASE 5:	7
+2.4	DEPENDENCIES:	9
+2.5	SCOPE	9
+2.6	EXCLUSIONS	10
+2.7	ASSUMPTIONS	10
+2.8	ACTORS/APPLICATIONS	10
+3.0	ACCOUNT ELIGIBILITY	12
+3.1	OVERVIEW	12
+3.2	ACCOUNT TYPE	12
+3.3	DIVIDEND PAY OPT CODE	12
+3.4	REGISTRATIONS	12
+3.5	ACCOUNT STATUS	17
+3.6	NRA ACCOUNTS	17
+3.6.1	Rules for NRA accounts	18
+3.6.2	Use cases for NRA accounts	18
+3.7	PWM/GIM II ACCOUNTS	18
+3.8	SYSTEMS IMPACTED BY ELIGIBILITY REQUIREMENTS.	18
+4.0	MIGRATION	18
+4.1	OVERVIEW	19
+4.2	DEVELOPMENT/DELIVERABLES	19
+5.0	SWEEP AND MAINTENANCE PROCESS	20
+5.1	OVERVIEW	20
+5.2	PRE-CONDITIONS	20
+5.3	SWEEP PROCESS	20
+5.3.1	Universal Sweep	21
+1.	Sweep Frequency	21
+5.3.2	BDP Sweep	21
+5.3.3	AAA Sweep	22
+5.3.4	Development and Deliverables	22
+5.4	MAINTENANCE PROCESS	22
+5.4.1	Existing maintenance process	23
+5.4.2	Enhancement required/Development/Deliverables	24
+5.5	MARGINS BUCKETING	24
+6.0	TIER MAINTENANCE	24
+6.1	OVERVIEW	24
+6.2	PRODUCT CODES AT METAVANTE	24
+7.0	WORKFLOW PROCESSING	27
+7.1	OPENING A NEW ERISA ACCOUNT	27
+7.1.1	Pre-conditions	27
+7.1.2	Use Case – CPS – Opening a New ERISA(IRA) Account	27
+7.1.3	Alternative Flows – Merlin	29
+7.1.4	Use Case Notes & Comments	31
+7.1.5	Post-conditions	31
+7.1.6	Development/Deliverables	31
+7.1.7	Additional Information	32
+7.2	FUND SWITCH IN AN ERISA/EBT ACCOUNT – APPLICABLE ONLY FOR AAA AND BSA ERISA ACCOUNTS.	32
+7.2.1	Pre-conditions	32
+7.2.2	Use Case	32
+7.2.3	Exceptions to this workflow	33
+7.2.4	Alternative Flows	33
+7.2.5	Use Case Notes & Comments	33
+7.2.6	Post-conditions	33
+7.2.7	Development/Deliverables	33
+7.2.8	Additional Information	33
+7.3	CLOSING ERISA/EBT ACCOUNTS	33
+7.3.1	Pre-conditions	34
+7.3.2	Use Case	34
+7.3.3	Development/Deliverables	34
+7.3.4	Alternative Flows	34
+7.3.5	Use Case Notes & Comments	34
+7.3.6	Post-conditions	34
+7.3.7	Development/Deliverables	34
+7.3.8	Additional Information	34
+8.0	MANAGED ACCOUNTS	35
+8.1	OVERVIEW:	35
+8.2	DEVELOPMENT AND DELIVERABLES:	35
+8.2.1	All Managed Products	35
+9.0	STATEMENTS	35
+9.1	OVERVIEW:	35
+9.2	DEVELOPMENT AND DELIVERABLES:	35
+9.2.1	BDP Holdings display	35
+9.2.2	Other changes	35
+10.0	REPORTING – PUBLIC SITE	35
+10.1	OVERVIEW	35
+10.2	PUBLIC-SITE DEVELOPMENT AND DELIVERABLES	36
+10.3	DATA SERVICES UPDATES	36
+11.0	REPORTING – CLIENTSERV	36
+11.1	OVERVIEW	36
+11.2	CLIENTSERV DEVELOPMENT AND DELIVERABLES	36
+12.0	REPORTING - IDEAS	36
+12.1	OVERVIEW	36
+12.2	IDEAS DEVELOPMENT/DELIVERABLES	36
+13.0	REPORTING – AIS	36
+13.1	OVERVIEW	36
+13.2	EXPECTED RESULTS	36
+14.0	REPORTING – FA WORKSTATION	37
+14.1	OVERVIEW	37
+14.2	FA WORKSTATION DEVELOPMENT/DELIVERABLES	37
+15.0	OPERATIONAL REPORTS – TO BE ENHANCED BY AAA	37
+15.1	MARGINS REPORTS	37
+15.2	AAA REPORTS	37
+16.0	DATA SERVICES, MUTUAL FUNDS, SWEEP REQUIREMENTS FOR TIER MAINTENANCE	38
+16.1	OVERVIEW:	38
+16.2	DEVELOPMENT/DELIVERABLES:	38
+17.0	PWM/GIM 2 ACCOUNTS	39
+17.1	DEVELOPMENT/DELIVERABLES:	39
+18.0	MARGINS	39
+18.1	DEVELOPMENT/DELIVERABLES:	39
+19.0	PERFORMANCE REPORTING	39
+19.1	DEVELOPMENT/DELIVERABLES:	40
+20.0	OPEN ITEMS	40
+21.0	TIMELINE	41
+22.0	APPENDIX A	41
+
+ 
+1.0	General Information
+1.1	Version Management
+Version #	Date Completed	Author	Revision Notes
+1.0	12/18/07	P. Venkataraman	Initial Version
+2.0	1/30/08	P.Venkataraman	•	Revised as per modified business requirements
+3.0	2/04/08	P.Venkataraman	•	Revised as per modified business requirements
+4.0	2/12/08	P.Venkataraman	•	Revised ERISA definition
+•	Revised NRA rules
+5.0	2/20/08	P.Venkataraman	•	Revised NRA eligibility rules for CPS, Merlin and Managed accounts.
+6.0	2/22/08	P.Venkataraman	•	Revised NRA eligibility rules for CPS, Merlin and Managed accounts.
+1.2	Related Documents
+•	Bank Deposit Program Phase 5 Business Requirements
+1.3	Document Review and Approval
+The contributors listed below have reviewed and approved the contents of this document.  When a contributor provides his/her signature to this document, then (s)he is indicating that (s)he has carefully:
+Read and reviewed; 
+•	Confirmed the contents to be complete, accurate, testable and measurable;
+•	Considered the impact of this document to his/her respective group; and
+•	Considered how this document fulfils the project needs
+Name	Functional  Area
+Paul Appleton, Riann Washburn	BDP Program Owner
+Virender Bedi	ClientServ, Public Site
+Janis Brown, Leonard Moreyn	Mutual Funds
+Leo Ferrer, Frank Sha, John Ly	Managed Accounts
+Rahul Vohra	RTA
+Doris Chiu	Statements
+Stephen Hansen, Sam Rosenfeld	AAA/BSA Operations
+Nutan Dutt	AAA
+Rich Eichhorn, Grace Valenski	Margins
+Jonathan Weintraub	Data Services
+Michael Horton	CPS/Merlin Technology
+Ajay Jain, Heather Williams	CPS/Merlin Operations
+Marty Katigbak, Rob Aromiskis	Statements
+Khalid Massoud	AIS
+Patti Neil, Barbara Tamkins	IRA Operations
+Asim Tewary	Data Warehouse
+Otto Heilmann, Lizz Catrillo	CSG Business
+Bill Peyton, Courtney McMahon, Bob Zak	Managed Accounts Operations
+Bessie Rezaba	IRA Technology
+Dennis Rizzo	Financial Control
+Piers Smith	ClientServ Business
+Pete Sprague	IWS, Ideas
+Linda Ward, Zo Bigornia	IRA, ERISA Business
+
+2.0	Introduction
+2.1	Overview
+With the successful rollout of BDP to AAA, BSA, IRA, Managed, Business and Personal Trust accounts, ERISA, PWM/GIM II, NRA (Selected Accounts) and BSA accounts without a sweep option will also now be eligible to select BDP as their sweep vehicle.  
+BDP will be replacing current sweep funds SGMT (US Government Money Market Trust) and ILAF (Liquid Asset Fund), AAMT and AAGS for eligible accounts, while tax-free funds CTFI, NTFI, ITFI, AATF, AACT, AAIG, and AANY will still be available as fund choices for pertinent accounts. 
+Please note that the regulatory deposit limits for IRA accounts are different than for BSA and AAA accounts.  For all IRA accounts except Coverdell ESA accounts, Metavante should sweep the first 245k to Bank 1, the next 245k to Bank 2, and anything beyond 490k back to Bank 1.  Morgan Stanley has nothing to do with these deposit limits, which are determined via a parameter within the Metavante system.  As such, Metavante will need to change the parameter for the new product codes.
+2.2	Definitions/Terms:
+•	ERISA: (Employment Retirement Income Security Act) is a federal law that establishes legal guidelines for private pensions and employee benefit plans/trust (EBT). ERISA accounts at Morgan Stanley GWMG are comprised of:
+o	Private pension accounts with IRA code of 200 series and 300 series. There is a 400 series being developed as this specification is being written.
+o	EBT accounts - This is identified through class/subclass combination of 9Y (with or without IRA codes) and 9R (with no IRA codes). Please see section 3.4 for account eligibility details.
+
+
+2.3	High-level rules for BDP phase 5:
+•	Drain/fill and migration for GIM II/PWM, NRA and ERISA accounts. Eligible drain funds for this phase are AAMT, AAGS, ILAF and SGMT only.
+•	Drain and fill is not applicable for BSA accounts without a sweep option. These accounts will be migrated into BDP. Further, any BSA accounts that were mailed and migrated from prior phases that opted out of BDP thereafter, are in scope. (Mailing and migration only)
+•	For ERISA accounts only, weekly interest re-tiering will be performed based off the Plan level assets and not household assets.
+Description	Class	Subclass	IRA Code	Account type eligible	Eligible for BDP 5 (Y/N)
+EBT	9	R	200 series,
+300 series
+No IRA Code	AAA, BSA, IRA	Y
+VIP and RPM	Z		200 series,
+300 series	IRA	Y
+EBT	9	Y	200 series,
+300 series,
+No IRA Code	AAA, IRA, BSA	Y
+•	For the purposes of this project, ERISAs will be identified using class, subclass and IRA code.
+
+•	Class/Subclass = 9/Blank. These will be treated as NON ERISA Accounts.
+Class	Subclass	IRA Code	Account type eligible	Eligible for BDP 5 (Y/N)
+9	Blanks	May or may not contain have an IRA code	AAA, IRA, BSA	Y
+Comments:
+There are 1600+ accounts that are currently active in CPS system. Per retirement business, approximately 450 of these accounts are ERISA accounts.
+•	450 accounts identified as ERISA will be excluded from Mailing and Migration using the ‘do not migrate’ list. 
+•	The remaining 1150+ accounts will be treated as NON-ERISA Accounts.
+•	Post migration, any account opened with a ‘9’ class and ‘blank’ subclass will be considered NON-ERISA account and fit into one of the existing product codes at MV.
+
+* Please note any new Class/Subclass being added after the launch date must be notified by the business.
+•	NRA accounts (existing and to-be-opened) are eligible for BDP phase 5. 
+o	NRA accounts are defined where NRA-Indicator in CPS/Merlin = ‘Y’
+o	NRA accounts of type ERISA and IRA will not participate in this phase (includes Mailing, Migration and new to-be-opened accounts in CPS and Merlin)
+o	Block AAMT, AAGS, ILAF and SGMT across all eligible accounts where NRA-Indicator = ‘Y’. 
+o	Enable BDP as the default fund sweep choice to all eligible accounts where NRA-Indicator = ‘Y’. 
+o	Post launch, NRA accounts will have eligible tax free funds and SICAV as alternate fund sweep choices. BDP will be the default fund choice for NRA accounts.
+
+•	GWM accounts in PWM Offices are identified as follows:
+190 - Philadelphia
+191 - Boston
+194 - Atlanta
+279 - Los Angeles
+284 - Washington DC
+290 - Miami
+580 - Hong Kong
+590 - Latin America
+690 - New York
+691 - Chicago
+692 - Houston
+696 - San Francisco
+790 – Zurich
+699  (Old PWM Los Angeles number - closed)
+289  (Old PWM Dallas number - closed)
+195  (Old PWM Miami number - closed)
+180  (Old PWM Seattle number - closed)
+300  (PWM Invesment group - still open - but no activity)
+700  (Open Retail branch located in Covington Louisiana
+
+
+•	GIMII accounts:
+o	Any account with a GIMII-Indicator of ‘Y’ is a GIMII account. These include accounts outside of PWM office range.
+•	BSA accounts without sweep:
+o	Current fund sweep choice = Space
+o	Div Pay Opt Code = 0,1,2
+•	Personal Trust accounts are not eligible for BDP Phase 5 (Mailing and migration) No changes to CPS/Merlin are required for this phase. Personal Trust offices are: 755, 534, 546, 558, 566, 568 and 583. 
+•	Guaranteed interest rates for all Phase 5 accounts (excluding BSA accounts w/o sweep) for the first 6 months from the launch date.
+•	TWO new product codes to be opened at Metavante to facilitate this launch.
+o	Product Code 016 – for all ERISA Non Managed (AAA, BSA, IRA) accounts
+o	Product Code 017 – for all ERISA Managed (AAA, BSA, IRA) accounts 
+•	For the purposes of product codes assignment, the following hierarchy will apply:
+o	ERISA
+o	PWM/GIMII/NRA/BSA without sweep – must follow the current processing
+o	As an example, a non managed GIMII account of type ERISA must be treated as an ERISA account and must be assigned product code 016.
+•	AAA Maintenance to ignore any account upgrades (from BSA to AAA) or downgrades (from AAA to BSA) for product codes 016 and 017 in the weekly maintenance process to Metavante. Other maintenance activities must be captured and reported appropriately to Metavante. 
+•	Morgan Stanley and Metavante to utilize existing product codes (001 through 014) for PWM/GIM II, NRA and BSA accounts without sweep. As an example, a non-managed AAA NRA account will be migrated to product code 001 and will be provided guaranteed rates.
+•	There is a special requirement for EDB to warehouse the guaranteed rates at individual accounts level within an existing product code. This will be accomplished via the tier override mechanism in the EDB tables.
+•	ERISA and GIM2 Access accounts incepted on or before August 31, 2003 will not participate in  drain/fill scenario. Any ERISA and GIM2 Access account incepted after August 31, 2003 are eligible for BDP phase 5 and will participate in the migration process.
+•	ERISA and GIM2 Vision accounts incepted before September 17, 2007 will not participate in the drain/fill scenario. Any ERISA and GIM2 Vision account incepted on or after September 17, 2007 are eligible for BDP phase 5 and will participate in the migration process.
+•	Specific accounts may be exempt from participating in BDP. This list will be provided by the Business.
+•	All existing Multi-Bank (Morgan Stanley Bank and Morgan Stanley Trust) functionality will apply to AAA, BSA and IRA BDP sweep balances. The FDIC limits on ERISA accounts stand at $250,000.
+
+2.4	Dependencies:
+•	This project is dependent on the availability of the Retirement systems (Plan Admin Database project) to support the interest re-tier process. Plan Admin project is currently in flight and is expected to be launched around end of 2nd calendar quarter 2008. Major systems involved to develop the plan admin database are CPS/Merlin, Data Modelling group, Data Services.
+2.5	Scope
+This document includes the functional specifications for allowing eligible AAA, BSA and IRA accounts to select BDPS as their sweep vehicle, processing related to the new fund choice, and the impact to downstream applications of the new fund sweep option.  These specifications have been categorized as follows:
+•	Account Eligibility
+•	Migration
+•	Processing
+o	Sweep
+o	Drain and Fill
+•	Tier Maintenance
+•	Workflow Processing
+•	Statements
+•	Reporting - (Public Site, ClientServ, AIS, IWS, Ideas)
+•	Data Services
+2.6	Exclusions
+The scope of this document does not cover the following:
+•	Changes to Metavante operational reports.  These changes will be made by Metavante.
+•	Changes to reports produced by the Data Warehouse.  These requirements are documented under separate cover.
+•	Client Mailing – The client mailing strategy will be dealt with in a separate document.
+2.7	Assumptions
+•	Processing rules for as-of adjustments are the same for the eligible accounts specified in this document that select BDP as their sweep vehicle as was implemented for AAA, BSA and IRA accounts.
+•	There is no change to the existing functionalities implemented in production for prior BDP Phases.
+2.8	Actors/Applications
+The following applications will either have build outs as a result of these specifications, or will be required to participate in testing as they part of the impacted system flow.
+•	CPS/Merlin
+•	AAA, BDP
+•	Universal Sweep
+•	Margins
+•	Data Services
+•	Data Modelling
+•	Data Warehouse
+•	IFI
+•	IFS (Mutual Funds Trading System)
+•	MSS
+•	P&S *
+•	RTA
+•	AIS
+•	IWS
+•	ClientServ
+•	Public Site
+•	Ideas
+•	Statements
+•	IRA
+•	IVR*
+•	Trillium
+•	Managed Accounts
+* No build-outs required; testing support only.
+
+ 
+3.0	Account Eligibility 
+3.1	Overview
+ERISA, NRA and PWM/GIM2 accounts eligibility for participation in BDP is determined by many pieces of information on CPS.  All the account parameters below need to be satisfied for an account to participate in BDP.  Any ineligible accounts should be systemically blocked from participating in BDP.
+Account type should be the initial check for eligibility, followed by Dividend Pay Code, Registration, Account Status and jurisdiction for foreign accounts.  
+3.2	Account Type 
+Account Type	Trade Control	Trade Control Group	2008 BDP Eligible
+Non-Fee Based	0	Transaction	Yes
+Custom Portfolio	D	Managed	Yes
+ICSVision1	J	Managed	Yes
+ICSVision2	K	Managed	Yes
+ICS/SMA	L	Managed	Yes
+Fund Solution	M	Managed	Yes
+Personal Portfolio	T	Managed	Yes
+Port Arch	U	Managed	Yes
+IMS Custom	Y	Managed	Yes
+Portfolio Advantage	Z	Managed	Yes
+Hold30days	H	Managed	Yes
+Choice Select	N	Choice	Yes
+Collateral *	S
+
+	Other
+
+	Yes
+Non-Discretionary 	B	Managed	Yes
+3.3	Dividend Pay Opt Code 
+Dividend Pay Code	Description	2008 BDP Eligible
+0	 NULL, PAY DIVIDEND ONCE A MONTH BY CHECK	Yes
+1	 HOLD (CREDIT) DIVIDEND TO ACCOUNT	Yes
+2	 AS PAYABLE, PAY WHENEVER DIVIDEND IS CREDITED	Yes
+3	 OPEN AAA	Yes
+4	 CLOSED AAA	Yes
+5	 OPEN IRA	Yes
+6	 CLOSE IRA	Yes
+7	 PRECIOUS METALS	No
+8	 WITHHOLD PRINCIPAL ON CHECK TO REG-RTL-ACCT	Yes
+
+3.4	Registrations
+Account Class	Sub-Class	Description	AAA Eligible for 2008 BDP	BSA Eligible for 2008 BDP	IRA Eligible for 2008 BDP	IRA Code	IRA Code Desc.
+REGULAR ACCOUNTS		
+00kkkkk  0		Single – Individual	Already In	Already In	N/A	 	 
+1	A	Joint Tenant 	Already In	Already In	N/A	 	 
+1
+	B	Joint Tenant – Right of Survivorship	Already In	Already In	N/A		
+1	C	Joint Tenant – Tenant in Common	Already In	Already In	N/A	 	 
+1	D	Joint Tenant – Community Property	Already In	Already In	N/A	 	 
+1	E	Joint Tenant – Tenant by Entirety	Already In	Already In	N/A	 	 
+1	F	Community Property w/ Right of Survivorship	Already In	Already In	N/A	 	 
+1	N	Joint Tenant – Right of Survivorship WA	Already In	Already In	N/A	 	 
+1	O	Joint Tenant – Right of Survivorship WA	Already In	Already In	N/A		
+1	P	Joint Tenant – Tenant in Common WA	Already In	Already In	N/A	 	 
+1	Q	Joint Tenant – Community Property WA	Already In	Already In	N/A	 	 
+1	R	Joint Tenant – Tenant by Entirety WA	Already In	Already In	N/A	 	 
+1	S	Community Property w/ Right of Survivorship WA	Already In	Already In	N/A	 	 
+2	G	Custodian – UGMA	Already In	Already In	N/A	 	 
+2	T	Custodian – UTMA	Already In	Already In	N/A	 	 
+6	R	Guardian – Restricted/Blocked	Already In	Already In	N/A	 	 
+6	N	Guardian – Non Restricted	Already In	Already In	N/A	 	 
+6	B	Guardian – Restricted/Blocked	Already In	Already In	N/A	 	 
+6	W	Guardian – Restricted/Withdrawal By Court Order Only	Already In	Already In	N/A	 	 
+6	S	Guardian – Restricted/Subject to Court Order	Already In	Already In	N/A	 	 
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	 111	Traditional
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	112	Traditional Spousal
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N /A	Already In	121	Rollover
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	131	SEP
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	141	Traditional/ Rollover
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	142	Traditional Spousal/ Rollover
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	151	SEP/ Traditional
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	161	SEP/ Traditional/ Rollover
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	171	SAR-SEP
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	181	SIMPLE
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	191	ROTH
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	192	ROTH Spousal
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	193	ROTH Combined
+9	R	Retirement Plan Trust (e.g. Keogh)4	N/A	N/A	Already In	185	Coverdell ESA
+9	R	Retirement Plan Trust (e.g. Keogh)4	Yes	Yes	Yes	2xx	VIP
+9	R	Retirement Plan Trust (e.g. Keogh)4	Yes	Yes	Yes		
+9	R	Retirement Plan Trust (e.g. Keogh)4	Yes	Yes	Yes	3xx	RPM
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	No	5xx	529 Plans
+9	Y	Employee Benefit Trust (e.g. Pension, Profit Sharing)	Yes	Yes	Yes	 	 
+9	Y	Employee Benefit Trust (e.g. Pension, Profit Sharing)	Yes	Yes	Yes	2XX	
+9	Y	Employee Benefit Trust (e.g. Pension, Profit Sharing)	Yes	Yes	Yes	3XX	
+9	 	Trust – Not Converted	Yes	Yes	Yes	 	 
+9	0	DWTCDR Personal Trust	Already In	Already In	Already In	 	 
+9	1	DWTCDS Personal Trust	Already In	Already In	Already In	 	 
+9	N	Trust – Living Testamentary	Already In	Already In	N/A	 	 
+9	N	Other – Joint Trust	Already In	Already In	N/A	 	 
+9	N	 Other – Crummey Trust	Already In	Already In	N/A	 	 
+9	N	Other – Family Trust	Already In	Already In	N/A	 	 
+9	N	Other – Generation-Skipping Trust	Already In	Already In	N/A	 	 
+9	N	Other – Remainder Man Trust	Already In	Already In	N/A	 	 
+9	N	Revocable Living Trust	Already In	Already In	N/A	 	 
+9	N	Irrevocable Living Trust	Already In	Already In	N/A	 	 
+9	N	Credit Shelter Trust	Already In	Already In	N/A	 	 
+9	N	Marital Trust	Already In	Already In	N/A	 	 
+9	N	Qualified Terminable Interest Property Trust (QTIP)	Already In	Already In	N/A	 	 
+9	N	Grantor Retained Trust	Already In	Already In	N/A	 	 
+9	N	Charitable Remainder and Lead Trust (CRAT/CRUT)	Already In	Already In	N/A	 	 
+9	N	Life Insurance Trust	Already In	Already In	N/A	 	 
+9	N	Qualified Personal Residence Trust	Already In	Already In	N/A	 	 
+9	N	Special Needs Trust	Already In	Already In	N/A	 	 
+0	L	Single Life Tenancy	Already In	Already In	N/A		
+E	 	Single – Estate (Not Fix Fielded)	Already In	Already In	N/A	 	 
+E	P	Single – Estate (Probated)4	Already In	Already In	N/A	 	 
+E	N	Single – Estate (Non-Probated)4	Already In	Already In	N/A	 	 
+0	E	Single – Estate (Not Converted)	Already In	Already In	N/A	 	 
+9	N or blank	Coogan Account
+
+	Already In	Already In	N/A	 	 
+Z	 	Coverdell Education Savings Acct	N/A	N/A	Already In	185	Coverdell ESA
+Z	 	529 Plan – Non UGMA/UTMA	No	No	No	500	CollegeSave
+Z	 	529 Plan – UGMA/UTMA	No	No	No	501	CollegeSave UGMA/UTMA
+Z	 	IRA Standard	N/A	N/A	Already In	111	Traditional
+Z	 	IRA Standard Spousal	N/A	N/A	Already In	112	Traditional Spousal
+Z	 	IRA Rollover	N/A	N/A	Already In	121	Rollover
+Z	 	IRA Std/Rollover	N/A	N/A	Already In	141	Traditional / Rollover
+Z	 	IRA Std/Rollover-Spousal	N/A	N/A	Already In	142	Trad. Spousal / Rollover
+Z	 	Roth IRA	N/A	N/A	Already In	191	ROTH
+Z	 	Roth Spousal IRA	N/A	N/A	Already In	192	ROTH Spousal
+Z	 	Roth Converted IRA	N/A	N/A	Already In	193	ROTH Combined
+Z	 	Simple IRA	N/A	N/A	Already In	181	SIMPLE
+Z	 	SEP IRA	N/A	N/A	Already In	131	SEP
+Z	 	Standard/SEP	N/A	N/A	Already In	151	SEP / Traditional
+Z	 	Rollover/SEP	N/A	N/A	Already In	161	SEP / Trad. / Rollover
+Z	 	Salary Reduction/SEP	N/A	N/A	Already In	171	SAR-SEP
+Z	 	V.I.P. Plan Money Purchase	Yes	Yes	Yes	211	VIP Basic Money Purchase
+Z	 	V.I.P. Plan Profit Sharing	Yes	Yes	Yes	212	VIP Basic Profit Sharing
+Z	 	V.I.P. Defined Benefit	Yes	Yes	Yes	213	VIP Defined Benefit
+Z	 	V.I.P. Plus Money Purchase	Yes	Yes	Yes	221	VIP Plus Money Purchase
+Z	 	V.I.P. Plus Profit Sharing	Yes	Yes	Yes	222 	VIP Plus Profit Sharing
+Z	 	V.I.P. 401(K) Plan	Yes	Yes	Yes	231	VIP / 401(k) 
+Z	 	V.I.P. Plus Target Benefit	Yes	Yes	Yes	241	VIP Plus Target Benefit
+Z	 	V.I.P. Plus 401(K) Plan	Yes	Yes	Yes	242	VIP Plus 401(k)
+Z	 	V.I.P. Plus Defined Benefit	Yes	Yes	Yes	251	VIP Plus Defined Benefit
+Z	 	RPM EMP/PS	Yes	Yes	Yes	311	RPM Profit Sharing
+Z	 	RPM EMP/MP	Yes	Yes	Yes	312	RPM Money Purchase
+Z	 	RPM EMP/DB	Yes	Yes	Yes	321	RPM Defined Benefit
+Z	 	RPM EMP/TB	Yes	Yes	Yes	322	RPM Target Benefit
+Z	 	RPM EMP/PS MP	Yes	Yes	Yes	331	RPM PS/MP
+Z	 	RPM EMP/PS/DB	Yes	Yes	Yes	332	RPM PS/DB
+Z	 	RPM EMP/PS/TB	Yes	Yes	Yes	341	RPM PS/TB
+Z	 	RPM EMP/DB/MP	Yes	Yes	Yes	342	RPM MP/DB
+Z	 	RPM EMP/OTH	Yes	Yes	Yes	351 	RPM other
+Z	 	RPM 401(K) PLAN	Yes	Yes	Yes	361	RPM 401(k)
+4	 	For Profit Corporation	Already In	Already In	N/A	 	 
+4	S	Corporate Sole Proprietorship	Already In	Already In	N/A		
+4	N       	Non Profit Corporation	Already In	Already In	N/A	 	 
+A	C	Institutional Company	Already In	Already In	N/A		
+A	I	Institutional Individual	Already In	Already In	N/A		
+5		Investment Club	Already In	Already In	N/A		
+C	 	Partnership (LLP)	Already In	Already In	N/A	 	 
+C	 	Company (LLC)	Already In	Already In	N/A	 	 
+3	 	Partnership	Already In	Already In	N/A	 	 
+D	U	Unincorporated	Already In	Already In	N/A		
+D	S	Unincorporated Sole Proprietorship	Already In	Already In	N/A		
+3	P	Partnership	Already In	Already In	N/A	 	 
+3	S	State Partnership	Already In	Already In	N/A	 	 
+3	F	Family Partnership	Already In	Already In	N/A	 	 
+3	A	Family Limited Partnership	Already In	Already In	N/A	 	 
+3	L	Limited Partnership	Already In	Already In	N/A	 	 
+3	T	State Limited Partnership	Already In	Already In	N/A	 	 
+3	G	General Partnership	Already In	Already In	N/A	 	 
+3	E	State General Partnership	Already In	Already In	N/A	 	 
+3	I	General Partnership Investment	Already In	Already In	N/A	 	 
+
+3.5	Account Status
+Account Status	Description	Additional Criteria	2008 BDP Eligible
+0	NORMAL (OPEN)		Yes
+2	TRANSFERRED	Transfer/Swing Date is in the future	NO (We are excluding this from mailing/migration as these accounts have 0 balances) – Confirmed
+3	SWING PENDING	Swing Effective Date is Today	Yes
+9	REVERSED SWING	Reversal Effective Date is Today	Yes
+4	SWUNG ACCOUNT		Yes
+5	CLOSED		No
+6	READY FOR DELETION  (NOT USED)		No
+
+3.6	NRA Accounts
+3.6.1	Rules for NRA accounts
+
+
+•	Offer BDP as the default fund choice to all accounts where NRA-Indicator = ‘Y’. 
+
+•	Eligible tax free funds and SICAV fund will be  alternate fund sweep choices for NRA accounts.
+
+•	ILAF will be the default fund sweep choice for any IRA account (managed, non-managed) where NRA Indicator in CPS/Merlin = ‘Y’. NRA accounts of type ERISA or IRA are out of scope for this phase. This point is just a restatement of the current functionality in production.
+
+•	Block AAMT, AAGS, ILAF and SGMT as valid fund sweep choice for eligible accounts where NRA Indicator in CPS/Merlin = ‘Y’. 
+
+•	Leave SICAV (IUSD) fund untouched in production.
+
+3.6.2	Use cases for NRA accounts
+
+The use cases will be published in a separate document.
+
+3.7	PWM/GIM II Accounts
+PWM accounts and GIM II accounts are in scope for this phase. Please see section 2.3 for details.
+3.8	Systems Impacted by eligibility requirements.
+Eligibility rules are implemented in CPS and Merlin.  The screens used for the following functions must undergo edits revision to allow the accounts described above to elect BDP as their sweep choice.  Specific screens used in the various affected work flows are detailed in the work flow sections of this document.
+
+Managed platform inception and trading systems also have eligibility logic that must be revised to accommodate these new account types.  The relevant systems are:
+Advisor One
+Custom Portfolio
+Access
+PPA
+FS/PA
+NDA.
+The affected functions are detailed in the work flow section of this document.
+
+
+4.0	Migration
+4.1	Overview
+Effective on migration date there are a number of changes that will need to be in place as described in this section.  Please note that unless otherwise specified, the migration details below apply only to ERISA, GIM II accounts (Managed, Business and Personal Trust (AAA, BSA, IRA)) and BSA accounts without a sweep option.
+4.2	Development/Deliverables
+•	The migration date for all Phase 5 accounts including BSA without sweep will be 5/16/2008. 
+•	Vision accounts incepted before September 17, 2007 will not participate in the drain/fill scenario. Any ERISA and GIM2 Vision account incepted on or after September 17, 2007 are eligible for BDP phase 5 and will participate in the migration process. 
+•	Access accounts incepted on or before August 31, 2003 will not participate in the drain/fill scenario. These accounts must not be migrated. Alternatively, any Access account opened after August 31, 2003 will be subject to drain/fill concept and will participate in migration.  
+•	Managed CESA accounts will be subject to Mailing and Migration during this phase. Systematic edits in CPS and Merlin are already in place and does not require any code change.
+•	For eligible AAA accounts that have AAMT or AAGS as their sweep vehicle prior to migration date, AAMT/AAGS becomes the previous fund choices and BDPS becomes the current fund choice. 
+•	For eligible BSA accounts that have ILAF or SGMT selected as their sweep vehicle prior to migration date, ILAF/SGMT becomes the previous fund choices and BDPS becomes the current fund choice.  As all eligible IRA accounts have ILAF as their sweep vehicle, ILAF will become the previous fund choice and BDPS becomes the current fund choice.
+•	For BSA accounts with no sweep option, BDPS will become the fund choice and these are not subject to drain/fill concept.
+•	On the CPS A page, the history field should show AAMT or AAGS, respectively, as the prior sweep fund choice as of migration date for AAA accounts.
+•	On the CPS U page and R page, the history field should show ILAF or SGMT, respectively, as the prior sweep fund choice as of migration date for both BSA and IRA accounts.
+•	On CPS, ‘BDPS’ will be the choice for accounts that migrate to BDP, and ‘BDPS’ should be allowed to be entered for new eligible AAA accounts on the A screen.
+•	On CPS, ‘BDPS’ will be the choice for accounts that migrate to BDP, and ‘BDPS’ should be allowed to be entered for new eligible BSA accounts on the Universal fund selection screen and on the G2 screen for IRA accounts.
+•	On the Merlin AAA fund choice screen, the Add fund drop down selection box should list ‘BDPS’ to represent the BDP program for eligible BDPS accounts. BDPS should be the first fund listed.
+•	On the Merlin Universal Sweep Fund Choice screen, the Add fund drop down selection box should list ‘BDPS’ to represent the BDP program for eligible BSA accounts.  BDPS should be the first fund listed.
+•	All eligible BSA accounts will not be allowed to manually purchase ILAF or SGMT. This is restatement of the current functionality in production and does not require any code change.
+•	All eligible IRA accounts will not be allowed to manually purchase ILAF. This is restatement of the current functionality in production and does not require any code change.
+•	BDP eligible IRA accounts will continue to be able to manually purchase SGMT as part of their IRA portfolio.  IRA accounts ineligible for BDP will continue to have ILAF as their sweep vehicle and will continue to be able to purchase SGMT.  This is a re-statement of the functionality currently in place, and does not represent new functionality.
+
+5.0	Sweep and Maintenance Process
+5.1	Overview
+During the drain and fill process, the drain on eligible accounts will be carried out by Universal Sweep (for BSA and IRA accounts) and AAA sweep (for AAA accounts), the fill will be carried out by BDP sweep.  Once the drain balance is depleted, eligible accounts that have migrated to BDPS or fund-switch into BDPS will have their BDP sweep debits and credits exercised wholly by the BDP sweep.  
+There are no drain and fill processing changes for the following accounts:
+•	AAA accounts ineligible for BDP that maintain AAMT or AAGS as their sweep choice.
+•	BSA or IRA accounts ineligible for BDP that maintain ILAF or SGMT as their sweep choice.
+•	AAA accounts that have AATF, AACT, AAIG, AAIF or AANY selected as their sweep vehicle.
+•	BSA accounts that have CTFI, ITFI, or NTFI selected as their sweep vehicle.
+5.2	Pre-conditions
+The drain/fill logic is applicable only for ERISA, PWM/GIM2 and NRA accounts (Managed and Non Managed). Other money market funds are listed here for reference.
+Symbol
+	Cusip
+	Symbol
+	Share Class Type
+	Drain Prior Sweep Fund	Sweep Credit Balances to BDP
+			No Sweep Election	N/A	N/A
+ILAF	616980108	ILAF	Sweep	Yes	Yes
+SGMT	616983102	SGMT	Sweep	Yes	Yes
+CTFI	616979100	CTFI	Sweep	No	No
+ITFI	616982104	ITFI	Sweep	No	No
+NTFI	616981106	NTFI	Sweep	No	No
+AAMT	005047980	AAMT	Sweep	Yes	Yes
+AAGS	005047923	AAGS	Sweep	Yes	Yes
+AATF	005047915	AATF	Sweep	No	No
+AACT	005047949	AACT	Sweep	No	No
+AAIG	004991105	AAIG	Sweep	No	No
+AAIF	00505K105	AAIF	Sweep	No	No
+AANY	005047980	AANY	Sweep	No	No
+5.3	Sweep Process 
+The following outlines the sweep process for AAA, BSA and IRA accounts. As such, all the functionalities depicted below are in production. The following is for reference purposes.
+ 
+Sweep process consists of the following 3 types of sweep.
+5.3.1	Universal Sweep
+Universal Sweep is responsible for sweeping funds for BSA, IRA accounts. This process must be enhanced to include ERISA, PWM, NRA and GIM2 accounts (Managed and Non managed) BSA, IRA accounts for BDP Phase 5.
+There is no work required to handle BDP accounts without a sweep option.
+1.	Sweep Frequency
+For BSA accounts, sweep should take place daily if there is a cash balance > $999.99.  If the cash balance < = $999.99, sweep weekly on Monday nights.
+Currently, for IRA accounts, sweep takes place daily if there is a cash balance > $0.00.  This will continue to be the case when the sweep choice is BDP.
+Note that the sweep frequency will not change for those accounts that have one of the BSA tax free funds as their sweep vehicle, nor will it change for BSA accounts that are ineligible for BDP.
+5.3.2	BDP Sweep
+BDP sweep is responsible for sweeping funds into and out of BDP fund for BSA, IRA and AAA accounts. This process must be enhanced to accommodate sweep for:
+ ERISA (including EBT), PWM, NRA and GIM2 Managed and Non Managed BSA, IRA, AAA accounts.
+5.3.3	AAA Sweep
+AAA sweep is responsible for sweeping funds into and out of AAA funds for AAA accounts. There will be no change in the sweep frequency for AAA accounts, i.e. sweep takes place daily if there is a cash balance > $0.00
+5.3.4	Development and Deliverables
+Enhance Universal, BDP and AAA sweep to recognize and sweep funds appropriately for ERISA, NRA, PWM and GIM2 accounts. ERISA and GIM2 can be of account type BSA, IRA or AAA and may be managed or non-managed. The following grid summarizes the account types and its relation to specific product codes at Metavante.
+
+Feature	Account Types	Product codes 	Identification for Sweep	Comments
+ERISA/EBT	AAA, BSA, IRA
+(Managed or Non managed)	016, 017 (new product codes)	Class, Subclass, IRA code	In terms of product code assignment, ERISA will hold priority.
+GIM2/NRA/PWM	AAA, BSA, IRA
+(Managed or Non managed)	001 through 014 (all existing product codes	Use the current identification process to assign product codes.	
+BSA accounts without sweep option	BSA	Existing product codes	Use the current identification process to assign product codes.	These accounts should automatically sweep into the existing process. No new build is required
+
+
+•	AAA, BSA and IRA Tier Maintenance API needs to be updated to account for new product numbers.
+•	The new product codes will need to be provided to MV on the Maintenance and Daily Activity file.
+•	For this phase, the drain/fill scenario for eligible AAA, BSA, IRA accounts will be identified when BDP is the current fund choice and current fund date = 5/16/08 (in production) and the prior fund choice is AAMT, AAGS, ILAF or SGMT. Drain/fill dates from prior phases will continue to function as is.
+o	Phase 4 = 9/14/07 (for all Phase 4 accounts except NDA)
+o	Phase 4 = 9/17/07 (for eligible  NDA accounts)
+o	Phase 3 = 9/15/06
+o	Phase 1 = 11/18/05
+
+5.4	Maintenance Process
+Maintenance process currently runs at 5 am every business day. The purpose of maintenance process is to recognize changes involved in account maintenance (such as account closure, account upgrade/downgrade) and transmit the information to Metavante deposits system for processing.
+5.4.1	Existing maintenance process
+Maintenance process consists of:
+1.	Account opening at Metavante – This is done when current fund choice is BDP and the plan number is blank. The logic used for account opening at Metavante will function exactly in a similar manner as it does for AAA, BSA and IRA accounts currently in production. Account opening is based on information from CPS.  
+Notes:  
+•	Once an account is opened, AAA provides a file to CPS that includes the plan number.
+•	Metavante will continue to receive the daily activity and maintenance files, represented by appropriate product codes as outlined in Section 6.2
+2.	Account closing and re-opening at Metavante – This is done when an account switches out of BDP as the current fund choice into another non-BDP fund choice. This constitutes a full-sell of all BDP holdings and posting accrued interest to the account. This constitutes an account closure at Metavante. The existing rules for account closing and reopening at Metavante will follow the current process as it exists in production
+3.	Swung accounts – When accounts swing from one office to another, necessary maintenance (close ‘swing from’ account and open ‘swing to’ account) records are sent to Metavante.
+4.	Other Maintenance activities – such as single to joint ownership, FA number change, Product code change, interest tier change are also handled appropriately.
+5.	The concepts explained below already exist in production and must be extended to Phase 5 managed accounts.
+The business case – There should be no change in BDP rates and/or should not full-sell/buy back when a client changes from one managed product to another (such as Custom Portfolio to PPA).
+Current process – A shift from one managed product to another entails a step down from Managed (custom portfolio) to non-managed status (trade control = 0 in CPS). The account is then upgraded to PPA.
+The Challenge – A client’s intention to terminate a managed account permanently versus shifting to another managed product cannot be deciphered systematically as both these cases 	involve switching the account to non-managed status.
+The solution – It has been decided that every client terminating the managed status will be assured the guaranteed 100% rate (AAMT or ILAF, depending on the account type) for 8 days from the termination date. If within 8 days, the client indeed shifts to another managed product, there will be no impact to his/her BDP positions i.e. (there will be no interest rate re-tier, no full-sell and no product code change). However, if after 8 days, the client still continues to be in a non-managed status, maintenance process will request (a) product code change, (b) interest rate change.
+The logical design to implement the same is outlined below. Detailed technical specification is required to accomplish this task:
+ 
+
+5.4.2	Enhancement required/Development/Deliverables
+•	The Account Maintenance File sent to Metavante must handle more product codes as outlined in section 7.2.
+•	Extend the concept of “Warehousing” to Phase 5 managed accounts. The concepts explained below already exist in production and must be extended to Phase 5 managed accounts.
+•	Maintenance to account for various use cases for Phase 5 accounts. Please refer to the Use Case document attached in Appendix A (last page of the document).
+5.5	Margins Bucketing
+The Margins bucketing in support of this phase will be exactly the same as the bucketing used to support AAA, BSA/IRA drain and fill sweep processing
+6.0	Tier Maintenance
+6.1	Overview
+ERISA/EBT and GIM2 (of account types AAA, BSA and IRA) accounts that select BDP as their sweep choice will get an interest rate based on the managed or non-managed status.
+This table represents the expected tiers that are required to support ERISA/EBT and GIM2 accounts.  
+6.2	Product Codes at Metavante
+New product codes should be setup on Metavante to support bank deposits for ERISA/EBT accounts. GIM2 accounts and BSA accounts without a sweep option will use the existing product codes set up at Metavante.
+  
+
+
+Metavante Index Rate Number	Index Rate DESCRIPTION	Auto or Manual entry
+001	$0 - $99,999	M
+002	$500,000 - $999,999	M
+003	$1,000,000 - $9,999,999	M
+004	$10,000,000 AND UP	M
+005*	AAMT 100% Rate (Daily )	A
+006*	ILAF 100% Rate  (Daily)	A
+007	Exception Rate	M
+008	AAMT Guaranteed 90%Rate	M
+009	ILAF Guaranteed 90% Rate	M
+010	AAGS Guaranteed 90% Rate	M
+011	SGMT Guaranteed 90% Rate	M
+012	$100,000 – $249,999	M
+013	$250,000 -  $499,999	M
+100	Fed Fund Rate	A
+
+* Note that the rates for tiers 005 and 006 will be entered systematically using a daily process.  Therefore these two tiers will not utilize the weekly manual entry process
+
+Note that interest plan 180 through 189 will be reserved for up to 10 unique override rates for special situations. Interest Plan 180 is currently in use for a small group of accounts.
+
+
+  
+7.0	Workflow Processing
+The workflows documented in this section detail the processes by which Managed accounts are opened, actions undertaken once opened, and closed.  While not every workflow results in development changes, the impact to and handling of accounts is important.
+7.1	Opening a New ERISA Account
+7.1.1	Pre-conditions
+User must have the appropriate access level to open a new account.
+7.1.2	Use Case – CPS – Opening a New ERISA(IRA) Account
+Methodology: The following table outlines the account opening in detail. Screen Shots along with commentary are attached where needed.
+
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘APAA’	User is taken to the APAA G1 screen.	3
+
+Step 3: Add Account Screen. The following screen is used to select a retirement plan/EBT plan.
+ 
+
+
+Step 4: Details Screen. The following screen is used to enter pertinent information and press enter.
+ 
+
+Step 5: Details Screen. The following screen must be changed to have BDPS as the ONLY sweep fund choice. Please note ILAF is the current sweep choice.
+
+ 
+
+Edit Checks for CPS/Merlin: The appropriate edits must focus on the following fields in CPS. Please refer to Section 3.0 for detailed account eligibility.
+1.	Trade Control
+2.	Div Handling Code
+3.	Status
+4.	Class
+5.	Sub-Class
+
+7.1.3	Alternative Flows – Merlin
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs on to Merlin.	Access granted.	2
+Step 2: The following screen shots must undergo a change to reflect BDPS instead of ILAF as a part of ERISA account opening process.
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+7.1.4	Use Case Notes & Comments
+•	The same information should appear in CPS regardless of whether the account is opened using CPS or Merlin.
+7.1.5	Post-conditions
+•	The account is opened on CPS/Merlin with BDPS as the fund choice. BDPS must the default choice as well for AAA, BSA and IRA ERISA/EBT accounts.
+7.1.6	Development/Deliverables
+1.	ERISA and EBT accounts (AAA, BSA and IRA, managed and non-managed) should be defaulted to ‘BDPS’ as the fund choice in both CPS and Merlin.
+7.1.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules
+	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+
+7.2	Fund Switch in an ERISA/EBT account – Applicable only for AAA and BSA ERISA accounts.
+7.2.1	Pre-conditions
+The account must be an ERISA account. 
+7.2.2	Use Case 
+Step #	Sending App/actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User signs into CPS	User is on the APMA page	3
+
+Step 2: Details Screen. The following screen must be changed to display BDPS as the ONLY sweep fund choice. Please note there is NO edit capability on this screen.
+
+ 
+
+7.2.3	Exceptions to this workflow
+None
+7.2.4	Alternative Flows
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs on to Merlin.	Access granted.	2
+Step 2: The following screen shots must undergo a change to reflect BDPS instead of ILAF in the fund history page.
+
+ 
+
+7.2.5	Use Case Notes & Comments
+•	There is no option to change the fund sweep choice on ERISA accounts.
+7.2.6	Post-conditions
+CPS/Merlin should have BDP as the fund sweep choice.
+7.2.7	Development/Deliverables
+BDPS must be the fund sweep choice on ERISA accounts.
+7.2.8	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+7.3	Closing ERISA/EBT accounts
+7.3.1	Pre-conditions
+The account must be an open account.
+7.3.2	Use Case 
+There should be no change in the process of closure of ERISA/EBT accounts and must follow the present procedures such as:
+1.	Full sell BDP positions from the account.
+2.	Change the account status to appropriate closed status (6 for IRA, 4 AAA)
+3.	Upon closure, the universal sweep indicator value must be set to ‘N’.
+7.3.3	Development/Deliverables
+1.	Full sell BDP positions from the account.
+2.	Change the account status to appropriate closed status (6 for IRA, 4 AAA)
+3.	Upon closure, the universal sweep indicator value must be set to ‘N’.
+7.3.4	Alternative Flows
+Merlin:
+There should be no change in the process of closure of ERISA/EBT accounts and must follow the present procedures such as:
+1.	Full sell BDP positions from the account.
+2.	Change the account status to appropriate closed status (5 for IRA, 4 AAA)
+
+7.3.5	Use Case Notes & Comments
+None
+7.3.6	Post-conditions
+None
+7.3.7	Development/Deliverables
+This should trigger the maintenance and sweep processes by AAA sweep by reading the CPS activity file. 
+7.3.8	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.0	Managed Accounts
+8.1	Overview:
+ERISA/EBT can be managed and can be either a AAA, BSA or IRA account type.
+8.2	Development and Deliverables:
+8.2.1	All Managed Products 
+All Managed products must allow BDP as the fund sweep choice for ERISA accounts. 
+All managed products must allow BDP for eligible NRA accounts, PWM/GIM2 accounts. Please refer to section 2.3 for details on eligibility and definition.
+
+
+9.0	Statements
+9.1	Overview:
+Statements must be enhanced to display BDP related activities for ERISA/EBT non-managed and managed AAA, BSA, IRA accounts.
+Statements will be required to display all the banks namely ‘Morgan Stanley Bank’, ‘Morgan Stanley Trust’.
+9.2	Development and Deliverables:
+9.2.1	BDP Holdings display 
+Wherever it appears on a monthly statement, the holdings should read as follows:
+‘Morgan Stanley Bank’
+‘Morgan Stanley Trust’	
+9.2.2	Other changes
+•	The bank names and their holdings in each bank must be specified.
+•	Where required, all the two banks along with corresponding holdings should be displayed.
+•	All other features such as disclosures, backer messages, Estimated Yearly Income must follow the current production convention.
+•	GIM2 Accounts – No statements from GWM are produced for GIM2 accounts, therefore no build is required. The PWM statements will be enhanced by PWM technology.
+
+10.0	Reporting – Public Site
+10.1	Overview
+The following link displays the current BDP rates for managed, non managed accounts in addition to other money market funds.
+http://www.morganstanleyindividual.com/accountoptions/activeassets/Investmentfeatures/
+No change expected for this page.
+10.2	Public-Site Development and Deliverables
+
+None
+10.3	Data Services Updates
+None
+11.0	Reporting – ClientServ
+11.1	Overview
+The following deliverables outlines the requirements for ClientServ. At the outset, it has been given to understand that there should be no changes with the exception of BDP rates pages display. However, each of the affected areas is narrated below.  
+11.2	ClientServ Development and Deliverables
+•	Extend the existing production protocols (Holdings, Balances by bank, transaction activity, interest earned transaction, as of adjustments for BDP, correct taxonomy of credits and debits, month to date interest accrued/YTD interest paid/YTD interest withheld, disclosures and rates page display)  for ERISA/EBT accounts.
+
+12.0	Reporting - Ideas
+12.1	Overview
+•	No changes for GWM Technology
+•	The guaranteed rates will be published in Ideas web page by business through ipub.
+12.2	Ideas Development/Deliverables
+None
+13.0	Reporting – AIS
+13.1	Overview
+13.2	Expected Results
+The following items should show up in AIS ‘A’ Verb screens to support the BDP phase 5 requirements:
+•	Page 1
+o	BDP sweep election will need to read ‘AAA/BDPS’ for AAA accounts that have BDP as their sweep vehicle.
+o	BDP sweep election will need to read ‘BSA/BDPS’ for BSA accounts that have BDP as their sweep vehicle.
+o	BDP sweep election will need to read ‘IRA/BDPS’ for IRA accounts that have BDP as their sweep vehicle.
+o	Money Market Balance/BDPS Balance will read ‘BDPS’.
+Note: The above are only applicable when ILAF or SGMT prior sweep fund balance is greater than zero.
+•	Page 2
+o	Custodial position screen should read ‘Bank Deposit Program’.
+
+
+14.0	Reporting – FA Workstation
+14.1	Overview
+FA workstation enhancements in this section should already be in place and the data should appear appropriately for ERISA/EBT, GIM2 and BSA accounts without a sweep option.  
+14.2	FA Workstation Development/Deliverables
+•	Extend the existing production protocols (Positions, Balances by bank, transaction activity, interest earned transaction, as of adjustments for BDP, correct taxonomy of credits and debits, month to date interest accrued/YTD interest paid/YTD interest withheld, disclosures and rates page display)  for ERISA/EBT accounts.
+
+
+15.0	Operational Reports – To be enhanced by AAA
+Several of the Operational reports produced by AAA and Margins require changes to support the addition of Managed, Business, and Personal Trust AAA, BSA and IRA accounts.  These changes are presented below.  
+15.1	Margins Reports
+•	New Exception report Managed, Business AAA, BSA accounts and IRA accounts.  Separate reports from existing report for AAA, BSA and IRA accounts, but same layout.
+15.2	AAA Reports
+•	Both BDP Million Dollar Reports should include Managed, Business and Personal Trust sorted by account type.
+Paaa.nvs.paaad215.millrept – AAA
+Paaa.nvs.paaad215.millrept.bsa – BSA/IRA
+
+•	Monetary Transaction Reports already listed in section 16.2 should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaad215.jrnlrpt(0) - AAA
+			paaa.nvs.paaad215.jrnlrpt.bsa(0) – BSA/IRA
+
+•	Control Total Report already listed in section 16.2 should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaad215.dwtcrept - AAA
+			paaa.nvs.paaad215.jrnlrpt.bsa(0) – BSA/IRA (print last line)  
+
+•	New/Closed Account Report should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaadcmv.nacrpt(0)
+
+•	Weekly BDPS Interest Tier Exception Report should include Managed, Business and Personal Trust sorted by account number.  (E-mail sent weekly by IIGBISUPPORT)
+•	Maintenance Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+•	Swing Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, no account type sort required.
+•	Full Sell Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+•	Month-end Interest Report - Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+
+•	Margin Fund Indicator Exception Report 
+paaa.nvs.paaad210.errfnd(0)
+
+•	BDP Balance Mismatch Report
+paaa.nvs.paaad210.errbal(0)
+
+•	Bucket Inconsistency Exception Report
+paaa.nvs.paaad210.errbuc(0)
+
+•	BDP Funds Trapped Report
+paaa.nvs.paaad210.errtrp(0)
+
+
+16.0	Data Services, Mutual Funds, Sweep Requirements for Tier Maintenance
+16.1	Overview:
+ERISA/EBT accounts that select BDP as their sweep choice will get an interest rate based on the plan level assets, not household assets.
+This table represents the expected tiers that are required to support ERISA accounts. 
+
+16.2	Development/Deliverables:
+#	Deliverables	Systems Impacted
+1	ERISA/EBT accounts will receive interest rate corresponding to the assets held under the plan. There will be new product codes set up to determine the tier. Product codes are 016(Non managed ERISA) and 017 (Managed ERISA). Please see section 4.0 for details.	Data Services
+Sweep
+2	The interest retiering at plan assets level is dependent on the completion and availability of plan admin database project. An output of the plan admin database project is the creation of the plan level assets	Data Services, Data Modelling
+3	Existing ERISA/GIM2/PWM/NRA non managed accounts to receive 90% of prior MMF for at least 6 months with tiered rates thereafter.	Data Services
+Sweep
+4	New ERISA plans (opened after launch date) to receive the tiered rate starting when the account is opened. New ERISA accounts under existing plan (migrated plan) will receive guaranteed rates for the first 6 months from launch date.	
+5	Guaranteed interest rates will be set using the same weekly process as in prior phases
+	Data Services
+6	Tiered interest rates will be set weekly, using the same process as in prior phases. 	Data Services
+7	New and existing Managed ERISA/EBT accounts will receive the 100% ILAF rate in perpetuity regardless of the account type (AAA,  BSA or IRA)	Data Services
+8	Similar to managed accounts, the 100% AAMT and 100% ILAF rate should be set daily to be equal to the prior day’s AAMT/ILAF daily yield.  This should be done systematically and not require rates to be entered manually.	Mutual Funds
+9	Inactive accounts (accounts no longer in BDP) must be purged from the EDB tables that is used for interest retier purposes	Data Services
+
+17.0	PWM/GIM 2 Accounts
+
+Currently, Data Services transmits a daily feed consisting of transactions, positions of all GIM2 accounts to PWM.
+
+17.1	Development/Deliverables:
+This daily feed to PWM must be enhanced to send BDP related transactions and positions to PWM.
+In addition to the existing feed, GWM will also send a copy of the bank balance table consisting of PWM/GIM2 accounts (received from Metavante) to PWM systems.
+APY by tier file will be transmitted from GWM to PWM daily.
+18.0	Margins
+
+All processes to support BDP Phase 5 in terms of Journals, Bucket movements to track BDP numbers must continue to function as in prior phases.
+
+18.1	Development/Deliverables:
+None
+
+19.0	Performance Reporting
+Performance Reporting produces monthly and quarterly reports for ERISA managed accounts. All underlying BDP security positions are rolled into the 360 security on RTA. 
+
+
+19.1	Development/Deliverables:
+1. Interest for BDP securities flow in on transactions for 361, 364, 368 securities. Tests for the security identifiers are hard coded, so as securities are added changes need to be made. 
+
+		2. Change Quarterly Performance Reports, PAD Report .
+
+20.0	Open Items
+
+1.	ERISA and GIM 2 accounts can take the shape of a managed account; especially Vision and Access – In Phase 4, all Vision accounts incepted up to September 17, 2007 were excluded from BDP. Should we continue to exclude ERISA Vision accounts and GIM2 Vision accounts opened prior to 9/17/07? – YES. Issue Closed.
+
+2.	In Phase 4, all Access accounts incepted prior to August 31, 2003 were excluded from BDP. Should we continue to exclude ERISA Access accounts and GIM2 Vision accounts incepted prior to 8/31/03? – YES. Issue Closed.
+
+
+3.	Accounts with class 9, subclass blank (BSA accounts) – Business is determining to validity of these accounts. – There are about 1600+ accounts – How to treat them? – Only 450 are ERISA accounts, which will be excluded from mailing and migration using the ‘do not’ migrate mechanism. All the other accounts will be treated as NON-ERISA accounts. Post launch, 9 blank accounts are considered Non-ERISA accounts.
+
+4.	BSA accounts without sweep that had BDP in the past – This is included in the scope. We will be mailing and migrating these accounts.
+
+5.	Do we require two dates (one for BSA accounts without sweep and the other for all other accounts) for migration for this phase 5? –Not required, AAA will be able to handle all the target accounts with just one date. 5/16/08
+
+6.	Accounts with class 9 subclass Y (AAA accounts) – There are about 9,965 accounts – How to treat them? – Business has confirmed these will be treated as ERISA accounts.
+
+7.	BSA Accounts without a sweep option – Included in this pile are ERISA accounts that are of account type BSA without a sweep choice – How do we treat these? Should these be put into BDP through migration with no drain/fill or should these accounts be treated under the ERISA umbrella? –  (1) A plain BSA account w/o sweep should be migrated into BDP and will be paid interest according to regular tiers. (2) An ERISA BSA account w/o sweep must also be migrated into BDP and will be paid interest according to guaranteed tiers for the first 6 months.
+
+8.	GIM2 accounts – Is there such a thing as GIM 2 Business or BusinessScape account? – Yes, BusinessScape accounts are out of scope.
+
+9.	Confirm Statement format for ERISA and EBT accounts.
+
+10.	With the functionality of universal sweep indicator changing for BSA accounts, how do we close BSA accounts in CPS? – this requirement is no longer applicable. We are not changing the behavior of u sweep indicator in cps/merlin
+
+11.	New requirement – For BSA w/o sweep accounts that will be migrated on May 17, CPS must have the ability to retain these accounts without a sweep if the client decides to do so post migration. Alternatively, any new BSA account opened/changed post May 19, 08 cannot be without a sweep. – How do we handle this? – no longer applicable
+
+12.	SICAV fund – SICAV (IUSD) fund must be blocked as a valid sweep choice beginning May 19, 2008 for all NRA accounts in the following 18 countries  - This request no longer applicable
+
+a.	Argentina, Aruba, Bahamas, Bermuda, Brazil, British Virgin Islands, Cayman Islands, Chile, Colombia, Costa Rica, Dominican Republic, Ecuador, Jamaica, Mexico, Netherlands Antilles, Panama, Venezuela, Germany. 
+13.	Letters to Plan Sponsors – must be revisited 
+
+
+
+
+21.0	Timeline
+	Description	Start Date 	End Date	Comments
+0	Addition of two new interest tiers to existing BDP accounts	2/05/08	2/05/08	
+1	Functional Spec sign off	1/30/08	2/08/08	
+2	Development/Unit Testing	1/30/08	3/06/08	
+3	Data refresh in QA environment (H265)	2/23/08	2/23/08	
+4	Mailing:
+First cut of data (including Trillium)
+User review
+Second cut (including Trillium)
+User review and Sign off
+Final Cut of production data (using close of business data on 2/22)
+Final production mailing file to BOWNE	
+1/30/08
+2/11/08
+2/15/08
+2/20/08
+2/23/08
+2/29/08	
+2/08/08
+2/14/08
+2/19/08
+2/25/08
+2/28/08
+2/29/08
+	
+5	QA shakeout period with  connectivity to Metavante	2/25/08	3/07/08	
+6	Code moved to QA	3/07/08	3/07/08	
+7	QA migration for 1st pass	3/08/08	3/08/08	
+8	QA testing (more testing timelines will be provided by QA)	3/10/08	5/09/08	
+9	Production migration	5/17/08	5/17/08	
+10	Go Live	5/19/08	5/19/08	
+
+
+22.0	Appendix A
+
+
+ 
