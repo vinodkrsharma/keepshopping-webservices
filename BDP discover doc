@@ -1,0 +1,1030 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+Internal Functional Specifications
+Bank Deposit Program Phase 2
+Discover Bank Inclusion
+
+
+
+
+This document contains information that is confidential and proprietary to Morgan Stanley.
+
+Author:	Stephen Cambor
+Date:	December 19, 2005
+eRoom Location:	
+Version:	1.5
+	
+ 
+ Contents Page
+1.	Document History	4
+2.	BDP Phase 2 Project Overview	5
+2.1	Executive Summary	5
+2.2	Scope of Phase 2	5
+2.2.1	Program Overview	5
+2.2.2	Enhanced Service Offering	5
+2.2.3	Deposit Insurance	6
+2.2.4	References	6
+2.2.5	Document Approval	6
+3.	Functional Specifications	8
+3.1	Architecture Overview…………………………….………………………………8
+3.1.1	Systems impacted by Phase 2 Requirements	9
+3.2	Detailed Design	10
+3.2.1	Update Margins with cancelled transactions notified by Metavante.	10
+3.2.2	Interest Accrued MTD shown per bank.	10
+3.2.3	Interest Paid shown per bank.	10
+		3.2.4	  Interest Paid YTD shown per bank…………………………………………  10
+		3.2.5	  Interest withheld transactions shown per bank …………………………   ..10
+3.2.6	Interest Withheld YTD shown per bank.	10
+3.2.7	Balances shown per bank.	10
+3.2.8	APY Earned shown per bank.	12
+3.2.9	Include Discover Bank balances in Household Asset Value Calculation…..12
+		3.2.10	 Add Discover Bank to Disclosure………………………………………  ……..14
+3.2.11	As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle.	15
+3.2.12	As-of backdated adjustment - account level - specific dollar amount -  current or previous cycle.	16
+3.3	Summary of open points in these specifications	177
+4.	Requirements specified in other documents	188
+5.	Requirements with functional specification deferred.	188
+6.	System Impacts and Effort	199
+6.1	Summary……………….…………………………………………………………………  19
+6.2	AAA………………………….………………………………………………………………20
+6.3	Margins…………………….……………………………………………………………… 20
+6.4	Client Serv………………………….………………………………………………………23
+6.5	Data Services………………………………………………………………………………25
+6.6	IWS………………………….………………………………………………………………31
+6.7	Statements………………….………………………………………………………………35
+6.8	1099………………………….……………………………………………………………   38
+6.9	RTA………………………….………………………………………………………………40
+
+
+
+ 
+ 
+
+1.	Document History
+
+Version
+Number	Author 	Date Updated	Description of Change (Include RFC #, etc.)	Affected Areas (i.e. requirements no. and page no.)
+1.0	Stephen Cambor	11/04/05	First Draft	n/a
+1.1	Stephen Cambor	11/15/05	Feedback from 11/11 review	Most sections updated
+1.2	Stephen Cambor	11/29/05	Feedback from 11/23 review	Revisions to IWS and Client Serv display requirements
+1.3	Stephen Cambor	12/3/05	Feedback from 11/30 review	Multiple
+1.4	Stephen Cambor	12/15/05	Feedback from 12/13 review	Multiple
+1.5	Stephen Cambor	12/22/05	Incorporate comments from sign-off round of reviews	Multiple
+ 
+ 
+2.	BDP Phase 2 Project Overview
+
+2.1	Executive Summary
+
+Currently, the Bank Deposit Program (BDP) sweeps clients’ uninvested cash into deposit accounts at Morgan Stanley Bank, where the client is eligible for FDIC insurance in accordance with FDIC regulations.  The interest rate applied to bank deposit accounts depends on the client’s total household assets.  The first phase of the BDP is expected to be launched on November 21, 2005 and includes AAA Transaction and Choice Accounts.  
+
+	The content within this Functional Specifications Document describes the requirements for multi-bank processing and additional “Day 2” requirements which were not implemented during the Nov/2005 launch.  Any of the changes as described in this document will be communicated to clients as appropriate.    
+
+See References in the next part of this document for a list of all published documents related to this phase of the project.
+
+	This document and all related documents are considered Morgan Stanley Confidential Information.
+
+
+2.2	Scope of Phase 2
+
+2.2.1	Program Overview
+
+BDP offers a series of electronically  linked deposit accounts opened on the client’s behalf by Morgan Stanley Stanley as agent and custodian for its clients at Morgan Stanley Bank and Discover Bank (the “Banks”) at one or more depository institutions (Banks or savings associations).  Deposits in the BDP program are will be eligible for FDIC insurance and earn interest that is currently insured by the FDIC “tiered” based on the account type and the value of total household assets at Morgan Stanley (and certain Discover bank deposits, where applicable)an internal Morgan Stanley calculated and designated household asset value.The program will offer clients a “tiered” interest rate based on an internal Morgan Stanley calculated household asset value and account type.  At the onset of the program, BDP will be offered to Active Assets Accounts (AAA) followed by B  There are 3 account types that are part of this program; Active Assets Account (AAA), Basic Securities Accounts (BSA) and Individual Retirement Account s (IRA) at a later date.
+
+2.2.2	Enhanced Service Offering
+
+Morgan Stanley will introduce BDP to clients as a sweep investment available to eligible brokerage investment accounts in Phase 1.  With the inclusion of Discover Bank in Phase 2, the BDP will feature a deposit waterfall hierarchy intended to maximizeprovide a high level of deposit insurance to the client through the use of multiple depositories (banks) and management of account bank deposit thresholds..
+
+2.2.3	Deposit Insurance
+
+Each client will be eligible for FDIC deposit insurance up to $100,000 for non-joint single accounts and $200,000 for joint accounts in principal and accrued interest at each Bank in the BDP.  For deposit insurance purposes, all deposit accounts including certificates of deposit (“CDs”) established in a particular recognized legal capacity directly with the depository institution or through an intermediary such as a Broker/Dealer will be aggregated with the deposit accounts established through the BDP in the same legal capacity.  Each client will be responsible for monitoring their individual FDIC insurance coverage based on the total amount of deposits maintained with each depository (bank) directly and as a result of participation in the BDP.
+
+2.3	References
+
+The full functional specification for Phase 2 of this project is described in multiple documents in addition to this one.  These are listed below.
+
+2.3.1.1	BDP Phase 2 Business Requirements Document (BRD)
+2.3.1.2	BDP Day 2 High Priority Requirements – Functional Requirements
+2.3.1.3	Morgan Stanley Monetary Processing Phase II (Metavante)
+2.3.1.4	Morgan Stanley Rebalancing Process (Metavante)
+2.3.1.5	Morgan Stanley Phase II As-of Adjustment Processing (Metavante)
+2.3.1.6	Morgan Stanley Phase II Auto Close Secondary Accounts (Metavante)
+2.3.1.7	Morgan Stanley Data Interfaces (Metavante)
+
+2.4	Document Review and Approval
+The contributors listed below have reviewed and approved the contents of this document.  When a contributor provides his/her signature to this document, then (s)he is indicating that (s)he has carefully:
+o	Read and reviewed; 
+o	Confirmed the contents to be complete, accurate, testable and measurable;
+o	Considered the impact of this document to his/her respective group; and
+o	Considered how this document fulfils the project needs.
+Name	Area	Signature	Date
+Virender Bedi	Client Serv	Y	
+Leandro Chan	Client Serv, RTA	Y	
+Doris Chiu	Statements	Y	
+Nutan Dutt	AAA	Y	
+Rich Eichhorn	Margins	Y	
+Donna Florendo	Data Services	Y	
+Alex LaMarca	Statements	Y	
+Peter Fu	AAA Operations	Y	
+Venkat Mukkamala	IWS	N	
+Deirdre Murphy	Data Warehouse	N	
+Jane Reinberg	BDP Business PM	Y	
+Uday Shankar	Products App Dev Manager	Y	
+Piers Smith	Ops Project Management	Y	
+Peter Sprague	IWS	Y	
+Tom Szabo	BDP Architecture	Y	
+Steven Tsounis	EDB Data Model	Y	
+Paul Valdez	BDP Business Owner	N	
+Mandi Vakkalanka	Quality Management	Y	
+Jonathan Weintraub	Data Services	Y	
+
+
+
+
+
+
+ 
+3.	Functional Specifications
+
+3.1	Architecture Overview
+
+ 
+ 
+
+
+
+There are no significant changes to the overall architecture in this phase.  The only change to note is that Morgan Stanley will receive two new files: 
+-	Daily cancelled transactions file from Metavante
+-	Weekly “other account balances” file from Discover Bank.
+	
+These will be described in the appropriate sections of this document.
+	
+ 
+ 
+3.1.1	Systems impacted by Phase 2 Requirements 
+
+
+ 
+
+
+
+Many systems were set up to handle most aspects of multi-bank processing during Phase 1.  In the grid above, those requirements that are expected to be met without any additional code changes are noted by the entry of “Test“ in the cell.  Those requirements that must be met by making programming changes are noted by the entry of “Change“ in the cell.
+
+*Note we are tracking both old and new (facelift) versions of Client Serv and IWS in the above grid.  Certain requirements will be met exclusively in the new versions of these apps.  Such changes, over and above the baseline parity of these apps, are noted by the entry of “Change“ in the cells of the new app columns.
+
+ 
+3.2	Detailed Design
+
+3.2.1	Update Margins with cancelled transactions notified by Metavante.
+
+Systems Impacted:  AAA, Margins, Metavante
+
+Timing:		Daily
+Input:		File of cancelled transactions (PAAA.NDM.MTV.PAAADREJ.REJECT(+1))
+
+Processing:	AAA: upon receipt of the file, AAA process will convert the data into sweep buys, sells and full sell interests as appropriate, for posting  to Margins.  If interest posting is reversed due to cancellation of full sell transaction, the reversal record must update the YTD values described in the next section.  This will reduce the number of breaks and manual corrections that need to be applied by AAA Operations in the event of failed transactions.  As in Phase 1, all such transactions will be reported by Metavante on the daily report.
+	
+	Margins:  add the buy or sell to “bucket 1“ (AAA-CLOS-POS-IHD)
+
+
+The specific transactions passed from AAA to Margins are detailed in section 6 of this document.
+
+The following requirements are specified together since functionally they are closely related:
+
+3.2.2	Interest Accrued MTD shown per bank.
+3.2.3	Interest Paid transactions shown per bank.
+3.2.4	Interest Paid YTD shown per bank.
+3.2.5	Interest Withheld transactions shown per bank.
+3.2.6	Interest Withheld YTD shown per bank.
+3.2.7	Balances shown per bank.
+	3.2.13 APY shown per bank.
+
+
+
+
+Systems Impacted:  AAA, Client Serv (both), EDB APIs, EDB Data Model, EDB Ref Data, IWS (both), Margins, Statements (all), 1099, RTA
+
+Processing:
+The daily bank balance file will continue to be sent by Metavante to AAA, which will pass it to Margins for posting and reconciling Metavante bank details to Margins and the Bank Balance Table.  The format of the file is unchanged.  The content will vary by client account, as those with two bank accounts will be represented by multiple records in the file.  All the datapoints referenced above, with the exception of YTD values, are contained in this file.  The file layout is defined in the Metavante document entitled, “Morgan Stanley Data Interfaces“.
+
+Margins must extend its reconciliation logic to rollup individual bank balances for the account, in order to reconcile to the single cash balance held in Margins records.  
+
+Similarly, the exception report produced by Margins as an output of the reconciliation needs to show the individual bank details for any accounts that do not reconcile.  
+
+The logic to post account details at the specific bank level already exists in Margins Phase 1 code, so no change is needed on that point.
+
+3.2.4 and 3.2.6  YTD values:
+
+Margins will also need to accumulate the YTD interest paid and YTD interest withheld data at the specific Bank level.  This is not currently stored or accumulated anywhere in IIG at that level (except by statements during their monthly run).  This data will be held in a table keyed to the same key-account as the Bank Balance table, and will carry the components of the client account ID.  It must be a separate table from Bank Balance since it accumulates – Bank Balance gets reloaded every day, so is not suitable for accumulation processing.  The processing and the table are fully described in section 6 of this document.
+
+EDB Data Model must be extended to include a table to store the YTD values per bank, for each AAA account.  The exact table specification will be documented in a technical doc.
+
+Data Warehouse must store the relevant data according to the same retention policy as the existing Bank Balance Table, to work with APIs supporting IWS and ClientServ displays.
+
+EDB reference data must be updated to recognize the Discover Bank ID.  There is a table that maps the Metavante bank codes (1 and 2) to the MSDW product IDS (361 and 364).  The 364 entry for Discover Bank must be in place so transactions can be coded correctly.
+
+AAA must be able to link the data from Metavante to the specific bank codes set up in reference data.
+
+EDB APIs must be updated to support the display of data by IWS.  Client Serv will also use these APIs beginning in Q2 2006.  The APIs are listed in section 6 of this document.
+
+ 
+Output / usage of the bank-specific data:
+
+The following systems access bank-specific data from the Bank Balance table, and will need to display it in the appropriate screens/pages as indicated in the following table:
+
+System	3.2.7
+Bank Balance	3.2.2
+MTD Accrued Interest	3.2.3
+Interest Paid
+Transact-ions	3.2.5
+Interest
+With-
+Held Transact-ions	3.2.4
+YTD Interest Paid	3.2.6
+YTD
+Interest
+Withheld	3.2.13
+APY	3.2.8
+APY Earned
+Old Client Serv	Activity
+Holdings	Holdings	Activity	Activity	n/a	n/a	Holdings	
+New Client Serv	Activity
+Holdings	Holdings	Activity	Activity	Holdings	Holdings	Holdings	
+Old IWS	Positions
+Cash/MMKT 	Positions
+Cash/MMKT 	Activity	Activity	n/a	n/a		
+New IWS	Positions
+Cash/MMKT 	Positions
+Cash/MMKT 	Activity	Activity	Positions	Positions		
+Monthly State-ments	Asset Details		Credits	Debits		Addt’l
+Acct Info		Asset
+Details
+Annual State-ments	Asset Details		Credits	Debits		Addt’l
+Acct Info		Asset
+Details
+Fiscal State-ments	Asset Details		Credits	Debits		Addt’l
+Acct Info		Asset
+Details
+HTML State-ments	Asset Details		Credits	Debits		Addt’l
+Acct Info		Asset
+Details
+1099					Maybe*	Yes		
+EDB APIs	See Section 6	See Section 6			See Section 6	See Section 6		
+
+* need to verify if this currently reports at the bank level – if so, then a change is needed. Change control will be issued if necessary.
+
+3.2.8	APY Earned shown per bank.
+
+Statements (all forms) must show APY earned per bank, in the Assets section.  The data is pulled from the Bank Balance table.
+
+3.2.9	Include Discover Bank acct balances in Household Asset Value Calculation.
+
+Systems Impacted:  EDB API, EDB Data Model, IWS
+
+EDB API and Data Model:  weekly, Discover Bank will transmit a file of account balances to Morgan Stanley.  The file will contain Account identifier, SSN of primary and joint holders, and account balance.  Data Services will store this data in a table to be created in this phase.  Once loaded, Data Services will run a process against the table to match it to AAA client accounts based on SSN.  The resulting matched account data will be held in a second new table, to await the weekly Tier processing initiated by AAA on Monday nights.  The API called by AAA for each account on Monday night to perform the Tier calculation will be modified to include the matched balances stored in the new table in the overall Tier calculation.
+
+Discover Bank account file details.
+•	Frequency – weekly
+•	Timing – prior to Monday night, preferably Sunday – to be agreed with Discover Bank
+•	Format – must contain account ID,balance, SSN.  File must contain header and trailer so data services can validate receipt of all the data.
+•	Volume – number of accounts in weekly file TBD.  Preliminary sample indicates approximately 150,000 records can be expected.
+•	On failure – immediate email to AAA ops and notification by telephone to Discover Bank Command Center, following their existing procedure.  TBD – is there an IIG prod support group that should be notified?
+•	Control Report – exact layout to be published in a change control to this document.
+
+Query logic used to prepare the file at Discover Bank.  The query implements the following rules:
+1.	The Following Information is Pulled: Customer CIF Key, Tan Account Type, Tran Account Number, Application Number, Account Number, Short Name, Tax ID Flag, Social Security Number 
+2.	Eliminates any Customer and Account without a Sole Owner, OWN or Joint Primary (and / or) Relationship. Joint ownerships are represented as 2 rows in the result set.
+3.	Eliminates any Customer and Account where the customer SS# is equal to zero.
+4.	Eliminates any account that has a status of Purged, No Check Posting.
+5.	Eliminates Product codes 70-76 and 90 (Internal Checking Accounts for Check Issuance).
+6.	Calculates Balance = current balance (ignore float amounts, hold amounts).
+7.	Additional information is pulled: Time accounts  and balances.
+8.	Eliminates any Time account except with a status of Open, Dormant, Matured.
+9.	Eliminates all accounts in branch 395 (Non-Consumer / Brokered / PMA ). 
+
+Control Reports:  a matching control report is necessary for research purposes.  The exact data to represent on the report will be documented in a change control to this document.
+
+The specific rules for matching Discover accounts to MS accounts are below.
+
+•	A client may have more than one Discover Bank account.  This will result in one match and one balance (the sum of the client’s Discover Bank balances).
+
+•	A client with one or more Discover Bank accounts may have more than one MS account.  This results in multiple matches (one for each MS account).  For trust accounts, use the SSN or TIN # that is used to create the MS account for matching purposes.
+
+•	Each MS account is in a Household.  One or more tenants on any accounts in a Household may have a Discover Bank account and get the benefit of those balances.
+
+•	A Discover Bank account may have joint owners.  This account may then match to multiple MS accounts, based on the distinct SSNs.
+
+•	To prevent double counting of balances, balances for a given Discover Bank account number should only be counted once per Household.
+•	If a Discover Bank account number applies to two separate Households, the balances will be applied twice.
+IWS Display:  There will be an indicator on IWS that indicates that an account is a “combined balance” account (i.e. there was a match on SSN/TIN with Discover and the Discover asset balances are being combined with total household assets at MS to determine the interest rate tier).  Note:  the exact display will be shown in the appendix for IWS displays. 
+
+Issue to be analyzed –the quality of SSN data on the AAA / data services side may produce a lot of false positive matches.  Review credit source matching results for some insight to this potential issue.
+
+ 
+3.2.10	 Add Discover Bank to Disclosure
+
+The Disclosure text about the nature and location of BDP deposits that appears in Clientserv and Statements (all) needs to be updated to include appropriate references to Discover Bank.  The text follows:
+
+Bank Deposits are at Morgan Stanley Bank and Discover Bank (Members FDIC), affiliates of Morgan Stanley DW Inc., and are eligible for FDIC insurance up to $100,000 per depositor (including principal and accrued interest) per bank when aggregated with all other deposits held by you in the same capacity at the bank, as applicable, including those deposits outside this Account.  Not SIPC insured.
+
+3.2.11	As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle.
+
+Systems Impacted:  AAA, Margins, 1099, Metavante 
+Note:  see the Metavante document entitled, “Morgan Stanley Phase 2 As-of Adjustment Processing“ for more information on this topic.
+
+As-of adjustments may be entered by means of the Metavante Insight application.  To post same cycle adjustments, no changes are needed in Morgan Stanley systems.  Metavante calculates the change and posts it to accrued interest, and updates the accrued interest as usual in the daily account balance file.
+
+For prior cycle adjustments, Metavante will not post accrued interest, but rather will post YTD interest paid, and pass the value in a separate field (called “Prior Cycle Interest Adjustment“) on the daily Bank Balance file.  Metavante will rely on Morgan Stanley to provide the amount to post to the bank balance(s) the next day.  To do this, on receipt of a bank balance record with a prior cycle interest adjustment, AAA will need to book a buy or sell as appropriate to the Margins cash balance value (NOT the bank deposit balance).  This “Free Credit“ (or debit as the case may be) will then be netted in the next day’s sweep.
+
+If the MS account is subject to tax withholding, as determined by AAA process, then withholding adjustments at the appropriate rate must also be posted with the as-of interest payments.
+
+These transactions will be posted using the following  (already existing) transactions.
+
+AAA Transaction Code	Margins Transaction Code	Description
+4034	4223	„caj“ or coupon adjustment
+4093	4237	Nra-tax adjustment
+4042	4234	US tax adjustment
+
+
+
+Note:  confirm the trailer text desired by Ops when using these transactions for the purposes described above.
+
+For prior year adjustments, Metavante stores the value of the adjustment in the field “Prior year interest adjustment“.  AAA will need to process this field as described above for “prior cycle interest adjustment.“
+
+Note:  in the event of an increase in prior year interest paid, the change may be reported in the current year’s 1099.  If the as-of adjustment results in a decrease in prior year interest paid, then an amended 1099 must be issued for the prior year.  The process for that must be defined.  Any resulting work will be handled in a subsequent release.
+
+Summary of the process flow.
+
+1.	Ops or business determines an as-of tier adjustment is needed.  The process for this must be specified by Ops.  The possible drivers include customer / FA complaint; break reports analysis / adjustment to daily cash balances; other TBD.  If Ops can demonstrate an account should have been in a different tier for some duration, based on the “real” (after resolution of breaks or issues) daily balance in the BDP account, the as-of feature can be invoked.
+2.	Enter as-of tier adjustment, current period.  The net result is a change to the interest accrued MTD, which can be observed in IWS and ClientServ.
+3.	Enter as-of tier adjustment, prior period.  The net result is an interest adjustment transaction, which is a cash transaction and therefore should be observable in IWS, ClientServ, Statements, 1099.
+4.	Enter as-of tier adjustment, prior period.  The net result is an interest adjustment transaction, which is a cash transaction and therefore should be observable in IWS, ClientServ, Statements.  The 1099 for this year will not be affected.  If the adjustment is negative a revised 1099 for that year will need to be produced.
+5.	Enter as-of tier adjustment that spans prior period into this period.  This is entered as one transaction in Metavante.  The current period piece will be seen as a change to MTD accrued interest in ClientServ and IWS.  The piece that applies to prior period will show as a (cash) interest adjustment transaction as in #3 above.  
+
+3.2.12	As-of backdated adjustment - account level - specific dollar amount - current or previous cycle.
+Systems impacted:  AAA, Margins, 1099, Metavante
+
+Note:  see the Metavante document entitled, “Morgan Stanley Phase 2 As-of Adjustment Processing“ for more information on this topic.
+
+The rules for processing this type of as-of adjustment for Morgan Stanley are exactly as described above for As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle.  However, the logic within Metavante is different.  See the above referenced document for the details.
+3.2.13	APY
+ClientServ currently shows the program APY next to Morgan Stanley Bank balance in the Holdings views.  This number should be repeated next to any Discover Bank balances in the same views.  
+
+Note:  confirming whether this data should show next to each balance, or once at the BDP program level.  
+
+
+
+
+3.3	Summary of open points in these specifications
+3.3.1	The specification for generating an amended prior year 1099 in the event of a decrease as-of interest payment adjustment  is TBD.
+3.3.2	The trailer text to accompany a 4055 transaction posted due to record on the MV cancelled transaction file is TBD.
+3.3.3	The trailer text to accompany as-of interest payments and interest withholdings, prior period and prior year, is TBD
+3.3.4	Control report for Discover Account matching will be documented separately.
+3.3.5	Notification procedure in the event of failure to receive valid Discover Bank Account file is TBD.
+3.3.6	Report for analyzing the tier determination for a specific account will be documented separately.
+3.3.7	ClientServ display of APY – should it be on each specific bank balance line, or should it be on the BDP program total balance line?
+3.3.8	The quality of SSN data on MS accounts is a concern, and data analysis is required.
+
+
+
+All will be addressed in change control to this document.
+
+
+
+
+ 
+4.	Requirements specified in other documents 
+
+The requirements below are specificed in the document entitled, “BDP Day 2 High Priority Requirements – Functional Requirements“.  They are included here for reference.  
+
+4.1	Put product code on FA COMP file and support other field size changes on the file.
+4.2	Allow pledged accounts eligible for BDPS.
+4.3	Disclosure statement mailing upon BDPS election.
+4.4	Block Managed Accounts from electing BDP.
+4.5	New Sub-Class for non-profit unincorporated entities.
+4.6	Block GIM2 accounts from selecting BDP.
+4.7	Remove the one-day pend on account close instructions
+4.8	Sending Account Re-open Instructions to Metavante
+4.9	Display 7-day Yield and APY for AAA Fund
+
+
+5.	Requirements with functional specification deferred. 
+
+5.1	Section removed.  Allocation of change requests to systems releases will be managed outside of the BRD / FS document trail.
+ 
+6.	System Impacts
+6.1	Summary
+
+The Table below recaps from section 3.1.1 the systems that must make code changes, or have previous code changes validated through testing, to support the functionalality specified in this document.
+
+ 
+
+
+
+Some systems were set up to handle most aspects of multi-bank processing during Phase 1.  In the grid above, those requirements that are expected to be met without any additional code changes are noted by the entry of “Test“ in the cell.  Other systems need to make changes to meet these requirements. These cases are noted by the entry of “Change“ in the cells above.
+
+*Note we are tracking both old and new (facelift) versions of Client Serv and IWS in the above grid.  Certain requirements will be met exclusively in the new versions of these apps.  Such changes, over and above the baseline parity of these apps, are noted by the entry of “Change“ in the cells of the new app columns.
+
+
+
+ 
+6.2	AAA
+
+AAA has to meet the following requirements:
+
+ID	Description	How to Meet
+3.2.1	Update Margins with cancelled transactions notified by MV.	Post buys and sells, using 4055 transaction, to keep all buckets in synch with MV balances.  Trailer Text TBD.
+3.2.2	Interest Accrued MTD shown per bank	Recognize the new code for Discover Bank (2) convert it to 364 and pass it on the relevant transactions to Margins.  Requires the proper entries be made in the Bank cross ref table.
+3.2.11	As-of adjustment – account level interest plan – current or previous cycle.	For previous periods, read the calculated adjustment on the bank balance file and post the Credits using the 4031 transaction (with the appropriate bank code 361 or 364) to Margins.  If the account is subject to withholding, also calculate and post the withholding adjustment using transactions 4093 (NRA client acct) or 4042 (US client acct) as appropriate.
+3.2.12	As-of adjustment – account level specific dollar amount – current or previous cycle.	Same as 3.2.11.
+
+6.3	Margins
+
+Margins needs to meet the following requirements:
+
+FS Ref	Requirements	How to Meet
+3.2.1	Update Margins with cancelled transactions notified by Metavante.	Take the 4055 transactions plus special indicator from AAA and post to the account.
+3.2.4	Interest Paid YTD shown per bank	Accumulate this YTD value based on transactions received from AAA.  See below.
+3.2.6	Interest Withheld YTD shown per bank	Accumulate this YTD value based on transactions received from AAA.  See below.
+3.2.7	Balances shown per bank	Accumulate to Bank Balance table at the bank level.  Perform reconciliation to margins balances taking into account the existence of 2 banks.  See below.
+3.2.11	As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle	Accept and post the CPN / CJR adjustment transactions with the specific bank code attached.
+3.2.12	As-of backdated adjustment - account level - specific dollar amount - current or previous cycle	As above.
+
+ 
+The following describes 3.2.4 and 3.2.6, the accumulation of YTD balances that Margins will perform, to create the data for display by IWS and Client Serve. 
+
+
+YTD values:
+
+Margins will also need to accumulate the YTD interest paid and YTD interest withheld data at the specific Bank level.  This is not currently stored or accumulated anywhere in IIG at that level (except by statements during their monthly run).  This data will be held in a table keyed to the same key-account as the Bank Balance table, and will carry the components of the client account ID.  It must be a separate table from Bank Balance since it accumulates – Bank Balance gets reloaded every day, so is not suitable for accumulation processing.
+
+The accumulation processing is as follows:
+
+
+The following set of transaction Ids, received daily from AAA, should post to YTD Interest Paid bucket:
+AAA Books to Margins	Output of Margins	Description	When this occurs
+4031	4213	Interest payment	-	At month end
+-	Mid month, full sell interest payment
+4034	4223	Interest payment adjustment	-	As-of adjustment for prior period
+-	Journal entry
+
+
+
+These should post to YTD Interest Withheld bucket:
+
+AAA Books to Margins	Output of Margins	Description	When this occurs
+4028	4218	NRA / tax withheld	-	Non-resident alient accounts only
+-	Month end interest payment
+-	Mid-month, full sell interest payment
+-	Journal entry
+4093	4237	NRA / tax withheld adjustment	-	Non-resident alient accounts only
+-	Month end interest payment
+-	Mid-month, full sell interest payment
+-	As-of adjustment for prior period
+-	Journal entry
+4041	4239	US tax withheld	-	US resident accounts only
+-	Month end interest payment
+-	Mid-month, full sell interest payment
+-	Journal entry
+4042	4234	US tax adjustment	-	US resident accounts only
+-	Month end interest payment
+-	Mid-month, full sell interest payment
+-	As-of adjustment for prior period
+-	Journal entry
+
+Processing an Account Open:  insert a new row into the YTD accumulator table.
+
+Processing an Account Swing:  the table is keyed to the key-account (lifetime ID).  Update the FA, Branch, Account number as indicated in the data received from CPS about the swing.
+
+Processing an Account Close:  do nothing.  Leave the data in the table.  
+
+Processing an Account Re-open:  the table row will still be there.  Accumulate as before.
+
+Reconciling with Statements:  Statements publishes YTD numbers that will commingle any taxable income from drain balance or prior sweep choice with the BDP interest paid.  So, while there is a risk that two systems are calculating and displaying a YTD interest paid number,  there is not a directly comparable pair of numbers for all accounts in all cases.  No direct reconciliation is possible.
+
+Going live:  to have accurate data, on the go-live date, it will be necessary to run a process that reads all the daily files for the days from Jan 1 2006 to live date, to load the YTD data properly.  In the absence of this, the displayed data will be wrong until Jan 1 2007. 
+
+
+Requirement  3.2.7   
+
+Margins must extend its reconciliation logic to rollup individual bank balances for the account, in order to reconcile to the single cash balance held in Margins records.  
+
+Similarly, the exception report produced by Margins as an output of the reconciliation needs to show the individual bank details for any accounts that do not reconcile.  
+
+The logic to post account details at the specific bank level already exists in Margins Phase 1 code, so no change is needed on that point.
+
+
+ 
+6.4	Client Serv
+
+
+Old and New Client Serv need to meet the following requirements:
+
+FS Ref	Requirements	How to meet
+3.2.2	Interest Accrued MTD shown per bank	Will display 2 banks correctly in the existing “Holdings” window.  See layout 1.
+3.2.3	Interest Paid transactions shown per bank	Will display 2 banks correctly in the activities window.  See layout 2.
+3.2.4	Interest Paid YTD shown per bank	New data, New ClientServ only, to be displayed in new window linked from cash balance on holdings page.  See layout 3.
+3.2.5	Interest Withheld transactions shown per bank	Will display 2 banks correctly in the activities window.  See layout 2.
+3.2.6	Interest Withheld YTD shown per bank	New data, New ClientServ only, to be displayed in new window linked from cash balance on holdings page.  See layout 3.
+3.2.7	Balances shown per bank	Will display 2 banks correctly on the holdings page.  See layout 1.
+3.2.10	New disclosure text on appropriate pages	The following pages need to be updated with the new disclosure text:
+Current Positions
+	A/C Summary
+		Holdings
+			Cash and Equivalents (see layout 1)
+			All Assets
+Previous Positions
+	A/C Summary
+		Holdings
+			Cash and Equivalents
+			All Assets
+3.2.11	As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle	This transaction should show in the activity window.  See layout 2.
+3.2.12	As-of backdated adjustment - account level - specific dollar amount - current or previous cycle	This transaction should show in the activity window.  See layout 2.
+3.2.13	Display APY with each Bank Balance	The APY should display next to each Bank Balance, in the Holdings window.  See layout 3.
+
+ 
+LAYOUT 1.  2 Banks display in the appropriate section highlighted by the red box below.  
+
+Note this is the Old Clientserv layout.  New Clientserv will have this page, but the styling will be different.  Samples not available at press time.  A Change control with New Clientserv screenshots will be published to support testing.
+
+Note this layout also contains the disclosure language change referencing Discover Bank.
+
+
+
+ 
+LAYOUT 2.  Activity from 2 Banks appears on the activity window as shown below.
+
+Note this is the Old Clientserv layout.  New Clientserv will have this page, but the styling will be different.  Samples not available at press time.  A Change control with New Clientserv screenshots will be published to support testing.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Note that banks are distinguishable only on interest transactions.  Automatic debits and credits occur at the BDPS level since they come from the BDP sweep, not the bank.
+
+
+
+LAYOUT 3. New Clientserv only.   To properly show all the desired information for the bank deposits, an additional expansion section is needed.  This is accesssed by clicking a link on the Holdings page.  The link would be embedded in the BDP Program cash balance total.  All details would then display in a new window similar to the layout below.  The exact appearance will be dictated by the latest style guides for Client Serv.
+
+Cash and Equivalents			Value	MTD Int
+Accrued	Change in
+Value	YTD Int Paid	YTD Int Withheld	APY
+AAMT	Active Assets Money Trust		$7,783.13					
+	Bank Deposit Program		152,800.00	$162.70	100.25	$595.98	$145.41	
+	Morgan Stanley Bank		$98,500.00	$168.05	100.25	$409.99	$100.85	2.91%
+	Discover Bank		$54,300.00	$94.65	0.00	$185.99	$44.56	2.91%
+								
+	Total Cash and Equivalents		$160,583.13	$262.70		$595.98	$145.41	
+
+
+ 
+6.5	Data Services
+
+
+EDB Data Model:
+
+
+FS Ref	Requirements	How to Meet
+3.2.4	Interest Paid YTD shown per bank	New table needed for accumulating YTD values per bank.  History version of table needed for use by APIs supporting prior period IWS displays.
+3.2.6	Interest Withheld YTD shown per bank	New table needed for accumulating YTD values per bank.  History version of table needed for use by APIs supporting prior period IWS displays.
+3.2.9	Include Discover Bank acct balances in Household Asset Value Calculation	Add new tables to hold the Discover account data and the AAA account match results.  Implement history of data to be used for analysis of tier setting history.  Provide an API and report to support analysis of tier setting history for specific account(s).
+
+Here is the DDL for the new table used in 3.2.4 and 3.2.6:
+
+  --
+      --ACTION is CREATE Tablespace PMGSSBIY
+      --
+CREATE  TABLESPACE PMGSSBIY
+   IN PMGS 
+  USING STOGROUP DB81G000 PRIQTY 720 SECQTY 720 ERASE NO FREEPAGE 0 
+PCTFREE 0 DEFINE YES 
+    SEGSIZE 32 
+  LOCKSIZE  ANY
+  CLOSE YES 
+  COMPRESS NO 
+;
+      
+      --
+      --ACTION is CREATE Table TBDP_BK_ACCT_IT_YD
+      --
+
+CREATE TABLE DBTPMGS.TBDP_BK_ACCT_IT_YD (
+       NUM_OFFICE           DECIMAL(3, 0) NOT NULL,
+       NUM_ACCT             DECIMAL(7, 0) NOT NULL,
+       NUM_BANK             SMALLINT NOT NULL,
+       KEY_ACCT             TIMESTAMP,
+       AMT_INT_PAID_YTD     DECIMAL(18, 2) NOT NULL,
+       AMT_INT_WTH_YTD      DECIMAL(18, 2) NOT NULL
+)
+  IN PMGS.PMGSSBIY 
+;
+
+CREATE TYPE 2 UNIQUE INDEX DBTPMGS.BIYDX001 ON 
+DBTPMGS.TBDP_BK_ACCT_IT_YD
+(
+       NUM_OFFICE                     ASC,
+       NUM_ACCT                       ASC,
+       NUM_BANK                       ASC
+)
+  USING STOGROUP DB81G000 PRIQTY 720 SECQTY 720 ERASE NO FREEPAGE 0 
+PCTFREE 5 DEFINE YES
+  CLUSTER 
+  CLOSE YES 
+  DEFER NO
+  COPY NO
+;
+
+CREATE TYPE 2 INDEX DBTPMGS.BIYDX002 ON DBTPMGS.TBDP_BK_ACCT_IT_YD
+(
+       KEY_ACCT                       ASC,
+       NUM_BANK                       ASC
+)
+  USING STOGROUP DB81G000 PRIQTY 720 SECQTY 720 ERASE NO FREEPAGE 0 
+PCTFREE 5 DEFINE YES
+  CLOSE YES 
+  DEFER NO
+  COPY NO
+;
+------- 
+ALTER TABLE DBTPMGS.TBDP_BK_ACCT_IT_YD
+       ADD CONSTRAINT BIYDX001 PRIMARY KEY (NUM_OFFICE, NUM_ACCT, 
+              NUM_BANK);
+----------------------------------------------------------------------------------------------------------------------
+
+This new table will need a history version for access by the appropriate APIs when displaying prior period data in ClientServ and IWS.  The APIs are Cash and MMK, and Position XREF.  These are also listed in the next section on API work.
+
+The history table should be warehoused / archived according to the same rules as the existing “Bank Balance” table.
+
+For requirement 3.2.9, Include Discover Account Balances in Household Asset Value Calculation, the process is described below:
+
+1.  On Sunday, EDB receives the file from Discover, validates the SSNs and loads the file to a "Discover Account" table.
+ 
+2.  On Tuesday before the AAA tiering job runs, EDB gets all Discover accounts with valid SSNs and matches those with Morgan Stanley accounts.  The matching is not limited to AAA accounts with BDP as a sweep choice.  All the matched accounts are stored on a second table "MS Discover Account Cross Reference".  EDB then determines the households for the matched accounts and builds another table "Household Discover Balance".  
+ 
+3.  On Tuesday morning, AAA tiering job runs and calls the EDB API to determine the tier based on the HH assets which includes any asset on the "Household Discover Balance" table for any matched account in that household.
+ 
+Note: Step 1 is tied to the receipt of the Discover file.
+        Steps 2 and 3 are tied to the tiering process to get all accounts for matching and to get the most current household configuration.
+
+ 
+The tables (which have already been defined in DEV) are:
+
+DBTPEDB.TACCT_DSC 
+       NUM_ACCT_DSC         DEC(12, 0) NOT NULL,
+       NUM_SSN              CHAR(9) NOT NULL,
+       AMT_BAL              DECIMAL(18, 6) NOT NULL,
+       IND_SSN_VALID        CHAR(1) NOT NULL
+
+
+TACCT_DSC_ACCT_XRF 
+     KEY_ACCT             TIMESTAMP NOT NULL,       
+     NUM_ACCT_DSC         DEC(12, 0) NOT NULL
+  
+
+THH_DSC_ACCT_XRF 
+       NUM_HH               INTEGER NOT NULL,
+       NUM_ACCT_DSC         DEC(12, 0) NOT NULL
+
+THH_DSC_BAL 
+       NUM_HH               INTEGER NOT NULL,
+       AMT_BAL_DSC          DECIMAL(18, 6) NOT NULL,
+       DT2_CLOSE_BUSINESS   DATE NOT NULL,
+       TMS_UPDATE           TIMESTAMP NOT NULL WITH DEFAULT,
+       CDE_UPDATE_USERID    CHAR(8) NOT NULL DEFAULT USER
+
+Note there is also a 5th table used in this process,  to indicate on an account level which Discover balances have been included in the HH total assets.  
+
+Warehousing:  For purposes of IWS display, compliance and audit trail, this data needs to be available on-line for 12 months, and in archive for 7 years, just like the existing BDP Bank Balance Table.
+
+Reporting:
+
+It will be necessary to have an API for reporting purposes.  Business and/or Ops users will need the ability report a MS client account’s tier at point in time, and what balances were used to calculate the household value.  The API needs to return, for a specified client account ID and a date range, the following:
+1.	Input Account ID
+2.	Input Date Range
+3.	Household ID
+4.	List of accounts in the household
+5.	Value of each account
+6.	MS Accounts Household total value
+7.	Discover account IDs associated at the time of tier assignment with that household
+8.	Value of each associated Discover account
+9.	Household Value including all associated Discover Account balances
+10.	Tier assigned
+11.	Date of tier assignment
+
+Items 3 -11 would need to repeat for each tier assignment event within the input date range.
+
+
+EDB APIs :
+
+FS Ref	Requirements	How to Meet
+3.2.4	Interest Paid YTD shown per bank	Modify the APIs (listed below) to include this data from the bank balance table, to support new IWS and new Clientserv.
+3.2.5	Interest Withheld transactions shown per bank	No change needed.
+3.2.6	Interest Withheld YTD shown per bank	Modify the APIs (listed below) to include this data from the bank balance table, to support new IWS and new Clientserv.
+3.2.9	Include Discover Bank acct balances in Household Asset Value Calculation	In Addition, the 7 APIs need to expose an indicator that Discover account balances were used in determining the interest tier for the account.
+
+
+
+The API work for 3.2.4, 3.2.6, and  3.2.9 points above consists of exposing certain data for use by IWS and Client Serve.  The APIs are:
+1.	Account Positions
+2.	HH Account
+3.	Statement Link
+4.	Cash / MMK – DB2
+5.	Cash / MMK - Datamart
+6.	Position cross reference – DB2
+7.	Position cross reference - Datamart
+8.	Statement Link Portfolio
+9.	HH Portfolio
+10.	Historical Position cross reference
+11.	(New Clientserv only) getm_account_turbo_pos
+
+IWS uses all of APIs 1-10.  ClientServ, as a result of the facelift project, will use 
+1. Account positions 
+8. Statement Link Portfolio
+11. getm_acct_turbopos.
+
+The data returned falls into 2 groups:
+Group A:  This data already displays in 3 of the APIs used by IWS (1,2 and 3).  It needs to be added to the remainder.
+-	Bank Balance
+-	MTD interest accrued
+
+Group B:  this data is not currently displayed anywhere in IWS or ClientServ.  All 11 APIs need to be updated.
+-	YTD interest paid
+-	YTD interest withheld
+-	Indication that Discover Account Balances were used in determining the interest tier for the account.
+
+More detail on the APIs used for the various data appears below.
+
+Category
+	IWS	ClientServ	ClientServ - Facelift
+			
+Section	Activities		
+			
+API Name	DB2PEDB.GET_RTA_TRAN_ACTV 	DBTPRTA.RTAS020A	DBTPRTA.RTAS020A
+	Past Activity - Request Id 01		
+	IntraDay Activity - Request Id 02		
+			
+Owner	EDB Team	Leandro's Team	Leandro's Team
+			
+Section 	Positions		
+			
+	GETM_ACCT_NEWPOS	Grapevine Service	GETM_ACCT_TURBOPOS [New API]
+	Request Id : 14 [Acct level & Statement Link level Positions]	Distributed Service Name: INETRTA	
+	Request Id : 06 [Household - Portfolio]	Mainframe Service Name: RTA	
+			
+	Cash & MMK - Mainframe Version	N/A	N/A
+	DB2PEDB.GET_RTA_SUMM_LIST	N/A	N/A
+	PositionsXRef - Mainframe Version	N/A	N/A
+	DB2PEDB.GET_RTA_SUM2_LIST	N/A	N/A
+	Cash & MMK - UDB Version	N/A	N/A
+	PositionsXRef - UDB Version	N/A	N/A
+	GETPOSITIONXREF5	N/A	N/A
+	Historical PositionXRef	N/A	N/A
+	DB2PEDB.GET_RTA_XPOS_HIST	N/A	N/A
+			
+	API's to retrieve bank balances, mtd …..		
+			
+	It is a 5th result set from GETM_ACCT_NEWPOS API	Check with Leadro Chan for the name of the API.	It will be part of GETM_ACCT_TURBOPOS API
+			
+	IWS screen/API needs the indicator showing Discover Account balances were factored into interest tier plan.	N/A	N/A
+	(verify which of the above APIs will be modified to do this)		
+ 
+6.6	IWS
+
+IWS needs to meet the following requirements:
+
+FS Ref	Requirements	How to meet
+3.2.2	Interest Accrued MTD shown per bank	Old IWS:  Will display 2 banks correctly in 3 of the positions views.  Add it to the remainder.
+
+New IWS:  it should be combined with other cash positions data in a new window (see layout below).
+3.2.3	Interest Paid transactions shown per bank	Both IWS versions:  Will display 2 banks correctly in the activities window.
+3.2.4	Interest Paid YTD shown per bank	New IWS Only:  New data, to be displayed in new window linked from cash balance on positions page (see below).
+3.2.5	Interest Withheld transactions shown per bank	Both IWS versions: This transaction should show in the activity window.
+3.2.6	Interest Withheld YTD shown per bank	New IWS Only:   New data, to be displayed in new window linked from cash balance on positions page (see below).
+3.2.7	Balances shown per bank	Old IWS:  Will display 2 banks correctly as-is on 3 of the views.  Update the remainder.
+
+New IWS:  it should be combined with other cash positions data in a new  window (see layout below).
+3.2.9	Include Discover Bank acct balances in Household Asset Value Calculation	New IWS only:  IWS should carry an indicator (*) on the Header for MTD Accrued Interest, to denote that Discover Account balances were used in determining the interest tier for the account.
+3.2.11	As-of backdated adjustment - account level interest plan (tier)  - current or previous cycle	Both IWS versions:  This transaction should show in the activity window.
+3.2.12	As-of backdated adjustment - account level - specific dollar amount - current or previous cycle	Both IWS versions:  This transaction should show in the activity window.
+
+ 
+Old IWS:  positions view (Requirements 3.2.2 and 3.2.7)
+
+Bank specific balances and MTD accrued interest will display as shown below:
+
+ 
+New IWS:  How it will meet requirements 3.2.2, 3.2.4, 3.2.6, 3.2.7, 3.2.9.
+
+The new window showing the details of all cash and equivalents is accessed by clicking on the link  attached to the“Total Cash and Equivalents“ on the positions views.   See below for illustration.  Note the actual styling will be dictated by the “Facelift“ project.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The link (highlighted by red box above) opens an expansion area showing all the details for all the cash and equivalents, in a grid like the one below.  
+
+Cash and Equivalents			Value	MTD Int
+Accrued	Change in
+Value	YTD Int Paid	YTD Int Withheld	APY
+AAMT	Active Assets Money Trust		$7,783.13					
+	Bank Deposit Program		152,800.00	$162.70	100.25	$595.98	$145.41	
+	Morgan Stanley Bank		$98,500.00	$168.05	100.25	$409.99	$100.85	2.91%
+	Discover Bank		$54,300.00	$94.65	0.00	$185.99	$44.56	2.91%
+								
+	Total Cash and Equivalents		$160,583.13	$262.70		$595.98	$145.41	
+
+
+
+The exact style is to be determined by the latest IWS guidelines and subject to approval by Client Coverage.  Note the asterisk next to “MTD Int Accrued“ heading – this denotes Discover account balances were referenced in determining the rate tier for this account.
+ 
+Both IWS versions:  how to meet transaction display requirements:
+3.2.3	Interest paid transactions shown per bank  (4213)
+3.2.5	Interest withheld transactions shown per bank (4218 / 4239)
+3.2.11	As-of adjustment transactions shown per bank – previous cycle – due to tier adjust (4223, 4237, 4234)
+3.2.12 	As-of adjustment transactions shown per bank – previous cycle – due to dollar adjust (4223, 4237, 4234).
+
+
+Old IWS is shown below to illustrate the information to display in both versions.  We still need to confirm the exact activity description text that displays for these transactions.
+
+
+ 
+6.7	Statements
+
+
+Statements has to meet the following requirements: 
+
+	Requirement	Section of Statement
+3.2.3	Interest Paid this Month, per bank	Credits to Your Account,
+Dividends and Interest, Taxable Income section
+3.2.5	Interest withheld transactions, per bank	Debits to Your Account
+
+3.2.7	Balance per bank	Asset Details,
+Bank Deposits Section
+3.2.8	APY Earned per bank	Asset Details,
+Bank Deposits Section
+3.2.10	Add Discover Bank to Disclosure	Asset Details,
+Bank Deposits Section
+3.2.11	As-of interest adjustment- prior cycle, same year	Credits to Your Account; or
+Debits to Your Account (if decrease)
+3.2.12	As-of interest adjustment – prior year	Credits to Your Account; or
+Debits to Your Account (if decrease)
+
+
+Layouts based on Monthly statements follow starting on next page.  Note the rules for displaying data in the Annual, Fiscal and HTML statements are the same.  A separate change control will publish specific examples of those statements, in preparation for QA.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+This illustrates how 3.2.3, interest paid per month, per bank, should be shown.  In reality, both bank interest payments would likely have the same transaction date, if they are due to the monthly interest payment process.  Any other business (i.e. interest adjustments) could fall on any day of the month.
+
+3.2.5 Interest Withheld transactions are displayed in Debits to Your Account, as shown below.  Note the exact label for the transaction must be confirmed, and if any change is necessary, a revised screenshot will be published in a change control to this document.
+
+ 
+3.2.7 Balances per bank, and 3.2.8 APY Earned per bank, are illustrated below.  A second row of data is added to the“BANK DEPOSIT PROGRAM“ section to show the Discover Bank assets.  This row shows the APY earned per bank, just as the Phase 1 release already displays it for Morgan Stanley Bank.
+
+
+3.2.10, Add Discover Bank to Disclosure, is also illustrated below with the approved text change to reference Discover Bank.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+3.2.8 and 3.2.9 are illustrated below.  The specific example is for 3.2.9, prior year adjustment, but the display is the same.  Note that, since the adjustment is entered through Metavante Insight, IIG systems do not have any data with which to construct a trailer showing the period of the adjustment.
+
+ 
+
+
+
+If the adjustment were a Debit, it would display on the Debits page, in the Other Debits section, where tax withheld transactions currently display, as shown below.  Note the exact label for these transactions must be confirmed, and if necessary a revised screenshot will be published in a change control to this document, in preparation for QA.
+
+
+
+  
+6.8	1099
+
+The data to display in the 1099 is pretty straightforward, as illustrated below.  No additional work is required to make the 1099 display 2 banks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+6.9	RTA	
+
+In order for ClientServ and IWS to display multi-Bank and as-of adjustment details, the information much be stored on RTA.  The detailed information that RTA must store, per Bank, listed below.
+
+•	Interest Accrued MTD (3.2.2)
+•	Interest Paid transactions (3.2.3)
+•	Interest Paid YTD (3.2.4)
+•	Interest Withheld transactions (3.2.5)
+•	Interest Withheld YTD (3.2.6)
+•	Balances (3.2.7)
+•	As-Of Backdated Adjustments – Account level interest plan, current or previous cycle (3.2.11)
+•	As-Of Backdated Adjustments – Account level specific dollar amount, current or previous cycle (3.2.12)
+
+Of these, only the YTD data (3.2.4 and 3.2.6) is actually new.  The interest paid (3.2.3) and withheld (3.2.5) should already be captured.  So are the balances (3.2.7)   It must be verified whether adjustment transactions (3.2.11 and 3.2.12) are currently captured, and if  not, then RTA process must change to accomodate this.
+
+
+
