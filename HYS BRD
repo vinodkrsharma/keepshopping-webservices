@@ -1,0 +1,218 @@
+High-Yield Savings Displays
+Business Requirements 
+
+
+
+
+
+
+
+
+
+
+
+
+August 2015
+
+ 
+Contents
+1.	Revision History	1
+2.	Document Reviewers & Approvers	1
+3.	General Requirements	2
+4.	Phase 1 BRD	2
+5.	Client Experience and Display	2
+5.1	Credit/Debit Advice & Disclosure Statement	2
+5.2	3D, MSO, Mobile, Statements	3
+5.3	Public Rate Display	7
+5.4	Deposits Order Entry System	7
+
+
+
+ 
+1.	Revision History
+Release	Date	Author	Description
+1.1	July 15th, 2015 	Pamela Schwartz	Draft
+1.2	August 7th, 2015	Pamela Schwartz	For signoff
+1.3	August 10th, 2015	Pamela Schwartz	Excel mock-ups converted in to requirements document text
+1.4	August 11th, 2015	Pamela Schwartz	Updates based on Statements Business team and BDP Legal feedback
+1.5	August 12th, 2015	Pamela Schwartz	Zainab Memon feedback
+1.6	August 14th, 2015	Pamela Schwartz	Additional Statement Business team feedback
+1.7			
+1.8			
+1.9			
+
+2.	Document Reviewers & Approvers
+Name	Reviewer Only	Reviewer & Approver
+Davide Brocato (BDP Business)		X (approved 8/12/15)
+Andrew Fong (BDP Business)	X	
+Pamela Schwartz (BDP Business)	X	
+Emily Shelton (BDP Ops)		X (approved 8/11/15)
+Deborah Kakaris (BDP Ops)	X	
+John Bertrand (BDP Ops)	X	
+Steve Cambor (IT)		X (approved 8/12/15)
+Prakash Venkataraman (BDP IT)	X	
+Arjun Sabharwal (BDP IT)	X	
+Ilan Weingarten (Legal)		X (approved 8/12/15)
+Marty Kang (Legal)	X	
+Laura Ciminera (Compliance)	X	
+Alicia Rich (MSO)		X (approved 8/17/15)
+Patty Raptis (MSO)	X	
+Vincent Benefico (MSO)	X	
+Brian Bichler (3D)		X (approved 8/20/15)
+Patricia Brawer (Statements)		X (approved 8/17/15)
+Charles Meli (Statements)	X	
+Gary Keltz (Statements)	X	
+Josh Van Aalst (Banking Services)		X (Zainab Memon approved 8/12/15)
+Zainab Memon (Banking Services)	X	
+Katherine Joseph (Banking Services)	X	
+Pamela Everett (Asset Taxonomy)	X	
+
+3.	General Requirements
+The purpose of this document is to outline the Business Requirements associated with the High-Yield Savings (“HYS”) new product offering to be made available from the Morgan Stanley Banks (Morgan Stanley Bank, N.A. “MSBNA” and/or Morgan Stanley Private Bank, National Association, “MSPBNA”).
+This document describes the enhanced systems displays required to support the HYS product offered through MSBNA and/or MSPBNA.
+
+4.	Phase 1 BRD
+
+Phase 1 of the HYS BRD was signed off on 6/30/15 by D. Brocato, S. Cambor, D. Kakaris, and I. Weingarten. The BRD includes the front to back Business and IT product design and booking model
+
+
+
+
+
+5.	Client Experience and Display
+
+5.1	Credit/Debit Advice & Disclosure Statement
+
+•	A client will receive a “debit advice” / ”credit advice” for any buy or any deposit in to or withdrawal from the HYS product
+•	Full details of the letters can be found in the attached documents and will be created with the EPS mailing team
+
+
+
+
+•	First buy in to the HYS product will trigger a HYS disclosure document to be mailed to the client; There will be one disclosure for the HYS product, regardless of whether the product is offered on MSBNA or MSPBNA; Ability to re-mail disclosure every 12 months
+
+
+
+
+
+5.2	3D, MSO, Mobile, Statements
+
+
+
+
+•	All HYS positions and associated activity will reflect on client statements, MS Online, and 3D
+o	Will not be counted towards Available Cash because it is a ticketed product
+o	Foreign Currency Deposits section to be re-tooled as Savings and Time Deposits and will include Global Currency, HYS, term deposits, ICS, and CDARS
+•	3D
+o	Balances:
+	Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits”
+o	Positions:
+	Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits”
+	Create 4 new sections (with sub-totals for each) before the current Global Currency sections, titled “USD Savings Deposits”, “USD Time Deposits”, “ICS Deposits”, and “CDARS Deposits”
+	Rename “Total Foreign Currency Deposits” to “Total Savings and Time Deposits”
+o	Position Details
+	USD Savings Deposits
+•	Link to new Deposits Order Entry system for trade processing
+•	Fields: Symbol/CUSIP, security description, balance, change, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), YTD interest paid, APY with an asterisk to note that APY valued as of previous day, % of account (LMV)
+	USD Time Deposits
+•	Link to new Deposits Order Entry system for trade processing
+•	Fields: Symbol/CUSIP, security description, balance, change, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), accrued interest since inception, YTD interest paid, APY with an asterisk to note that APY valued as of previous day, % of account (LMV)
+	ICS Deposits
+•	Fields: Symbol/CUSIP, security description, balance, change, MTD accrued interest, with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), YTD interest paid, APY with an asterisk to note that APY valued as of previous day, % of account (LMV)
+	CDARS Deposits
+•	Fields: Symbol/CUSIP, security description, balance, change, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), accrued interest since inception, YTD interest paid, APY with an asterisk to note that APY valued as of previous day, % of account (LMV)
+o	Activity
+	Trade Activity: to include USD Savings and Time Deposits Deposits/Withdrawals,  ICS/CDARS buys/sells, and automatic reinvestment of interest
+	Withdrawals: To include USD Savings service fees for withdrawals over 6 in a calendar month
+	Dividends & Interest: To include USD Savings and Time Deposits  and ICS/CDARS interest payments
+	Cash Activity: To include USD Savings and Time Deposits  and ICS/CDARS interest payments, and service fees for withdrawals over 6 in a calendar month
+o	Performance
+	Buys, sells, and fees will be included in net contributions/withdrawals; Interest payments to be included in Investment earnings (income)
+	Include USD Savings & Promontory ICS in Cash; USD Time and Promontory CDARS in Fixed Income & Preferreds
+o	Allocation & Income
+	Include USD Savings & Promontory ICS in Cash; USD Time and Promontory CDARS in Fixed Income & Preferreds
+	USD Time and CDARS to be included in maturity schedule
+	Will not include any products in projected income
+•	MSOR/iPad
+o	Home
+	Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits” (MSOR only)
+	Include all products in “My Top Holdings”
+	Will not include any products in projected income
+o	Accounts & Port Report
+	Under accounts – holdings, rename the “Foreign Currency Deposits” section to “Savings and Time Deposits” 
+	Under accounts – holdings, create 4 new sections before the current Global Currency sections, titled “USD Savings Deposits”, “USD Time Deposits”, “ICS Deposits”, and “CDARS Deposits”
+	Under portfolio reports – allocation, include USD Savings & Promontory ICS in Cash; USD Time and Promontory CDARS in Fixed Income – Taxable 
+	Under portfolio reports – product type, combine the “Foreign Currency Deposits” and “Currency Time Deposits” sections in to 1 section titled “Savings and Time Deposits”
+o	Accounts Holdings Details
+	USD Savings Deposits
+•	Fields: Name, APY with an asterisk to note that APY valued as of previous day, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), YTD interest paid, balance
+	USD Time Deposits
+•	Fields: Name, APY with an asterisk to note that APY valued as of previous day, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), accrued interest since inception, YTD interest paid, balance
+	ICS Deposits
+•	Fields: Name, APY with an asterisk to note that APY valued as of previous day, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), YTD interest paid, balance
+	CDARS Deposits
+•	Fields: Name, APY with an asterisk to note that APY valued as of previous day, MTD accrued interest with an asterisk to note that accrued interest since last payment through XX date (where XX is the last valued date), accrued interest since inception, YTD interest paid, balance
+o	Activity
+	Investment activity: Include USD Savings & Time Deposits Deposits/Withdrawals, ICS/CDARS buys/sells, Interest Payments, & Reinvestment of Interest
+	Cash Activity: To include USD Savings and Time Deposits  and ICS/CDARS interest payments, and service fees for withdrawals over 6 in a calendar month
+	Withdrawals: To include USD Savings service fees for withdrawals over 6 in a calendar month
+	Dividends & Interest: To include USD Savings and Time Deposits  and ICS/CDARS interest payments
+	Trade Activity: to include USD Savings and Time Deposits Deposits/Withdrawals,  ICS/CDARS buys/sells, and automatic reinvestment of interest
+o	iPhone/Mobile
+	Asset allocation: include USD Savings & Promontory ICS in Cash; USD Time and Promontory CDARS in Fixed Income
+	Cash v. Priced Assets: include all products in priced assets and accrued interest; include a disclaimer in the “info” button that notes that priced assets include Savings and Time Deposits
+	Under portfolio reports – product type: Combine the “Foreign Currency Deposits” and “Currency Time Deposits” sections in to 1 section titled “Savings and Time Deposits”
+	Activity buckets should follow the same approach as detailed under the “activity” section above
+o	Trade
+	To include USD Savings and Time Deposit buys/sells and ICS/CDARS buys/sells  in Trade - Order Status section
+•	Statement
+o	Balance Sheet account summary: Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits”
+o	Asset Allocation: Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits”
+	USD and Foreign Currency Time and Savings Deposits will be mapped to asset classes based on the Asset Taxonomy engine; Statements will pick up that Asset Allocation to include these deposits in the table and graphs
+	Note: Assumes that Allocation of Holdings is out of scope, as the new Asset Taxonomy will be in place by the implementation timeline of this project
+o	Account detail: Rename the “Foreign Currency Deposits” section to “Savings and Time Deposits” and create new sub-sections:
+	Each subsection under the Savings and Time Deposits will have its own Title note
+•	ICS and CDARS title notes to be determined in conjunction with Promontory and provided to the Statements team
+•	Legal will sign off on all title notes
+	Each sub-section requires a subtotal after each deposit type and then a subtotal for the sub-section
+	The “Savings and Time Deposits” section should show a total
+	New section #1:  “USD Savings and Time Deposits”
+•	Fields to include: Description, Value, Accrued Interest (populated for USD Time only), and APY%
+•	Asset class: USD Savings = Cash; USD Time = Fixed Income & Preferreds
+	New section #2:  “Foreign Currency Savings and Time Deposits”
+•	Fields to include: Description, Currency, Value, Estimated Annual Income, Accrued Interest, and APY%
+•	Asset class: GC Savings = Cash; GC Time = Fixed Income & Preferreds (subject to change based on Pam Everett asset taxonomy work)
+	New section #3:  “ICS Deposits”
+•	Fields to include: Description, Value, and APY%
+•	Asset class: Cash
+	New section #4:  “CDARS Deposits”
+•	Fields to include: Description, Value, Accrued Interest, and APY%
+•	Asset class: Fixed Income & Preferreds
+o	Activity/Category Statement
+	All transactions will be passed through RTA.  Transaction IDS will be included as part of the functional requirements; Any new transactions will need to go through the Journals Committee
+	Purchases, Dividend reinvestments, sales & redemptions to include USD Savings and Time Deposits Deposits/Withdrawals and ICS/CDARS buys/sells and reinvestment of interest
+	Taxable income and distributions to include USD Savings and Time Deposits and ICS/CDARS interest Payments
+	Other credits and debits to include USD Savings Service Fee if exceed 6 withdrawals/month
+o	Statements will provide final mock-ups (that conform to Statement type and table specs) as part of Statements’ MDD
+
+5.3	Public Rate Display
+
+•	HYS rates by tier will be displayed on the MS public website, in the same location as Money Market Fund and BDP rates (http://www.morganstanley.com/wealth-investmentstrategies/ratemonitor.html) 
+•	A new section will be created titled “High Yield Savings APYs” with tiered rates based on either deposits by Bank or by BDP Pricing Group value
+
+
+
+
+5.4	Deposits Order Entry System
+ 
+
+
+
+
+•	A new Deposits Order Entry system will be created to facilitate HYS trades, accessible through 3D and similar to the multiple fixed income order entry system
+o	Will include client demographic information, details of the product offering, and will allow FAs to buy/sell
+o	If the transaction is subject to penalties/fees, a pop-up will appear that warns the FA of such a charge
+•	Launch points include:
+o	New Money Filter (accessed through 3D  MyPractice  New Money Filter) will direct to the Deposits Order Entry system for trade processing
+o	3D  Orders  Deposits Order Entry
+o	3D  Positions  Drop down for buy/sell, which will take the FA to the Deposits Order Entry
