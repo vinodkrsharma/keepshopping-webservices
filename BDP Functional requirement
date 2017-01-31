@@ -1,0 +1,1423 @@
+
+
+
+
+
+FUNCTIONAL REQUIREMENTS – 
+BDP PHASE 4 – BDP FOR MANAGED, BUSINESS, PERSONAL TRUST ACCOUNTS
+
+Author:	Prakash Venkataraman
+Version:	V 1.4
+Version Date:	April 15, 2007
+
+ 
+Table of Contents
+
+1.0	GENERAL INFORMATION	7
+1.1	VERSION MANAGEMENT	7
+1.2	RELATED DOCUMENTS	7
+1.3	DOCUMENT REVIEW AND APPROVAL	7
+2.0	INTRODUCTION	9
+2.1	OVERVIEW	9
+2.2	HIGH-LEVEL RULES FOR BDP PHASE 4:	9
+2.3	SCOPE	12
+2.4	EXCLUSIONS	12
+2.5	ASSUMPTIONS	12
+2.6	ACTORS/APPLICATIONS	12
+3.0	MANAGED ACCOUNTS OVERVIEW	14
+3.1	OVERVIEW	14
+4.0	ACCOUNT ELIGIBILITY	16
+4.1	OVERVIEW	16
+4.2	ACCOUNT TYPE	16
+4.3	DIVIDEND PAY OPT CODE	16
+4.4	REGISTRATIONS	17
+4.5	ACCOUNT STATUS	21
+4.6	INTERNATIONAL ACCOUNTS	21
+4.6.1	Existing Accounts	21
+4.6.2	New Accounts	21
+4.7	PWM ACCOUNTS	21
+4.8	COLLATERAL ACCOUNTS	22
+4.9	SYSTEMS IMPACTED BY ELIGIBILITY REQUIREMENTS.	22
+5.0	MIGRATION	23
+5.1	OVERVIEW	23
+5.2	DEVELOPMENT/DELIVERABLES	23
+6.0	SWEEP AND MAINTENANCE PROCESS	25
+6.1	OVERVIEW	25
+6.2	PRE-CONDITIONS	25
+6.3	SWEEP PROCESS	25
+6.3.1	Universal Sweep	26
+6.3.1.1	Sweep Frequency	26
+6.3.2	BDP Sweep	27
+6.3.3	AAA Sweep	27
+6.3.3.1	Sweep Frequency	27
+6.3.4	Development and Deliverables	27
+6.4	MAINTENANCE PROCESS	27
+6.4.1	Existing maintenance process	28
+6.4.2	Enhancement required/Development/Deliverables	28
+6.5	MARGINS BUCKETING	29
+6.6	BANK ID VALUE	30
+7.0	TIER MAINTENANCE	31
+7.1	OVERVIEW	31
+7.2	PRODUCT CODES AT METAVANTE	31
+8.0	WORKFLOW PROCESSING	33
+8.1	OPENING A NEW MANAGED ACCOUNT	33
+8.1.1	Pre-conditions	33
+8.1.2	Use Case – CPS – Opening a New Managed (AAA) Account	33
+8.1.3	Exceptions to this work flow	36
+8.1.4	Alternative Flows – Merlin	37
+8.1.5	Use Case Notes & Comments	37
+8.1.6	Post-conditions	37
+8.1.7	Development/Deliverables	37
+8.1.8	Additional Information	38
+8.2	INCEPTING A NEW MANAGED ACCOUNT	38
+8.2.1	Pre-conditions	38
+8.2.2	Use Case – SMA – Incepting a New Managed (AAA) Account	38
+8.2.3	Exceptions to this workflow	39
+8.2.4	Alternative Flows – CPS	39
+8.2.5	Alternative Flows – Merlin	39
+8.2.6	Use Case Notes & Comments	39
+8.2.7	Post-conditions	39
+8.2.8	Development/Deliverables	39
+8.2.9	Additional Information	40
+8.3	SWITCHING FROM MANAGED TO NON-MANAGED ACCOUNT/TERMINATION OF MANAGED STATUS	40
+8.3.1	Pre-conditions	40
+8.3.2	Use Case	40
+8.3.3	Exceptions to this workflow	43
+8.3.4	Alternative Flows	43
+8.3.5	Use Case Notes & Comments	43
+8.3.6	Post-conditions	43
+8.3.7	Development/Deliverables	43
+8.3.8	Additional Information	43
+8.4	SWITCHING FROM NON-MANAGED ACCOUNT TO MANAGED ACCOUNT	43
+8.4.1	Pre-conditions	43
+8.4.2	Use Case	44
+8.4.3	Alternative Flows	45
+8.4.4	Use Case Notes & Comments	46
+8.4.5	Post-conditions	46
+8.4.6	Development/Deliverables	46
+8.4.7	Additional Information	46
+8.5	FUND SWITCH FOR MANAGED ACCOUNTS	47
+8.5.1	Pre-conditions	47
+8.5.2	Use Case - CPS	47
+8.5.3	Alternative Flows	47
+8.5.4	Use Case Notes & Comments	49
+8.5.5	Post-conditions	49
+8.5.6	Development/Deliverables	49
+8.5.7	Additional Information	49
+8.6	SWITCHING FROM ONE MANAGED PRODUCT TO ANOTHER (FOR EX. VISION TO PPA)	49
+8.6.1	Pre-conditions	49
+8.6.2	Use Case	49
+8.6.3	Alternative Flows	49
+8.6.4	Use Case Notes & Comments	49
+8.6.5	Post-conditions	49
+8.6.6	Development/Deliverables	49
+8.6.7	Additional Information	49
+8.7	RE-PLATING A MANAGED ACCOUNT	50
+8.7.1	Pre-conditions	50
+8.7.2	Use Case	50
+8.7.3	Current Replating Process	51
+8.7.4	Alternative Flows	53
+8.7.5	Use Case Notes & Comments	53
+8.7.6	Post-conditions	53
+8.7.7	Development/Deliverables	53
+8.7.8	Additional Information	54
+8.8	SWITCHING FROM ONE PORTFOLIO TO ANOTHER PORTFOLIO WITHIN THE SAME MANAGED PRODUCT	54
+8.8.1	Pre-conditions	54
+8.8.2	Use Case Notes & Comments	54
+8.8.3	Post-conditions	54
+8.8.4	Development/Deliverables	54
+8.8.5	Additional Information	54
+8.9	UPGRADING FROM MANAGED BSA ACCOUNT TO MANAGED AAA ACCOUNT	54
+8.9.1	Pre-conditions	54
+8.9.2	Use Case	54
+8.9.3	Alternative Flows – Merlin	55
+8.9.4	Use Case Notes & Comments	57
+8.9.5	Post-conditions	57
+8.9.6	Development/Deliverables	57
+8.9.7	Additional Information	57
+8.10	OPENING A NEW MANAGED IRA ACCOUNT	57
+8.10.1	Pre-conditions	57
+8.10.2	Use Case - CPS	58
+8.10.3	Alternative Flows - Merlin	58
+8.10.4	Use Case Notes & Comments	59
+8.10.5	Post-conditions	59
+8.10.6	Development/Deliverables	59
+8.10.7	Additional Information	59
+8.11	SWITCHING FROM A NON-MANAGED TO MANAGED IRA ACCOUNT	59
+8.11.1	Pre-conditions	60
+8.11.2	Use Case – CPS	60
+8.11.3	Use Case – Merlin	60
+8.11.4	Use Case Notes & Comments	62
+8.11.5	Post-conditions	62
+8.11.6	Development/Deliverables	62
+8.11.7	Additional Information	62
+8.12	SWITCHING FROM A MANAGED TO NON-MANAGED IRA ACCOUNT	63
+8.12.1	Pre-conditions	63
+8.12.2	Use Case/Functional Specification	63
+8.12.3	Alternative Flows	63
+8.12.4	Use Case Notes & Comments	63
+8.12.5	Post-conditions	63
+8.12.6	Development/Deliverables	63
+8.12.7	Additional Information	63
+9.0	PERSONAL TRUST ACCOUNTS	64
+9.1	OVERVIEW:	64
+9.2	HIGHLIGHTS:	64
+9.3	ACCOUNT RECOGNITION:	64
+10.0	STATEMENTS	65
+10.1	OVERVIEW:	65
+10.2	DEVELOPMENT AND DELIVERABLES:	65
+10.2.1	BDP Holdings display	65
+10.2.2	Other changes	65
+11.0	REPORTING – PUBLIC SITE	67
+11.1	OVERVIEW	67
+11.2	PUBLIC-SITE DEVELOPMENT AND DELIVERABLES	67
+11.2.1	New page to display BDP Tiered Interest Rates and Tax Free Fund Rates for Non-Managed Accounts	67
+11.2.2	New page to display BDP Tiered Interest Rates and Tax Free Fund Rates for Managed Accounts	68
+11.2.3	Remove pages	69
+11.3	DATA SERVICES UPDATES	69
+12.0	REPORTING – CLIENTSERV	70
+12.1	OVERVIEW	70
+12.2	CLIENTSERV DEVELOPMENT AND DELIVERABLES	70
+12.2.1	Holdings – Label Change to Reflect Proper Taxonomy under ‘Cash and Equivalents’	70
+12.2.2	Holdings – Balances by Bank	70
+12.2.3	Transaction Activity – Interest Earned Transaction	71
+12.2.4	Transaction Activity – As of Adjustments for BDP	72
+12.2.5	Transaction Activity – Correct Taxonomy of Credits and Debits	72
+12.2.6	Month To Date Interest Accrued/YTD Interest Paid/YTD Interest Withheld	73
+12.2.7	Link to BDP tiered rates and Tax Free fund rates for Non-Managed Accounts (AAA, BSA, IRA)	74
+12.2.8	Link to display BDP Tiered Interest Rates and Tax Free Fund Rates for Managed Accounts (AAA, BSA, IRA)	75
+12.2.9	Disclosure Statement	76
+13.0	REPORTING - IDEAS	77
+13.1	OVERVIEW	77
+13.2	IDEAS DEVELOPMENT/DELIVERABLES	77
+13.2.1	Update the BDP Rates (Internal Web Site) Page	77
+14.0	REPORTING – AIS	81
+14.1	OVERVIEW	81
+14.2	DEVELOPMENT/DELIVERABLES	81
+15.0	REPORTING – FA WORKSTATION	83
+15.1	OVERVIEW	83
+15.2	FA WORKSTATION DEVELOPMENT/DELIVERABLES	83
+15.2.1	Positions	83
+15.2.2	Transaction Activity – Interest Earned Transaction	84
+15.2.3	Transaction Activity – Tax Withholding by Bank	85
+15.2.4	Transaction Activity – As of Adjustments for BDP	85
+15.2.5	Transaction Activity – Correct Taxonomy of Credits and Debits	85
+16.0	OPERATIONAL REPORTS – TO BE ENHANCED BY AAA	87
+16.1	MARGINS REPORTS	87
+16.2	AAA REPORTS	87
+17.0	DATA SERVICES, MUTUAL FUNDS, SWEEP REQUIREMENTS FOR TIER MAINTENANCE	89
+17.1	OVERVIEW:	89
+17.2	DEVELOPMENT/DELIVERABLES:	89
+18.0	MARGINS	91
+18.1	DEVELOPMENT/DELIVERABLES:	91
+19.0	PERFORMANCE REPORTING	92
+19.1	DEVELOPMENT/DELIVERABLES:	92
+20.0	CLIENT MAILINGS	93
+21.0	APPENDIX A – USE CASES FOR AAA SWEEP, SMA, CPS AND METAVANTE	94
+
+1.0	General Information
+1.1	Version Management
+Version #	Date Completed	Author	Revision Notes
+1.0	01/17/07	P. Venkataraman	Initial Version
+1.1	2/26/07	Prakash Venkataraman	•	Fine-tune document
+1.2	3/6/07	Prakash Venkataraman	•	Incorporate feedback.
+1.3	3/15/07	Prakash Venkataraman	•	Incorporate feedback.
+			•	
+			•	
+			•	
+			•	
+1.2	Related Documents
+•	Bank Deposit Program Phase 4 Business Requirements – BDP for Managed Accounts, Business Accounts, Personal Trust Accounts
+1.3	Document Review and Approval
+The contributors listed below have reviewed and approved the contents of this document.  When a contributor provides his/her signature to this document, then (s)he is indicating that (s)he has carefully:
+Read and reviewed; 
+•	Confirmed the contents to be complete, accurate, testable and measurable;
+•	Considered the impact of this document to his/her respective group; and
+•	Considered how this document fulfils the project needs
+Name	Functional  Area
+Paul Appleton	BDP Program Owner
+Virender Bedi	ClientServ, Public Site
+Janis Brown	IFI
+Leandro Chan	Managed Accounts
+Rahul Vohra	RTA
+Doris Chiu	Statements
+Stephen Hansen	AAA/BSA Operations
+Nutan Dutt	AAA
+Rich Eichhorn, Grace Valenski	Margins
+Gene Holley	Data Services
+Michael Horton	CPS/Merlin
+Ajay Jain	CPS/Merlin Business User
+Marty Katigbak, Rob Aromiskis	Statements
+Khalid Massoud	AIS
+Susan Mathai/Derick Fider /Leonard Moreyn	 IFS (Mutual Fund Trading), MSS
+Patti Neil	IRA Operations
+Namrata Punjabi	Data Modeling/Data Warehouse
+Otto Heilmann, Liz Catrillo	CSG Business Owner
+Bill Peyton, Courtney McMahon, Bob Zak	Managed Accounts Operations
+Bessie Rezaba	IRA
+Dennis Rizzo	Financial Control
+Piers Smith	ClientServ Business
+Pete Sprague	IWS, Ideas
+Linda Ward	BDP IRA Business Owner
+Heather Williams	CPS/Merlin Business User
+
+2.0	Introduction
+2.1	Overview
+With the successful rollout of BDP to AAA accounts, BSA and IRA accounts, Managed Accounts, Business Accounts and Personal Trust accounts will also now be eligible to select BDP as their sweep vehicle.  BDP will be replacing current sweep funds SGMT (US Government Money Market Trust) and ILAF (Liquid Asset Fund), AAMT and AAGS for eligible accounts, while tax-free funds CTFI, NTFI, ITFI, AATF, AACT, AAIG, AAIG, New York Tax Free (not available as of now) will still be available as fund choices for all Managed BSA and AAA accounts respectively. The following table outlines all the details pertaining to the available sweep choices.
+Please note that the regulatory deposit limits for IRA accounts are different than for BSA and AAA accounts.  For all IRA accounts except Coverdell ESA accounts, Metavante should sweep the first 245k to Bank 1, the next 245k to Bank 2, and anything beyond 490k back to Bank 1.  Morgan Stanley has nothing to do with these deposit limits, which are determined via a parameter within the Metavante system.  As such, Metavante will need to change the parameter for the new product codes.
+
+2.2	High-level rules for BDP phase 4:
+•	Business Scape Accounts are not eligible for BDP phase 4.
+•	All Personal Trust accounts (managed and non-managed) will receive interest rates meant for managed accounts. (Personal Trust AAA accounts will receive 100% AAMT rate into perpetuity and Personal Trust BSA/IRA accounts will receive 100% ILAF rate into perpetuity)
+•	NDA accounts are managed accounts and will be subject to BDP drain/fill migration and are included in the scope for BDP phase 4.
+•	NRA accounts (existing and to-be-opened) are not eligible for BDP phase 4.
+•	PWM accounts are not eligible for BDP phase 4.
+•	Access accounts incepted on or before August 31, 2003 will not participate in the drain/fill scenario. Any account opened after August 31, 2003 are eligible for BDP phase 4 and will participate in the migration process.
+•	Vision accounts are exempt from BDP migration process. Vision accounts opened after BDP launch date will be allowed to have BDPS as the fund choice.
+•	Access accounts incepted on or before August 31, 2003 will not participate in drain/fill scenario. 
+•	Specific accounts may be exempt from participating in BDP. This list will be provided by the Business.
+
+ 
+ 
+
+
+Notes:
+•	All existing Multi-Bank (Morgan Stanley Bank and Morgan Stanley Trust FSB) functionality will apply to AAA, BSA and IRA BDP sweep balances.
+2.3	Scope
+This document includes the functional specifications for allowing eligible AAA, BSA and IRA accounts to select BDPS as their sweep vehicle, processing related to the new fund choice, and the impact to downstream applications of the new fund sweep option.  These specifications have been categorized as follows:
+•	Account Eligibility
+•	Migration
+•	Processing
+o	Sweep
+o	Drain and Fill
+•	Tier Maintenance
+•	Workflow Processing
+•	Statements
+•	Reporting - (Public Site, ClientServ, AIS, IWS, Ideas)
+2.4	Exclusions
+The scope of this document does not cover the following:
+•	Addition of New York Tax Free Fund. This is a new fund and will be made available along with the BDP launch date. This will be addressed in a separate document.
+•	Changes to Metavante operational reports.  These changes will be made by Metavante.
+•	Changes to reports produced by the Data Warehouse.  These requirements are documented under separate cover.
+•	Client Mailing – The client mailing strategy will be dealt with in a separate document.
+2.5	Assumptions
+•	Processing rules for as-of adjustments are the same for the eligible accounts specified in this document that select BDP as their sweep vehicle as was implemented for AAA, BSA and IRA accounts.
+•	All production issues stemming from the November 21, 2005 and September 18, 2006 BDP rollouts related to bucket mismatches, and the CPS-AAA, BSA and IRA interface (i.e., trapped funds) have been addressed.
+2.6	Actors/Applications
+The following applications will either have build outs as a result of these specifications, or will be required to participate in testing as they part of the impacted system flow.
+•	CPS/Merlin
+•	AAA, BDP
+•	Universal Sweep
+•	Margins
+•	Data Services
+•	Data Modelling
+•	Data Warehouse
+•	IFI
+•	IFS (Mutual Funds Trading System)
+•	MSS
+•	P&S *
+•	RTA
+•	AIS
+•	IWS
+•	ClientServ
+•	Public Site
+•	Ideas
+•	Statements
+•	IRA
+•	IVR*
+•	Trillium
+* No build-outs required; testing support only.
+
+ 
+3.0	Managed Accounts Overview
+3.1	Overview
+Managed Accounts	Access	Vision	Personal Portfolio (PPA)	Custom Portfolio	Mutual Fund Advisory (MFA): Fund Solution / Portfolio Architect	NDA
+A/c types(Div Handling)	AAA (3,4), BSA (0,1,2), IRA(5,6)	AAA (3,4), BSA (0,1,2), IRA(5,6)	AAA (3,4), BSA (0,1,2), IRA(5,6)	AAA (3,4), BSA (0,1,2), IRA(5,6)	AAA (3,4), BSA (0,1,2), IRA(5,6)	AAA (3,4), BSA (0,1,2), IRA(5,6)
+Trade Control (CPS)	L	J, K	T	D	M, U	B
+Money Managers	One Money Manager. (MSIM, Van Kampen, MSAM, any other external MM) 	One Money Manager. (MSIM, Van Kampen, MSAM, any other external MM) 	Multiple MM per a/c.	Run by Morgan Stanley FA	Run by Morgan Stanley FA	TBD
+Securities Traded	Equities, Fixed Income	Equities, Fixed Income	Equities ,Mutual Funds, ETFs	Equities, Options, Fixed Income	All Mutual Funds	TBD
+Money Market Presence	Yes	Yes	Yes	Yes	Yes	Yes
+A/c maintenance platform	IACA, SMA, Advisor One	IACA screen in Mainframe (used for A/c opening, closure)	SMA, Advisor One	SMA, Advisor One	SMA, Advisor One, MF Asset Allocation	TBD
+Trading Platform/Timing	1. MM logs into MS systems through remote software called "Neoteris", use IACM for trades
+2. Trading is possible only the next business day after a/c inception	1. MM logs into MS systems through remote software called "Neoteris"
+2. FA calls trade operations and enter the trades	1. MM logs into MS systems through remote software called "Neoteris", trades through IDEAS website
+2. Trades Manager of Managers funds
+3. Same day inception and trading possible	FA trades via “Lydia” system – Advisor one	1. MF Asset Allocation  (MFAA Version 10.2) tool through Toolbar (workstation dependent)	TBD
+Pre-requisities	A/c should be opened in CPS with Trade control "H"/”0”	A/c should be opened in CPS with Trade control "H"/”0”	A/c should be opened in CPS with Trade control "H"/”0”	A/c should be opened in CPS with Trade control "H"/”0”	A/c should be opened in CPS with Trade control "H"/”0”	A/c should be opened in CPS with Trade control "H"/”0”
+Managed Accounts	Access	Vision	Personal Portfolio (PPA)	Custom Portfolio	Mutual Fund Advisory (MFA): Fund Solution / Portfolio Architect	NDA
+Replating Allowed	Yes, through SMA, requires a 'From' and 'To' a/c. 'To' a/c must not be already a managed a/c. CANNOT replate an 'IRA' A/c 	Replating is a manual process using the Mainframe screens in Vision	Yes, through SMA, requires a 'From' and 'To' a/c. 'To' a/c must not be already a managed a/c. CANNOT replate an 'IRA' A/c	Yes, through SMA, requires a 'From' and 'To' a/c. 'To' a/c must not be already a managed a/c. CANNOT replate an 'IRA' A/c	Manual replating is possible. The replating happens at the Trust company side. Cannot be done in GWM platform	Manual replating is possible. The replating happens at the Trust company side. Cannot be done in GWM platform
+Portfolio to Portfolio Switch	Manager change is possible via termination and new paperwork	Manager change is possible via termination and new paperwork	Change one or all of portfolio(s)	Not Applicable	Change one or all of portfolio(s)	Change one or all of portfolio(s)
+Money Market Fund Switch	Permitted	Permitted	Permitted	Permitted	Permitted	Permitted
+Termination of Managed Accounts	Terminate through BOSS system at Branch 	Manual process	Terminate through Advisor One	Terminate through Advisor One	Terminate managed status through Asset Allocation Tool. Account liquidated and the a/c becomes a regular AAA	Terminate managed status through Asset Allocation Tool. Account liquidated and the a/c becomes a regular AAA
+Statements	TBD	TBD	TBD	TBD	TBD	TBD
+Additional Characteristics	 	 	Book keeping is done at a sub-account level in Margins. Each MM's share = one sub a/c. Cash and Cash equivalents are maintained at the a/c level, not sub-a/c	 	 	 
+ 
+4.0	Account Eligibility 
+4.1	Overview
+Managed account eligibility for participation in BDP is determined by many pieces of information on CPS.  All the account parameters below need to be satisfied for an account to participate in BDP.  Any ineligible accounts should be systemically blocked from participating in BDP.
+Account type should be the initial check for eligibility, followed by Dividend Pay Code, Registration, Account Status and jurisdiction for foreign accounts.  Specific indicators, like the Novis indicator for collateral account should be the final check made.
+4.2	Account Type 
+Account Type	Trade Control	Trade Control Group	2007 BDP Eligible	Eligible for AANY
+Non-Fee Based	0	Transaction	Already In / No change	Yes
+Custom Portfolio	D	Managed	Yes	Yes
+ICSVision1	J	Managed	Yes	Yes
+ICSVision2	K	Managed	Yes	Yes
+ICS/SMA	L	Managed	Yes	Yes
+Fund Solution	M	Managed	Yes	Yes
+Personal Portfolio	T	Managed	Yes	Yes
+Port Arch	U	Managed	Yes	Yes
+IMS Custom	Y	Managed	Yes	Yes
+Portfolio Advantage	Z	Managed	Yes	Yes
+Hold30days	H	Managed	Yes	Yes
+Choice	N	Choice	Already In / No change	Yes
+Collateral *
+	S
+
+	Other
+
+	Already In / No change	Yes
+Non-Discretionary 	B	Managed	Yes	Yes
+4.3	Dividend Pay Opt Code 
+Dividend Pay Code	Description	2007 BDP Eligible	Eligible for AANY
+0	 NULL, PAY DIVIDEND ONCE A MONTH BY CHECK	Yes	No*
+1	 HOLD (CREDIT) DIVIDEND TO ACCOUNT	Yes	No*
+2	 AS PAYABLE, PAY WHENEVER DIVIDEND IS CREDITED	Yes	No*
+3	 OPEN AAA	Yes	Yes
+4	 CLOSED AAA	Yes	No
+5	 OPEN IRA	Yes	No
+6	 CLOSE IRA	Yes	No
+7	 PRECIOUS METALS	No	No
+8	 WITHHOLD PRINCIPAL ON CHECK TO REG-RTL-ACCT	Yes	No*
+
+* BSA accounts not eligible for AANY sweep, already eligible for NTFI.
+4.4	Registrations
+Account Class	Sub-Class	Description	AAA Eligible for 2007 BDP	BSA Eligible for 2007 BDP	IRA Eligible for 2007 BDP	IRA Code	IRA Code Desc.	Eligible for AANY
+REGULAR ACCOUNTS			
+00kkkkk  0		Single - Individual	Yes	Yes	No	 	 	Yes
+1	A	Joint Tenant 	Yes	Yes	No	 	 	Yes
+1
+	B	Joint Tenant – Right of Survivorship	Yes	Yes	No			Yes
+1	C	Joint Tenant - Tenant in Common	Yes	Yes	No	 	 	Yes
+1	D	Joint Tenant – Community Property	Yes	Yes	No	 	 	Yes
+1	E	Joint Tenant - Tenant by Entirety	Yes	Yes	No	 	 	Yes
+1	F	Community Property w/ Right of Survivorship	Yes	Yes	No 	 	 	Yes
+1	N	Joint Tenant - Right of Survivorship WA	Yes	Yes	No	 	 	Yes
+1	O	Joint Tenant – Right of Survivorship WA	Yes	Yes	No			Yes
+1	P	Joint Tenant - Tenant in Common WA	Yes	Yes	No	 	 	Yes
+1	Q	Joint Tenant - Community Property WA	Yes	Yes	No	 	 	Yes
+1	R	Joint Tenant - Tenant by Entirety WA	Yes	Yes	No	 	 	Yes
+1	S	Community Property w/ Right of Survivorship WA	Yes	Yes	No	 	 	Yes
+2	G	Custodian - UGMA	Yes	Yes	No	 	 	Yes
+2	T	Custodian - UTMA	Yes	Yes	No	 	 	Yes
+6	R	Guardian - Restricted/Blocked	Yes	Yes	No	 	 	Yes
+6	N	Guardian - Non Restricted	Yes	Yes	No	 	 	Yes
+6	B	Guardian - Restricted/Blocked	Yes	Yes	No	 	 	Yes
+6	W	Guardian - Restricted/Withdrawal By Court Order Only	Yes	Yes	No	 	 	Yes
+6	S	Guardian - Restricted/Subject to Court Order	Yes	Yes	No	 	 	Yes
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	 111	Traditional	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	112	Traditional Spousal	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	121	Rollover	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	131	SEP	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	141	Traditional/ Rollover	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	142	Traditional Spousal/ Rollover	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	151	SEP/ Traditional	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	161	SEP/ Traditional/ Rollover	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	171	SAR-SEP	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	181	SIMPLE	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	191	ROTH	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	192	ROTH Spousal	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	193	ROTH Combined	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	Yes	185	Coverdell ESA	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	No	2xx	VIP	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	No	3xx	RPM	No
+9	R	Retirement Plan Trust (e.g. Keogh)4	No	No	No	5xx	529 Plans	No
+Re: the above three line items, all 9R account codes in 200 series (VIP), 300 series (RPM) or the 500 series (529 plans) are ineligible for BDP.
+9	Y	Employee Benefit Trust (e.g. Pension, Profit Sharing)	No	No	No	 	 	Yes
+9	 	Trust - Not Converted	No	No	No	 	 	Yes
+9	0	DWTCDR Personal Trust	Yes	Yes	Yes	 	 	Yes
+9	1	DWTCDS Personal Trust	Yes	Yes	Yes	 	 	Yes
+9	N	Trust - Living Testamentary	Yes	Yes	No	 	 	Yes
+9	N	Other - Joint Trust	Yes	Yes	No	 	 	Yes
+9	N	 Other - Crummey Trust	Yes	Yes	No	 	 	Yes
+9	N	Other - Family Trust	Yes	Yes	No	 	 	Yes
+9	N	Other - Generation-Skipping Trust	Yes	Yes	No	 	 	Yes
+9	N	Other - Remainder Man Trust	Yes	Yes	No	 	 	Yes
+9	N	Revocable Living Trust	Yes	Yes	No	 	 	Yes
+9	N	Irrevocable Living Trust	Yes	Yes	No	 	 	Yes
+9	N	Credit Shelter Trust	Yes	Yes	No	 	 	Yes
+9	N	Marital Trust	Yes	Yes	No	 	 	Yes
+9	N	Qualified Terminable Interest Property Trust (QTIP)	Yes	Yes	No	 	 	Yes
+9	N	Grantor Retained Trust	Yes	Yes	No	 	 	Yes
+9	N	Charitable Remainder and Lead Trust (CRAT/CRUT)	Yes	Yes	No	 	 	Yes
+9	N	Life Insurance Trust	Yes	Yes	No	 	 	Yes
+9	N	Qualified Personal Residence Trust	Yes	Yes	No	 	 	Yes
+9	N	Special Needs Trust	Yes	Yes	No	 	 	Yes
+0	L	Single Life Tenancy	Yes	Yes	No			Yes
+7		Bankruptcy	Yes	Yes	No			Yes
+	B	House Account	No	No	No			No
+E	 	Single - Estate (Not Fix Fielded)	Yes	Yes	No	 	 	Yes
+E	P	Single - Estate (Probated)4	Yes	Yes	No	 	 	Yes
+E	N	Single - Estate (Non-Probated)4	Yes	Yes	No	 	 	Yes
+0	E	Single - Estate (Not Converted)	Yes	Yes	No	 	 	Yes
+9	N	Coogan Account	Yes	Yes	No	 	 	Yes
+EDUCATION SAVINGS / RETIREMENT ACCOUNTS
+Z	 	Coverdell Education Savings Acct	No	No	Yes	185	Coverdell ESA	No
+Z	 	529 Plan - Non UGMA/UTMA	No	No	No	500	CollegeSave	No
+Z	 	529 Plan - UGMA/UTMA	No	No	No	501	CollegeSave UGMA/UTMA	No
+Z	 	IRA Standard	No	No	Yes	111	Traditional	No
+Z	 	IRA Standard Spousal	No	No	Yes	112	Traditional Spousal	No
+Z	 	IRA Rollover	No	No	Yes	121	Rollover	No
+Z	 	IRA Std/Rollover	No	No	Yes	141	Traditional / Rollover	No
+Z	 	IRA Std/Rollover-Spousal	No	No	Yes	142	Trad. Spousal / Rollover	No
+Z	 	Roth IRA	No	No	Yes	191	ROTH	No
+Z	 	Roth Spousal IRA	No	No	Yes	192	ROTH Spousal	No
+Z	 	Roth Converted IRA	No	No	Yes	193	ROTH Combined	No
+Z	 	Simple IRA	No	No	Yes	181	SIMPLE	No
+Z	 	SEP IRA	No	No	Yes	131	SEP	No
+Z	 	Standard/SEP	No	No	Yes	151	SEP / Traditional	No
+Z	 	Rollover/SEP	No	No	Yes	161	SEP / Trad. / Rollover	No
+Z	 	Salary Reduction/SEP	No	No	Yes	171	SAR-SEP	No
+Z	 	V.I.P. Plan Money Purchase	No	No	No	211	VIP Basic Money Purchase	No
+Z	 	V.I.P. Plan Profit Sharing	No	No	No	212	VIP Basic Profit Sharing	No
+Z	 	V.I.P. Defined Benefit	No	No	No	213	VIP Defined Benefit	No
+Z	 	V.I.P. Plus Money Purchase	No	No	No	221	VIP Plus Money Purchase	No
+Z	 	V.I.P. Plus Profit Sharing	No	No	No	222 	VIP Plus Profit Sharing	No
+Z	 	V.I.P. 401(K) Plan	No	No	No	231	VIP / 401(k) 	No
+Z	 	V.I.P. Plus Target Benefit	No	No	No	241	VIP Plus Target Benefit	No
+Z	 	V.I.P. Plus 401(K) Plan	No	No	No	242	VIP Plus 401(k)	No
+Z	 	V.I.P. Plus Defined Benefit	No	No	No	251	VIP Plus Defined Benefit	No
+Z	 	RPM EMP/PS	No	No	No	311	RPM Profit Sharing	No
+Z	 	RPM EMP/MP	No	No	No	312	RPM Money Purchase	No
+Z	 	RPM EMP/DB	No	No	No	321	RPM Defined Benefit	No
+Z	 	RPM EMP/TB	No	No	No	322	RPM Target Benefit	No
+Z	 	RPM EMP/PS MP	No	No	No	331	RPM PS/MP	No
+Z	 	RPM EMP/PS/DB	No	No	No	332	RPM PS/DB	No
+Z	 	RPM EMP/PS/TB	No	No	No	341	RPM PS/TB	No
+Z	 	RPM EMP/DB/MP	No	No	No	342	RPM MP/DB	No
+Z	 	RPM EMP/OTH	No	No	No	351 	RPM other	No
+Z	 	RPM 401(K) PLAN	No	No	No	361	RPM 401(k)	No
+BUSINESS ACCOUNTS
+4	 	For Profit Corporation	Yes	Yes	No	 	 	Yes
+4	S	Corporate Sole Proprietorship	Yes	Yes	No			Yes
+4	N       	Non Profit Corporation	Yes	Yes	No	 	 	Yes
+A	C	Institutional Company	Yes	Yes	No			Yes
+A	I	Institutional Individual	Yes	Yes	No			Yes
+5		Investment Club	Yes	Yes	No			Yes
+C	 	Partnership (LLP)	Yes	Yes	No	 	 	Yes
+C	 	Company (LLC)	Yes	Yes	No	 	 	Yes
+3	 	Partnership	Yes	Yes	No	 	 	Yes
+D	U	Unincorporated	Yes	Yes	No			Yes
+D	S	Unincorporated Sole Proprietorship	Yes	Yes	No			Yes
+3	P	Partnership	Yes	Yes	No	 	 	Yes
+3	S	State Partnership	Yes	Yes	No	 	 	Yes
+3	F	Family Partnership	Yes	Yes	No	 	 	Yes
+3	A	Family Limited Partnership	Yes	Yes	No	 	 	Yes
+3	L	Limited Partnership	Yes	Yes	No	 	 	Yes
+3	T	State Limited Partnership	Yes	Yes	No	 	 	Yes
+3	G	General Partnership	Yes	Yes	No	 	 	Yes
+3	E	State General Partnership	Yes	Yes	No	 	 	Yes
+3	I	General Partnership Investment	Yes	Yes	No	 	 	Yes
+
+4.5	Account Status
+Account Status	Description	Additional Criteria	2007 BDP Eligible	Eligible for AANY
+0	NORMAL (OPEN)		Yes	Yes
+2	TRANSFERRED	Transfer/Swing Date is in the future	Yes	Yes
+3	SWING PENDING	Swing Effective Date is Today	Yes	Yes
+9	REVERSED SWING	Reversal Effective Date is Today	Yes	Yes
+4	SWUNG ACCOUNT		Yes	Yes
+5	CLOSED		No	No
+6	READY FOR DELETION  (NOT USED)		No	No
+
+4.6	International Accounts
+4.6.1	Existing Accounts
+Offshore clients/Non-Resident Aliens (NRA) with accounts currently sweep to a Migration Eligible Sweep Fund will be notified of BDP but will NOT be migrated to the Bank Deposit Program.  These client accounts will continue to sweep to their current sweep fund.
+4.6.2	New Accounts
+All new NRA accounts will be blocked from selecting BDP. 
+4.7	PWM Accounts
+PWM accounts that are on the GWM platform are NOT eligible to participate in BDP. CPS should block BDP for all PWM offices in GWM platform.
+4.8	Collateral Accounts 
+Collateral accounts identified with Trade Control = S (for Legacy Accounts) or Novis Indicator = C (for Newer Accounts) are eligible to participate in BDP.
+4.9	Systems Impacted by eligibility requirements.
+Eligibility rules are implemented in CPS and Merlin.  The screens used for the following functions must undergo edits revision to allow the accounts described above to elect BDP as their sweep choice.  Specific screens used in the various affected work flows are detailed in the work flow sections of this document.
+
+Managed platform inception and trading systems also have eligibility logic that must be revised to accommodate these new account types.  The relevant systems are:
+Advisor One
+Custom Portfolio
+Access
+PPA
+FS/PA
+NDA.
+
+The affected functions are detailed in the work flow section of this document.
+
+
+5.0	Migration
+5.1	Overview
+Effective on migration date there are a number of changes that will need to be in place as described in this section.  Please note that unless otherwise specified, the migration details below apply only to Managed, Business and Personal Trust (AAA, BSA, IRA) accounts.
+5.2	Development/Deliverables
+•	Vision accounts are EXEMPT from drain/fill scenarios. These accounts must not be migrated. Any Vision account opened on or after BDP launch date should allow BDPS as the default fund choice.  Any Vision account incepted prior to the launch date must be permitted to keep their existing sweep fund.  They may also choose to elect BDP, but in that case will not be a drain-fill account but will behave like any newly opened Vision account.
+•	Access accounts incepted on or before August 31, 2003 will not participate in the drain/fill scenario. These accounts must not be migrated. Alternatively, any Access account opened after August 31, 2003 will be subject to drain/fill concept and will participate in migration.  These accounts will be specifically listed in an exclusion file read by the migration process on the go-live weekend.
+•	For eligible AAA accounts that have AAMT or AAGS as their sweep vehicle prior to migration date, AAMT/AAGS becomes the previous fund choices and BDPS becomes the current fund choice. 
+•	For eligible BSA accounts that have ILAF or SGMT selected as their sweep vehicle prior to migration date, ILAF/SGMT becomes the previous fund choices and BDPS becomes the current fund choice.  As all eligible IRA accounts have ILAF as their sweep vehicle, ILAF will become the previous fund choice and BDPS becomes the current fund choice.
+Note:  These accounts will be included in the new drain and fill process documented in section 6.0.
+•	On the CPS A page, the history field should show AAMT or AAGS, respectively, as the prior sweep fund choice as of migration date for AAA accounts.
+•	On the CPS U page, the history field should show ILAF or SGMT, respectively, as the prior sweep fund choice as of migration date for both BSA and IRA accounts.
+•	On CPS, ‘BDPS’ will be the choice for accounts that migrate to BDP, and ‘BDPS’ should be allowed to be entered for new eligible AAA accounts on the A screen.
+•	On CPS, ‘BDPS’ will be the choice for accounts that migrate to BDP, and ‘BDPS’ should be allowed to be entered for new eligible BSA accounts on the Universal fund selection screen and on the G2 screen for IRA accounts.
+•	On the Merlin AAA fund choice screen, the Add fund drop down selection box should list ‘BDPS’ to represent the BDP program for eligible BDPS accounts. BDPS should be the first fund listed.
+•	On the Merlin Universal Sweep Fund Choice screen, the Add fund drop down selection box should list ‘BDPS’ to represent the BDP program for eligible BSA accounts.  BDPS should be the first fund listed.
+•	All eligible AAA accounts will not be allowed to manually purchase AAMT or AAGS.
+•	All eligible BSA accounts will not be allowed to manually purchase ILAF or SGMT.
+•	BDP eligible IRA accounts will continue to be able to manually purchase SGMT as part of their IRA portfolio.  IRA accounts ineligible for BDP will continue to have ILAF as their sweep vehicle and will continue to be able to purchase SGMT.  This is a re-statement of the functionality currently in place, and does not represent new functionality.
+
+6.0	Sweep and Maintenance Process
+6.1	Overview
+During the drain and fill process, the drain on eligible accounts will be carried out by Universal Sweep (for BSA and IRA accounts) and AAA sweep (for AAA accounts), the fill will be carried out by BDP sweep.  Once the drain balance is depleted, eligible accounts that have migrated to BDPS or fund-switch into BDPS will have their BDP sweep debits and credits exercised wholly by the BDP sweep.  
+There are no drain and fill processing changes for the following accounts:
+•	AAA accounts ineligible for BDP that maintain AAMT or AAGS as their sweep choice.
+•	BSA or IRA accounts ineligible for BDP that maintain ILAF or SGMT as their sweep choice.
+•	AAA accounts that have AATF, AACT, AAIG, AAIF or AANY selected as their sweep vehicle.
+•	BSA accounts that have CTFI, ITFI, or NTFI selected as their sweep vehicle.
+•	AAA, BSA accounts that have no sweep election.
+6.2	Pre-conditions
+The drain/fill logic is applicable only for [ILAF and SGMT] for BSA and IRA accounts and [AAMT and AAGS] for AAA accounts. Other money market funds are listed here for reference.
+Symbol
+	Cusip
+	Symbol
+	Share Class Type
+	Drain Prior Sweep Fund	Sweep Credit Balances to BDP
+			No Sweep Election	N/A	N/A
+ILAF	616980108	ILAF	Sweep	Yes	Yes
+SGMT	616983102	SGMT	Sweep	Yes	Yes
+CTFI	616979100	CTFI	Sweep	No	No
+ITFI	616982104	ITFI	Sweep	No	No
+NTFI	616981106	NTFI	Sweep	No	No
+AAMT	005047980	AAMT	Sweep	Yes	Yes
+AAGS	005047923	AAGS	Sweep	Yes	Yes
+AATF	005047915	AATF	Sweep	No	No
+AACT	005047949	AACT	Sweep	No	No
+AAIG	004991105	AAIG	Sweep	No	No
+AAIF	00505K105	AAIF	Sweep	No	No
+AANY	005047980	AANY	Sweep	No	No
+6.3	Sweep Process 
+The following outlines the sweep process for AAA, BSA and IRA accounts. As such, all the functionalities depicted below are in production. The following is for reference purposes.
+ 
+Sweep process consists of the following 3 types of sweep.
+6.3.1	Universal Sweep
+Universal Sweep is responsible for sweeping funds for BSA, IRA accounts. This process must be enhanced to include Managed BSA, IRA accounts, Business BSA accounts and Personal Trust BSA, IRA accounts for BDP Phase 4.
+6.3.1.1	Sweep Frequency
+The sweep frequency for BSA accounts that have BDP as their sweep vehicle will be different from AAA accounts that have selected BDP.  For BSA accounts, sweep should take place daily if there is a cash balance > $999.99.  If the cash balance < = $999.99, sweep weekly on Monday nights.
+Currently, for IRA accounts, sweep takes place daily if there is a cash balance > $0.00.  This will continue to be the case when the sweep choice is BDP.
+Note that the sweep frequency will not change for those accounts that have one of the BSA tax free funds as their sweep vehicle, nor will it change for BSA accounts that are ineligible for BDP.
+6.3.2	BDP Sweep
+BDP sweep is responsible for sweeping funds into and out of BDP fund for BSA, IRA and AAA accounts. This process must be enhanced to accommodate sweep for Managed BSA, IRA, AAA accounts, Business BSA, AAA accounts and Personal Trust BSA, IRA, AAA accounts.
+6.3.3	AAA Sweep
+AAA sweep is responsible for sweeping funds into and out of AAA funds for AAA accounts. 
+6.3.3.1	Sweep Frequency
+The sweep frequency for BSA accounts that have BDP as their sweep vehicle will be different from AAA accounts that have selected BDP.  For AAA accounts, sweep takes place daily if there is a cash balance > $0.00.
+6.3.4	Development and Deliverables
+•	Enhance Universal, BDP and AAA sweep to recognize and sweep funds appropriately for Managed, Business and Personal Trust accounts.
+•	AAA, BSA and IRA Tier Maintenance API needs to be updated to account for new product numbers (See page 38 for the complete list of product codes)
+•	The new product codes will need to be provided to MV on the Maintenance and Daily Activity file.
+•	For this phase, the drain/fill scenario for eligible Managed AAA, BSA, IRA, Business AAA, BSA and Personal Trust accounts will be identified when BDP is the current fund choice and current fund date = 9/17/07 and the prior fund choice is AAMT, AAGS, ILAF or SGMT. Currently, AAA drain/fill accounts are identified when BDP is the current fund choice and current fund date = 11/18/05 and the prior fund choice is AAMT or AAGS; BSA/IRA drain/fill accounts are identified when BDP is the current fund choice and current fund date = 9/18/06 and the prior fund choice is ILAF or SGMT.
+•	Only Managed Business Accounts coded with Class/Sub-class 4N (Non Profit Corporation) are eligible of BDP Phase 4. Non-managed business accounts with class/sub-class 4N are already in the BDP program from the prior phase. These accounts must be assigned and processed as a Managed Account and NOT as a business managed account. Sweep must assign managed business accounts with 4N, product code of ‘009’ and NOT ‘007’; the reasons being these accounts are exempt from the Reserve Link rules. Hence, Metavante will process these accounts under product code ‘007’. Please refer to section 7.2 for the list of product codes.
+
+6.4	Maintenance Process
+Maintenance process currently runs at 7 am every business day. The purpose of maintenance process is to recognize changes involved in account maintenance (such as account closure, account upgrade/downgrade) and transmit the information to Metavante deposits system for processing.
+6.4.1	Existing maintenance process
+Maintenance process consists of:
+1.	Account opening at Metavante – This is done when current fund choice is BDP and the plan number is blank. The logic used for account opening at Metavante will function exactly in a similar manner as it does for AAA, BSA and IRA accounts currently in production. Account opening is based on information from CPS.  
+Notes:  
+•	Once an account is opened, AAA provides a file to CPS that includes the plan number.
+•	It is planned to have the available cash minimum for opening new non drain-fill AAA accounts will be lowered to be in line with the BSA/IRA requirement (> $0.00) prior to the migration of BSA BDP. 
+•	Metavante will continue to receive the daily activity and maintenance files, represented by appropriate product codes as outlined in Section 7.2
+2.	Account closing and re-opening at Metavante – This is done when an account switches out of BDP as the current fund choice into another non-BDP fund choice. This constitutes a full-sell of all BDP holdings and posting accrued interest to the account. This constitutes an account closure at Metavante. The existing rules for account closing and reopening at Metavante will follow the current process as it exists in production
+3.	Swung accounts – When accounts swing from one office to another, necessary maintenance (close ‘swing from’ account and open ‘swing to’ account) records are sent to Metavante.
+4.	Other Maintenance activities – such as single to joint ownership, FA number change, Product code change, interest tier change are also handled appropriately.
+6.4.2	Enhancement required/Development/Deliverables
+•	The Account Maintenance File sent to Metavante must handle more product codes as outlined in section 7.2.
+•	In addition to the existing process, the maintenance process must be enhanced to add the following logic to support “Managed Account Terminations”.  Please refer to Appendix A for detailed use cases in support of this concept.
+The business case – There should be no change in BDP rates and/or should not full-sell/buy back when a client changes from one managed product to another (such as Custom Portfolio to PPA).
+Current process – A shift from one managed product to another entails a step down from Managed (custom portfolio) to non-managed status (trade control = 0 in CPS). The account is then upgraded to PPA.
+The Challenge – A client’s intention to terminate a managed account permanently versus shifting to another managed product cannot be deciphered systematically as both these cases 	involve switching the account to non-managed status.
+The solution – It has been decided that every client terminating the managed status will be assured the guaranteed 100% rate (AAMT or ILAF, depending on the account type) for 8 days from the termination date. If within 8 days, the client indeed shifts to another managed product, there will be no impact to his/her BDP positions i.e. (there will be no interest rate re-tier, no full-sell and no product code change). However, if after 8 days, the client still continues to be in a non-managed status, maintenance process will request (a) product code change, (b) interest rate change.
+Notes: The process must consider additional parameters while evaluating accounts that require maintenance at Metavante. The parameters include (a) Trade Control Change, (b) Div-Handling change (c) Branch Office (for Personal Trust). Please refer to Appendix A for detailed use cases.
+The logical design to implement the same is outlined below. Detailed technical specification is required to accomplish this task:
+ 
+6.5	Margins Bucketing
+The Margins bucketing in support of this phase will be exactly the same as the bucketing used to support AAA, BSA/IRA drain and fill sweep processing
+6.6	Bank ID Value
+The Bank ID value used in the header of the daily transaction file, weekly APY file, Bank Balance file and Daily Maintenance file needs to be parameterized by IFS and AAA so that any value can be used in QM testing or production.
+7.0	Tier Maintenance
+7.1	Overview
+Managed AAA, BSA and IRA accounts that select BDP as their sweep choice will get an interest rate based on the managed or non-managed status.
+This table represents the expected tiers that are required to support managed, business and personal trust accounts. Note: The table below represents the post-launch scenario; therefore the guaranteed rates for prior phases will have expired. (Interest plans 008, 009 and 308 are needed for purposes of keeping fund history.  
+7.2	Product Codes at Metavante
+New product codes should be setup on Metavante to support bank deposits for managed, business and personal trust accounts.  
+  
+ 
+
+* Note that the rates for tiers 005 and 006 will be entered systematically using a daily process.  Therefore these two tiers will not utilize the weekly manual entry process
+
+Note that interest plan 180 through 189 will be reserved for up to 10 unique override rates for special situations. Interest Plan 180 is currently in use for a small group of accounts.
+
+ 
+
+8.0	Workflow Processing
+The workflows documented in this section detail the processes by which Managed accounts are opened, actions undertaken once opened, and closed.  While not every workflow results in development changes, the impact to and handling of accounts is important.
+8.1	Opening a New Managed Account
+8.1.1	Pre-conditions
+User must have the appropriate access level to open a new account.
+8.1.2	Use Case – CPS – Opening a New Managed (AAA) Account
+Methodology: The following table outlines the account opening in detail. Screen Shots along with commentary are attached where needed.
+
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘APAA’	User is taken to the APAA G1 screen.	3
+
+Step 4: G1 Screen. The following screen outlines details when opening a Single Account with subclass Estate. Pressing Enter should proceed to G2 screen
+
+
+
+
+
+
+
+
+
+
+Step 5: CStStep 5: G2 Screen. Change the trade-control from ‘0’ to ‘H’ (Pending Managed Account), assign ‘AAA Enroll’ to ‘r’, marking the account to type AAA. This should cause the Dividend Handling to change from ‘1’ to ‘3’ systematically.
+
+Press enter to go to the ‘A’ screen.
+ 
+
+ 
+Step 6: ‘A’ Screen The following screen must systematically, select ‘BDPS’ as the default fund choice when opening a managed account. The ‘Active Date’ must reflect the current date. In addition, prior fund choice, if any, must cascade in the sweep fund history table.
+
+ 
+
+Edit Checks for CPS/Merlin: The appropriate edits must focus on the following fields in CPS. Please refer to Section 4.0 for detailed account eligibility.
+1.	Trade Control
+2.	Div Handling Code
+3.	Status
+4.	Class
+5.	Sub-Class
+		
+Account Type	Funds Eligible/Allowed	Funds to be blocked (SMA should not incept managed a/c if any one of the following funds are selected)
+Managed AAA
+Business AAA	BDPS, AATF, AACT, AAIG, AAIF, New York Tax Free(available on BDP launch date)	AAMT, AAGS, ABFS
+Managed BSA
+Business BSA	BDPS, ITFI, CTFI, NTFI	ILAF, SGMT, ABFS
+Managed IRA	BDPS	ILAF, ABFS
+
+8.1.3	Exceptions to this work flow
+
+1.	Can a Trade-control be set to any value to reflect Managed Account status (D, J, K, L etc). Please look at screen shots below. What does this mean?
+Answer/Analysis: Selected users are privileged to perform this operation in CPS. The primary business reason for this action is to speed up the process of changing the trade control to ‘0’ so FA’s can quickly operate the account to realize market synergies. However, prior to such alterations, the appropriate personnel always ensures the account is ‘terminated’ of the managed status using Managed Accounts platform (IACA, Advisor One, Boss etc). This will ensure the account is out of managed space. 
+  
+ 
+8.1.4	Alternative Flows – Merlin
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs on to Merlin.	Access granted.	2
+2	User	CPS	User enters ‘personal information’ as a part of the new account opening process	User is taken to the APAA G1 screen.	3
+Step 3: The following screen shot in Merlin must undergo changes to include BDPS as the default fund choice and block AAMT.
+
+ 
+8.1.5	Use Case Notes & Comments
+•	Step 3 - Under the current CPS process, the user needs to first elect to have a sweep then pick the sweep fund.
+•	The same information should appear in CPS regardless of whether the account is opened using CPS or Merlin.
+8.1.6	Post-conditions
+•	The account is opened on CPS/Merlin.
+8.1.7	Development/Deliverables
+1.	Managed AAA, BSA and IRA accounts should be defaulted to ‘BDPS’ as the fund choice in both CPS and Merlin.
+2.	For Trade-control = ‘H’, ‘BDPS’ should be the default fund choice in CPS/Merlin.
+8.1.8	Additional Information
+Non-Functional Requirements	•	None
+Business Rules
+	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.2	Incepting a New Managed Account
+8.2.1	Pre-conditions
+User must have the appropriate access level to incept a new account.
+Account should have been created in CPS/Merlin.
+8.2.2	Use Case – SMA – Incepting a New Managed (AAA) Account
+The following diagram is a pictorial depiction of SMA inception process:
+ 
+		
+Account Type	Funds Eligible/Allowed	Funds to be blocked (SMA should not incept managed a/c if any one of the following funds are selected)	Additional Edits
+Managed AAA	BDPS, AATF, AACT, AAIG, AAIF, New York Tax Free(available as of BDP launch date)	AAMT, AAGS, ABFS	A/c type must not be margin/short, non-purpose loan, with the exception of SBL.
+Trade control should be ‘0’ or ‘H’. 
+Legal – NRA screening
+ERISA screening
+Managed BSA	BDPS, ITFI, CTFI, NTFI	ILAF, SGMT, ABFS	A/c type must not be margin/short, non-purpose loan, with the exception of SBL.
+Trade control should be ‘0’ or ‘H’. 
+Legal – NRA screening
+ERISA screening
+Managed IRA	BDPS	ILAF, ABFS	A/c type must not be margin/short, non-purpose loan, with the exception of SBL.
+Trade control should be ‘0’ or ‘H’. 
+Legal – NRA screening
+ERISA screening
+
+For new account inception process, the following table outlines the timing with respect to Trading and updates to Trade Control in CPS.
+Managed Product	Trading Timeline	Trade Control Update in CPS
+Access	Trading is possible only the following business day	Real-time
+Custom portfolio	Incept without positions-same day trading possible	Batch update to CPS
+PPA	Trading is possible only the following business day	Real-time
+Fund Solution	Incept without positions-same day trading possible	Real-time
+Portfolio Architect	Incept without positions-same day trading possible	Real-time
+
+8.2.3	Exceptions to this workflow
+MFA process – ‘B’ to ‘D’ conversion: This process is no longer an issue for BDP Phase 4. This feature will be disabled in production prior to BDP launch date of 9/17/07.
+8.2.4	Alternative Flows – CPS
+No changes are required in CPS to incept the account. The process to change the trade-control to appropriate managed status must remain the same.
+8.2.5	Alternative Flows – Merlin
+Not Applicable
+8.2.6	Use Case Notes & Comments
+•	See table in 9.2.2
+8.2.7	Post-conditions
+•	The trade control in CPS/Merlin should be the same as updated by SMA.
+8.2.8	Development/Deliverables
+1.	CPS: Managed AAA, BSA and IRA accounts should be defaulted to ‘BDPS’ as the fund choice in both CPS and Merlin.
+2.	Edit Checks for SMA and MFA: Managed accounts should allow for BDPS as the default fund choice while incepting accounts. 
+3.	MFA (Mutual Fund Advisory) Process: For Fund solutions and Portfolio Architect products only, Money market fund choices are selected in the Advisor One process. As a part of the account opening process, the fund choice is selected in CPS and currently there is an ability to override this selection in the Advisor one platform. This process must be changed and the ability to select funds through Advisor One must be disabled. Once this change is implemented, MFA products will be in sync with other managed products.
+4.	MFA Process: MFA should NOT sell money market positions explicitly to offset the quarterly billing amount. AAA sweep should handle this as a part of the sweep process. No build is necessary for AAA sweep to accommodate this process.
+
+8.2.9	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.3	Switching from Managed to Non-Managed Account/Termination of managed status
+8.3.1	Pre-conditions
+The account must be a managed account. 
+Based on discussions, a managed account can be stripped off the managed status only via SMA platform. 
+8.3.2	Use Case 
+Step #	Sending App/actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	SMA (advisor One)	User logs on to SMA.	Access granted.	2
+2	User	SMA	User selects Advisor One platform link from Ideas page	User is taken into Advisor One platform	3
+3	User	SMA	User inputs the office and FA number and selects ‘Account Review and Servicing’ and clicks next button. 	User is taken to ‘LYDIA main menu’	4
+4	User	SMA	User clicks ‘Action Items’ from the web page
+	User is taken to the Action Items page.	5
+5	User	SMA	User clicks ‘Terminate Account’ option	Terminate account web page show up	6
+
+Step 6: User enters the Account number and selects one of the liquidation options as outlined in the below screen. 
+ 
+Step7: Selecting ‘All Holdings’ will display the following page for Termination.
+
+
+ 
+This will terminate an account to a Non-Managed status. At this point in time, the Trade Control in CPS is changed from a valid managed trade control to ‘0’ (Non Managed Status). Please note that there is no work involved for CPS/Merlin here.
+The above mentioned use-case will convert the following Managed account to a Non-managed status.
+1.	Managed AAA to AAA
+2.	Managed BSA to BSA
+3.	Managed IRA to IRA
+The following cases/workflows will require additional steps in addition to the above mentioned use-case:
+Scenarios	Intermediate Results	Additional workflow	Final Result
+Managed AAA to BSA	The above workflow will change the account to AAA	User must change the Div-Handling code in CPS from ‘3’ to ‘1’. This is done is Melvin Rodriguez area.	The account is changed to BSA
+Managed BSA to AAA	The above workflow will change the account to BSA	User must change the Div-Handling code in CPS from ‘1’ to ‘3’. This is done at the branch level. 	The account is changed to AAA
+
+8.3.3	Exceptions to this workflow
+•	What happens when users change the trade control in CPS directly without the use of Advisor One? Is this possible? If so, what are the implications?
+Answer/Analysis: Selected users are privileged to perform this operation in CPS. The primary business reason for this action is to speed up the process of changing the trade control to ‘0’ so FA’s can quickly operate the account to realize market synergies. However, prior to such alterations, the appropriate personnel always ensures the account is ‘terminated’ of the managed status using Managed Accounts platform (IACA, Advisor One, Boss etc). This will ensure the account is out of managed space.
+•	In some cases, managed accounts once downgraded to non-managed status undergo manual intervention to change the account to BSA. Need more clarification and its effect on BDP.
+8.3.4	Alternative Flows
+Not possible in Merlin.
+8.3.5	Use Case Notes & Comments
+•	There is no change to this workflow process. This is for informational purposes only.
+•	The Termination option will not trigger a sell/buy of money market funds through the managed accounts system.
+•	There is a 3 day lag period prior to upgrading this account again to a managed status.
+8.3.6	Post-conditions
+CPS should reflect the changed trade control ‘0’. 
+8.3.7	Development/Deliverables
+This should trigger the maintenance and sweep processes by AAA sweep by reading the CPS activity file. Please see Appendix A for the details
+8.3.8	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.4	Switching from Non-Managed Account to Managed Account
+8.4.1	Pre-conditions
+The account must be a NON-MANAGED account.
+8.4.2	Use Case 
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘APMA’	User is taken to the APMA screen.	3
+
+Step 3: G2 Screen – User enters the account number and navigates to G2 Screen. Currently, a non-managed account with BDPS as the current fund choice is prohibited from changing the trade control to ‘H’ (pending managed). G2 should change to allow BDPS for ‘H’ trade control. Please see the following screenshot.
+ 
+Step 4: Please refer to section 8.2 for the next steps
+The above mentioned use-case will convert the following Non-Managed account to a Managed status.
+1.	AAA to Managed AAA
+2.	BSA to Managed BSA
+3.	IRA to Managed IRA
+The following cases/workflows will require additional steps in addition to the above mentioned use-case:
+Scenarios	Additional workflow	Intermediate Results	Final Result
+BSA to Managed AAA	User must change the Div-Handling code in CPS from ‘0’ to ‘3’.	The account is now AAA	Upon executing the above workflow, the account is converted from AAA to Managed AAA
+AAA to Managed BSA	User must change the Div-Handling code in CPS from ‘3’ to ‘0’.	The account is now BSA	Upon executing the above workflow, the account is converted from AAA to Managed BSA
+
+8.4.3	Alternative Flows
+Alternatively, Non-Managed account could be incepted as a Managed account even if the trade control is ‘0’ in CPS. Thus, steps 1, 2 and 3 in the section 8.4.2 (use case) are NOT pre-requisites to this workflow.
+
+Merlin:
+Specific screen shots are explained below:
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User navigates to Account classification page	Page is displayed	2
+
+ 
+
+ 
+8.4.4	Use Case Notes & Comments
+•	Please refer to the details in Appendix A
+8.4.5	Post-conditions
+•	None
+8.4.6	Development/Deliverables
+This should trigger the maintenance and sweep processes by AAA sweep by reading the CPS activity file. Please see appendix A for details.
+8.4.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.5	Fund Switch for Managed Accounts
+8.5.1	Pre-conditions
+An account with a sweep vehicle selected must exist.
+8.5.2	Use Case - CPS
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘APMA’	User is taken to the APMA screen.	3
+
+Step 3: Currently, BDPS is not allowed as a fund choice for managed and business accounts. The following screen should be changed in CPS to accept BDPS as a valid fund choice.
+ 
+8.5.3	Alternative Flows 
+Merlin:
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs onto Merlin	Access granted.	2
+2	User	Merlin	User navigates to the fund choice screen	User is taken to the fund choice screen.	3
+
+Step 3: The following screen outlines the current fund choice. 
+ 
+
+Step 4:  The ‘Fund Add’ screen below must be changed to have BDPS as a fund choice. Infact, BDPS must the first fund choice in the dropdown. AAMT should be removed as a fund selection in the dropdown below.
+ 
+
+SMA:
+No changes required in SMA platform.
+8.5.4	Use Case Notes & Comments
+•	The same information should appear in CPS regardless of whether the fund is switched using CPS or Merlin.
+•	The same Merlin process should be used for multiple fund switches. 
+•	Please refer to Appendix A for detailed use cases
+8.5.5	Post-conditions
+None
+8.5.6	Development/Deliverables
+This should trigger the maintenance and sweep processes by AAA sweep by reading the CPS activity file. Please see appendix A for details.
+8.5.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.6	Switching from One Managed Product to another (For ex. Vision to PPA)
+8.6.1	Pre-conditions
+The account must be incepted as a Managed Account.
+8.6.2	Use Case 
+Switching from one managed product to another entails the following:
+•	Termination of existing managed account to a non-managed status
+•	All holdings in the account must be liquidated and settled (there is a 3 day lag period to accomplish this objective)
+•	 SMA will incept the same account as a different managed product.
+•	This use case is a combination of switching from Managed to Non-managed accounts/Termination of managed status (section 8.3) and switching from Non-managed accounts to managed accounts (section 8.4)
+
+8.6.3	Alternative Flows
+8.6.4	Use Case Notes & Comments
+•	Please refer to Appendix A for detailed use cases.
+8.6.5	Post-conditions
+None
+8.6.6	Development/Deliverables
+As described in section 8.3 and 8.4
+8.6.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.7	Re-plating a Managed Account
+8.7.1	Pre-conditions
+Re-plating constitutes moving all the assets from one managed account to another account.
+The ‘From’ account must be a managed account.
+The ‘To’ account must exist in CPS and must NOT be a managed account. 
+8.7.2	Use Case 
+Step #	Sending App/actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	SMA (advisor One)	User logs on to SMA.	Access granted.	2
+2	User	SMA	User selects Advisor One platform link from Ideas page	User is taken into Advisor One platform	3
+3	User	SMA	User inputs the office and FA number and selects ‘Account Review and Servicing’ and clicks next button. 	User is taken to ‘LYDIA main menu’	4
+4	User	SMA	User clicks ‘Maintenance’ from the web page
+	User is taken to the Maintenance page.	5
+5	User	SMA	User clicks ‘Replating Account’ option	Replate account web page show up	6
+
+Step 6: User enters the ‘From’ Account number and the ‘To’ account number in the screen below to initiate the replate process.
+
+ 
+	
+8.7.3	Current Replating Process
+
+When replate is requested:
+1.	Without any other trade activity (same day process)
+a.	Account will be put ‘ON HOLD’ – No trading allowed
+b.	Replate will process at 5 pm the same business day.
+
+2.	With Non-Mutual Fund trading activity (1 day delay)
+a.	Accout will be put ‘ON HOLD’, the current day and the following business day.
+b.	Replate request date will be request date + 1 business day
+
+3.	With Mutual Fund trading activity (1 day/2 days delay)
+a.	If trading activity has occurred on this account one day prior to the replate request, Account will be put ‘ON HOLD’, the current day and the following business day. Thus, Replate request date will be request date + 1 business day.
+b.	If trading occurs on the same business day as the replate request, Account will be put ‘ON HOLD’, the current day + 2 business days. Thus, Replate request date will be request date + 2 business days.
+Examples:
+
+Case	Monday	Tuesday	Wednesday	Thursday
+1	Replate is requested and there is no other activity on the account	Account is replated and the positions are moved to the ‘TO’ account. Please refer to ‘Replate process’ outlined below for details	n/a	n/a
+2	With Non-mutual fund trading activity:
+Account buys 100 shares of IBM at 10 am
+Replate is requested at 1 PM	The account is put ‘ON HOLD’ . No trading activity can occur	Account is replated and the positions are moved to the ‘TO’ account. Please refer to ‘Replate process’ outlined below for details	n/a
+3a	With Mutual Fund trading activity:
+a. Account acquires positions in a mutual fund on Friday (prior business day)	The account is put ‘ON HOLD’ . No trading activity can occur	Account is replated and the positions are moved to the ‘TO’ account. Please refer to ‘Replate process’ outlined below for details	n/a
+3b	With Mutual Fund trading activity:
+Account buys mutual fund positions at 10 am
+
+Replate is requested at 1 pm	The account is put ‘ON HOLD’ . No trading activity can occur	The account is put ‘ON HOLD’ . No trading activity can occur	Account is replated and the positions are moved to the ‘TO’ account. Please refer to ‘Replate process’ outlined below for details
+
+Replate Process:
+1.	Happens at 5 pm every business day where replate request date = system process date
+2.	will send security transfers to black box system.
+3.	For Equity and Fixed Income Assets held in the account:
+a.	Managed Accounts system will send instructions to Black Box to have the positions transferred to new account according to RTA (tpos_balance_td) for type-to-type transfer
+b.	Managed Accounts system will will write to Debit Advice and LOA file with transaction 4441 for AJS system
+4.	For AAA Money Market Funds Assets held in the account:
+a.	Managed Accounts System will send transaction to AAA system to sell the AAA money market positions.
+b.	If the “To” account also has the same AAA money market fund as the “From” account, the managed accounts system will send a buy transactions for the “To” account to AAA system. The buy transaction must include the SD cash (from RTA intra day table).
+c.	Managed Accounts System will update shadow balance according to RTA (TPOS_BALANCE_TD).
+d.	Managed Accounts System will create a feed to margins with DB/CR transaction 4299. And the debit transaction must include the SD cash.
+5.	For NON-AAA Money Market Funds, mutual funds and ILAF Assets held in the account:
+a.	Managed Accounts System will send instructions to black box to have the fund position transferred to the new account.
+b.	The Black Box will send the money market fund and mutual fund transfer instruction to the ICI system who will send the legal transfer request to the Trust company.
+c.	For mutual funds, Black Box will reject funds other than external / surpass.
+8.7.4	Alternative Flows
+None
+8.7.5	Use Case Notes & Comments
+•	The replate ‘From’ account remains open and active. However it is not a managed account
+•	The Drain Fill scenario will not be preserved for re-plated accounts.
+
+8.7.6	Post-conditions
+Please see Appendix A for detailed use-cases.
+8.7.7	Development/Deliverables
+•	Managed Accounts technology must send a daily file consisting of ‘from’ and ‘to’ accounts involved in the replate process.
+•	Sweep process must handle these accounts appropriately by creating maintenance and sweep activity records. 
+8.7.8	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.8	Switching from One Portfolio to another Portfolio within the same managed product
+
+8.8.1	Pre-conditions
+The account must be a managed account.
+8.8.2	Use Case Notes & Comments
+Switching from one portfolio to another within the same managed product should behave exactly in accordance with the current behaviour.
+8.8.3	Post-conditions
+The account should have switched models within the same managed product.
+8.8.4	Development/Deliverables
+No new built out is necessary to accommodate this workflow.
+8.8.5	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.9	Upgrading from Managed BSA Account to Managed AAA Account
+8.9.1	Pre-conditions
+The account must be a managed BSA account
+8.9.2	Use Case
+Step #	Sending App/actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS	Access granted.	2
+2	User	CPS	User goes to the A screen and changes the AAA-Enroll from ‘O’ (BSA) to ‘R’ (AAA)	Account changed to AAA and insists on a fund selection	3
+
+Step 3: The recently upgraded managed AAA account must allow selecting BDPS as the fund choice. Please see the screen shot for details.
+
+ 
+8.9.3	Alternative Flows – Merlin
+Step #	Sending App/actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs onto Merlin	Access granted.	2
+2	User	Merlin	Users enters the BSA managed account number and clicks on the universal sweep option (to the left of the screen)	Account changed to AAA and insists on a fund selection	3
+
+Step 3: Clicking on the ‘Close sweep option’ brings up the pop-up window to close the universal sweep option.
+
+ 
+
+Step 4: Click on the ‘AAA’ to the left of the screen. 
+
+ 
+Step 5: Please refer to Section 8.5.3 and 8.5.4 for next steps.
+8.9.4	Use Case Notes & Comments
+•	The same information must appear in CPS regardless of whether the account is opened using CPS or Merlin
+
+8.9.5	Post-conditions
+The account must be upgraded from a BSA managed to a AAA managed account with BDPS as the fund choice.
+8.9.6	Development/Deliverables
+Managed AAA accounts must allow BDPS as a fund choice.
+8.9.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.10	Opening a New Managed IRA Account
+8.10.1	Pre-conditions
+User must have the appropriate access level to open a new account. This use case is applicable only for IRA 100 series accounts. 
+8.10.2	Use Case - CPS
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘AAPA’	User is taken to the APAA Add Account screen.	3
+3	User	CPS	User enters ‘DW’ in the Account Class field, completes the remaining fields and hits Enter	User is taken to the next Add Account screen.	4
+4	User	CPS	User enters the retirement plan type and hits Enter.	User is taken to the G1 screen.	5
+5	User	CPS	User enters account and plating information and hits enter. 
+	User is taken to the G2 screen. 
+
+	6
+
+Step 6: G2 Screen for IRA accounts must be changed to allow BDPS as a valid fund choice when opening a managed IRA account (trade control ‘H’). 
+ 
+8.10.3	Alternative Flows - Merlin
+Step 1: Opening a Managed IRA account (100 series only), the current fund choice is ILAF and is greyed out. This screen must change to have BDPS as the only and default fund choice while opening IRA managed accounts. Please see the screen shot for details.
+ 
+
+8.10.4	Use Case Notes & Comments
+•	The same information should appear in CPS regardless of whether the account is opened using CPS or Merlin.
+8.10.5	Post-conditions
+•	The pending managed IRA (100 series) account is opened with BDPS as the current fund choice. 
+8.10.6	Development/Deliverables
+1.	Only BDP eligible IRA accounts can select BDP.
+2.	On CPS, the RETM PLAN FDG field should default to either BDPS or ILAF based on the retirement plan type entered.
+3.	Managed accounts (100 series) must be able select BDP.
+4.	ILAF should be disabled as a fund choice and should no longer be available (only for 100 series)
+5.	Whether the account is opened using CPS or Merlin, after the account is opened either ILAF or BDPS must appear on the current fund line on the new fund history table.
+8.10.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.11	Switching from a non-Managed to Managed IRA Account
+8.11.1	Pre-conditions
+The IRA account has been opened as non-managed account and has BDP selected as the fund choice.
+8.11.2	Use Case – CPS
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	CPS	User logs on to CPS.	Access granted.	2
+2	User	CPS	User enters ‘APMA’, selects office and account number and selects G screen	User is taken to the G2 screen.	3
+
+Step 3: G2 Screen for IRA accounts must be changed to allow BDPS as a valid fund choice when opening a managed IRA account (trade control ‘H’)
+ 
+8.11.3	Use Case – Merlin
+Step #	Sending App/ Actor	Receiving App (if any)	Description	Outputs	Next Step
+1	User	Merlin	User logs on to Merlin.	Access granted.	2
+2	User	Merlin	User enter the account number and in the ‘Account Classification Information’ screen, changes the value of ‘Special Handling Account Type’ from ‘NONE’ to ‘MANAGED Account’	See the screen shot below	3
+Step3: Changing the account to a managed status. At this point, the default fund choice should be BDPS.
+ 
+Step 4: The following screen must be automatically updated with BDPS as the fund choice, once ‘Managed’ is selected in the above screen.
+ 
+8.11.4	Use Case Notes & Comments
+•	The same information should appear in CPS regardless of whether the account is opened using CPS or Merlin
+8.11.5	Post-conditions
+•	The account is now managed with BDPS as the fund choice.
+8.11.6	Development/Deliverables
+1.	Only BDP eligible IRA accounts can hold BDP.
+2.	On CPS, the RETM PLAN FDG field should default to either BDPS or ILAF based on the retirement plan type entered.
+3.	Managed accounts (100 series) must be able to select BDP.
+4.	ILAF should be disabled as a fund choice and should no longer be available (only for 100 series)
+5.	Whether the account is opened using CPS or Merlin, after the account is opened either ILAF or BDPS must appear on the current fund line on the new fund history table.
+8.11.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+8.12	Switching from a Managed to non-Managed IRA Account
+8.12.1	Pre-conditions
+The IRA account has been opened as a managed account.
+8.12.2	Use Case/Functional Specification 
+8.12.3	Alternative Flows
+Not possible in Merlin
+8.12.4	Use Case Notes & Comments
+None
+8.12.5	Post-conditions
+The account is non-Managed.
+8.12.6	Development/Deliverables
+ILAF will no longer be a valid sweep choice for non-Managed accounts.  So when an account goes from Managed to non-managed, an error message needs to appear stating that a new non-managed retirement fund account type must be selected.  The non-managed retirement accounts will default to BDPS as the sweep fund. 
+8.12.7	Additional Information
+Non-Functional Requirements	•	None
+Business Rules	•	All existing rules for using CPS apply (i.e., minimum data requirements, data formats, etc. ) 
+
+9.0	Personal Trust Accounts
+9.1	Overview:
+Personal Trust accounts are setup in GWM universe. Personal Trust accounting and record keeping functions are outsourced to Metavante, a third party vendor.
+9.2	Highlights: 
+1.	Personal Trust Accounts in the GWM world can be (a) Managed (b) Non-Managed set of accounts.
+2.	Personal Trust Accounts (from a Trust perspective) is set up either as a Discretionary (Firm’s fiduciary responsibility towards the client) or Non-Discretionary type. 
+3.	Thus, the following combinations are possible/exist today: 
+a.	A personal trust Managed Account that is discretionary in nature 
+b.	A personal trust Non-Managed Account that is discretionary in nature 
+c.	A personal trust Managed Account that is Non-discretionary in nature 
+d.	A personal trust Non-Managed Account that is Non-discretionary in nature 
+
+9.3	Account recognition: 
+The following outlines how to decipher systematically between Managed/Discretionary for personal accounts.
+
+1.	Only the following Branch/Office are allowed to setup Personal Trust Accounts (No known exceptions to this rule so far). For the purposes of this phase, Personal Trust accounts must be identified solely by referencing the below mentioned branch numbers. 
+Following is the list of Morgan Stanley Trust branches:
+                        755    Currently in use
+534    Currently in use
+558    Currently in use
+546    Currently in use 
+566    Reserved for future use
+568    Reserved for future use
+583	Reserved for future use
+
+2.	As a part of the account set up process, FA’s must select Trust-type. If trust-type ‘DWTCDS’ is selected, then it’s a discretionary account. Please note that behind the scenes, this translates into Account Class = 9 and Sub-class = ‘1’ combination in CPS. 
+3.	Alternatively, if trust-type ‘DWTCDR’ is selected, then it’s a Non-discretionary account. Please note that behind the scenes, this translates into Account Class = 9 and Sub-class = ‘0’ combination in CPS. 
+10.0	Statements
+10.1	Overview:
+Statements must be enhanced to display BDP related activities for managed AAA, BSA, IRA accounts and business AAA, BSA accounts.
+Discover Bank will be replaced by Morgan Stanley Trust FSB for this phase. Please refer to Section 2.0 for the bank related details.
+There may be circumstances where Statements will be required to display all the three banks namely ‘Morgan Stanley Bank’, ‘Morgan Stanley Trust FSB’ and ‘Discover Bank’. This situation may arise when an account switches to managed status post BDP launch. This will result in moving assets from ‘Discover Bank’ to ‘Morgan Stanley Trust FSB’ on the upgrade date and will be followed by interest receipt from ‘Discover Bank’ on the second last business day of the month.
+10.2	Development and Deliverables:
+10.2.1	BDP Holdings display 
+Wherever it appears on a monthly statement, the holdings should read as follows:
+‘Morgan Stanley Bank’
+‘Morgan Stanley Trust’
+	‘Discover Bank’ (if required)
+10.2.2	Other changes
+The following screen shot outlines changes required:
+
+•	The bank names and their holdings in each bank must be specified.
+•	Where required, all the three banks along with corresponding holdings should be displayed.
+•	The Disclosure on AAA statements in the Asset Details section will read as follows “Bank deposits are at Morgan Stanley Bank and Morgan Stanley Trust (Members FDIC), affiliates of Morgan Stanley & Co. Incorporated.  Bank deposits are eligible for FDIC insurance up to applicable limits.  Not SIPC insured.”
+•	For all BDP eligible accounts, a second disclosure will appear on the statement backer as follows: “The Bank Deposit Program APY represents the applicable rate in effect for your deposits at the statement ending date.  This APY may be different than the APY that was in effect during the statement period.  For current Bank Deposit Program or Money Market Fund yields, go to http://www.morganstanleyindividual.com/xxxx/xxxx.” 
+•	Est Yrly Income must be displayed in statements. The formula to derive the value is Est Yrly Income = (Total Bank Deposits * APY)
+•	Business AAA – These statements follow the same bank deposit presentation and disclosure that is used for non-business AAA.
+•	Business BSA – These statements follow the same bank deposit presentation and disclosure that is used for non-business BSA.
+•	Personal Trust statements are serviced by a third party vendor and no changes are required to GWM statements.
+
+
+ 
+
+
+11.0	Reporting – Public Site
+11.1	Overview
+Currently, we have the following pages displaying information pertaining to rates for AAA, BSA, IRA and Coverdell accounts. 
+http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/BSARateReaderTier.asp -- BDP Tiered rates for BSA accounts
+http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/UniversalSweepFundRates.asp -- Tax Free rates for BSA accounts
+http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/IRARateReaderTier.asp -- BDP Tiered rates for IRA accounts
+http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/UniversalSweepFundIRARates.asp -- Tax free rates for IRA accounts (does not exist any more).
+Include AAA rate pages as well, if it exists.
+With the current release of BDP, the above pages must be decommissioned and all the above information must be displayed in TWO pages.
+
+11.2	Public-Site Development and Deliverables
+11.2.1	New page to display BDP Tiered Interest Rates and Tax Free Fund Rates for Non-Managed Accounts
+1.	The following page contains two parts. The first part will display BDP tiered rates (6 tiers) for AAA, BSA, IRA and Coverdell Accounts.
+2.	The second part will display the Tax Free alternatives rate followed by the notes and disclaimers.
+3.	x.xx% outlined in the screen shot will be obtained from the same sources as it is being done today. 
+4.	Create a URL that provides a link to BDP Tiered Interest Rates and Tax Free Fund Rates page for non-managed accounts.  This is the same URL that will be displayed in client statements and will be as follows:  http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/BSARateReaderTier.asp -- Get the new address
+5.	The above page must be available as a link from the public site through the following page.
+6.	Create BDP Tiered Interest Rates and Tax Free Fund Rates page.  The envisioned screen will follow the existing format and shall contain the following content.
+ 
+11.2.2	New page to display BDP Tiered Interest Rates and Tax Free Fund Rates for Managed Accounts
+7.	Create a URL that provides a link to BDP Tiered Interest Rates and Tax Free Fund Rates page.  This is the same URL that will be displayed in client statements and will be as follows:  http://individualdev.msdwis.com/AccountOptions/ActiveAssets/InvestmentFeatures/BSARateReaderTier.asp -- Get the new address
+8.	Create BDP Tiered Interest Rates and Tax Free Fund Rates page.  The envisioned screen will follow the existing format and shall contain the following content.
+ 
+11.2.3	Remove pages 
+Remove pages as outlined in section 11.1 (overview)
+11.3	Data Services Updates
+Data Services will need to retrieve the 7 Day yield from the IFSV TKT_HIST table to support these requirements. 
+12.0	Reporting – ClientServ
+12.1	Overview
+The following deliverables outlines the requirements for ClientServ. At the outset, it has been given to understand that there should be no changes with the exception of BDP rates pages display. However, each of the affected areas is narrated below.  
+12.2	ClientServ Development and Deliverables
+12.2.1	Holdings – Label Change to Reflect Proper Taxonomy under ‘Cash and Equivalents’
+‘MMF and Bank Deposits’ should appear for Managed, Business, Personal trust AAA, BSA and IRA accounts.  The screen shot below is for reference.
+  
+12.2.2	Holdings – Balances by Bank
+There should be ability to view balances by Bank. Current functionality allows viewing balances for (a) Morgan Stanley Bank and (b) Discover Bank.  However, for accounts being affected this phase, Discover Bank will be replaced by Morgan Stanley Trust FSB. Thus, any existing accounts with BDP balances should display (a) Morgan Stanley Bank and (b) Discover Bank. Accounts affected as a part of Phase 4 must display (a) Morgan Stanley Bank (b) Morgan Stanley Trust FSB. Under certain circumstances, such as AAA to a managed AAA upgrade, all the three banks mentioned above must be displayed. The screen shot below is for reference.
+ 
+12.2.3	Transaction Activity – Interest Earned Transaction
+The requirement for BDP phases 4 is to show Interest Earned in the activity section.  .  The screen shot below is for reference.
+ 
+12.2.4	Transaction Activity – As of Adjustments for BDP
+The requirement to have as-of backdated adjustments appearing on the Activity screen should be included for BDP phase 4 as in prior phases.  These transactions should appear at the account level for the current or previous cycle.
+12.2.5	Transaction Activity – Correct Taxonomy of Credits and Debits
+The requirement for BDP Phase 4 is to show Automatic Investment and Automatic Redemption as the proper taxonomy for credits and debits. The screen shot below is for reference.
+ 
+12.2.6	Month To Date Interest Accrued/YTD Interest Paid/YTD Interest Withheld
+The ability to view MTD accrued interest, YTD interest paid and YTD interest withheld should be available for BDP phase 4.  The screen shot below is for reference.
+ 
+12.2.7	Link to BDP tiered rates and Tax Free fund rates for Non-Managed Accounts (AAA, BSA, IRA)
+A link should be created to display BDP tiered interest rates and Tax Free fund rates for Non-Managed Accounts from the cash and equivalents section of ClientServ show below. The requirements are detailed in section 11.2.1. Any existing links to other BDP rates should be removed.
+
+ 
+12.2.8	Link to display BDP Tiered Interest Rates and Tax Free Fund Rates for Managed Accounts (AAA, BSA, IRA)
+A  link should be created to display BDP tiered interest rates and Tax Free fund rates for Managed Accounts from the cash and equivalents section of ClientServ shown below. The requirements are detailed in section 11.2.2. Any existing links to other rate pages should be removed.
+
+ 
+12.2.9	Disclosure Statement
+The disclosure must change as follows:
+“Bank deposits are at Morgan Stanley Bank and Morgan Stanley Trust (Members FDIC), affiliates to Morgan Stanley & Co. Incorporated, and are eligible for FDIC insurance up applicable limits and in accordance with FDIC rules. Not SIPC insured.”
+These disclosures must be available on ClientServ when the appropriate account type is on screen, in the same locations where disclosures are available for AAA accounts
+
+13.0	Reporting - Ideas
+13.1	Overview
+There are four enhancements needed in Ideas to support BSA/IRA BDP:
+•	Update the Bank Deposit Program Rates (Internal Web Site) page with ILAF and SGMT rates to be presented with the iMoney Net rates.
+•	Provide a link to the BSA money market fund rates.
+•	Provide a link to the IRA money market fund rates.
+•	Add the IRA disclosure to the Ideas BDP page.
+13.2	Ideas Development/Deliverables
+13.2.1	Update the BDP Rates (Internal Web Site) Page
+The BDP rate (internal web site) page can currently be accessed via the Interest Rate screen, available by selecting Products, Banking, Bank Deposit Program, and Interest Rates. Screen 1 outlines the change required and Screen 2 displays the content (‘Former AAMT clients’ and ‘Former AAGS clients’). The additional data (AAMT and AAGS) from Screen 2 should be ported to Screen 1.
+Screen 1:
+ 
+
+Screen 2: 
+ 
+Updates include the following:
+•	Business Accounts – Client who had AAMT, AAGS, ILAF or SGMT as their sweep selection as of XXXX (BDP launch date) 2007.
+•	New Section for former AAMT clients that has the AAMT rate compared to BDP and iMoney Net rates.
+•	New Section for former AAGS clients that has the AAGS rate compared to BDP and iMoney Net rates.
+•	Display the APY for AAMT and AAGS.
+•	Updated disclosure statement which will read as follows:  
+“Rates are posted each Tuesday, except when the Federal Reserve Bank or New York Stock Exchange are closed. In that case, rates will be posted on the next business day.
+If ILAF (or SGMT) is your cash sweep investment as of September 2006, the rate paid on your bank deposits on the Effective Date will be set periodically, for a period of not less than 6 months, at the higher of the iMoneyNet Retail Taxable Money Market Index (or the iMoneyNet Government Retail Taxable Money Market Index) or 90% of the prevailing ILAF (or SGMT) rate. The Bank Deposit Program rate is calculated on a weekly basis, based on the ILAF/SGMT 7-day yield from the previous week.
+Additional text to be provided by Business
+Thereafter, at a time determined by Morgan Stanley in its sole discretion, interest rates will be the Tiered Rates and accordingly, clients with the higher total household assets will receive a higher interest rate than clients with lower total household assets.”
+14.0	Reporting – AIS
+14.1	Overview
+The following enhancements are required to the AIS ‘A’ Verb screens to support the BDP phase 4 requirements:
+•	Page 1
+o	BDP sweep election will need to read ‘AAA/BDPS’ for AAA accounts that have BDP as their sweep vehicle.
+o	BDP sweep election will need to read ‘BSA/BDPS’ for BSA accounts that have BDP as their sweep vehicle.
+o	BDP sweep election will need to read ‘IRA/BDPS’ for IRA accounts that have BDP as their sweep vehicle.
+o	Money Market Balance/BDPS Balance will read ‘BDPS’.
+Note: The above are only applicable when ILAF or SGMT prior sweep fund balance is greater than zero.
+•	Page 2
+o	Custodial position screen should read ‘Bank Deposit Program’.
+14.2	Development/Deliverables
+1.	A screen mock up for a AAA account is pasted below:
+ 
+2.	Custodial position screen (A Verb, 2nd Page) should read ‘Bank Deposit Program’.  Screen mock up is below.
+ 
+
+15.0	Reporting – FA Workstation
+15.1	Overview
+Each FA workstation enhancement in this section should already be in place and the data should appear appropriately for Managed, Business and Personal Trust accounts.  Nevertheless, each requirement is listed below and a screen shot provided where applicable.  
+15.2	FA Workstation Development/Deliverables
+15.2.1	Positions
+•	‘Morgan Stanley Bank’, ‘Morgan Stanley Trust FSB’ and ‘Discover Bank’ should appear for Managed, Business, Personal Trust AAA, BSA and IRA.  The screen shot below is for reference.
+•	MTD interest accrued should be displayed at the individual bank level as shown below.
+•	The APY needs to be displayed for the BDP program on the Positions screen.  Note that the APY should be displayed at the program level, not the Bank level, as shown below.
+•	The YTD Interest Paid/YTD Interest Withheld fields must be displayed as referenced below.
+
+ 
+
+15.2.2	Transaction Activity – Interest Earned Transaction
+The requirement for Managed, Business and Personal Trust AAA, BSA, IRA is to show Interest Earned transactions at the Bank level in the activity section.  The screen shot below is for reference.
+ 
+15.2.3	Transaction Activity – Tax Withholding by Bank
+The requirement for Managed, Business and Personal Trust AAA, BSA, IRA is to show Tax Withholding by Bank in the activity section.  The screen shot below is for reference.
+.
+15.2.4	Transaction Activity – As of Adjustments for BDP
+The as-of backdated adjustments should appear on the Activity screen.  These transactions should appear at the account level for the current or previous cycle.
+15.2.5	Transaction Activity – Correct Taxonomy of Credits and Debits
+The requirement for managed, business and personal trust AAA, BSA and IRA is to show Automatic Investment and Automatic Redemption as the proper taxonomy for credits and debits.  The screen shot below is for reference.
+ 
+
+
+16.0	Operational Reports – To be enhanced by AAA
+Several of the Operational reports produced by AAA and Margins require changes to support the addition of Managed, Business, and Personal Trust AAA, BSA and IRA accounts.  These changes are presented below.  
+16.1	Margins Reports
+•	New Exception report Managed, Business AAA, BSA accounts and IRA accounts.  Separate reports from existing report for AAA, BSA and IRA accounts, but same layout.
+
+16.2	AAA Reports
+•	Both BDP Million Dollar Reports should include Managed, Business and Personal Trust sorted by account type.
+Paaa.nvs.paaad215.millrept – AAA
+Paaa.nvs.paaad215.millrept.bsa – BSA/IRA
+
+•	Monetary Transaction Reports already listed in section 16.2 should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaad215.jrnlrpt(0) - AAA
+			paaa.nvs.paaad215.jrnlrpt.bsa(0) – BSA/IRA
+
+•	Control Total Report already listed in section 16.2 should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaad215.dwtcrept - AAA
+			paaa.nvs.paaad215.jrnlrpt.bsa(0) – BSA/IRA (print last line)  
+
+•	New/Closed Account Report should include Managed, Business and Personal Trust sorted by account type.
+			paaa.nvs.paaadcmv.nacrpt(0)
+
+•	Weekly BDPS Interest Tier Exception Report should include Managed, Business and Personal Trust sorted by account number.  (E-mail sent weekly by IIGBISUPPORT)
+•	Maintenance Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+•	Swing Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, no account type sort required.
+•	Full Sell Report – Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+•	Month-end Interest Report - Add Managed, Business, and Personal Trust AAA, BSA and IRA accounts, sort by account type.
+
+•	Margin Fund Indicator Exception Report 
+paaa.nvs.paaad210.errfnd(0)
+
+•	BDP Balance Mismatch Report
+paaa.nvs.paaad210.errbal(0)
+
+•	Bucket Inconsistency Exception Report
+paaa.nvs.paaad210.errbuc(0)
+
+•	BDP Funds Trapped Report
+paaa.nvs.paaad210.errtrp(0)
+
+
+17.0	Data Services, Mutual Funds, Sweep Requirements for Tier Maintenance
+17.1	Overview:
+Managed AAA, BSA and IRA accounts that select BDP as their sweep choice will get an interest rate based on the managed or non-managed status.
+This table represents the expected tiers that are required to support managed, business and personal trust accounts. Note: The table below represents the post-launch scenario; therefore the guaranteed rates for prior phases will have expired. (Interest plans 008, 009 and 308 are needed for purposes of keeping fund history. 
+
+17.2	Development/Deliverables:
+#	Deliverables	Systems Impacted
+1	New and existing managed accounts will receive the 100% AAMT or ILAF rate in perpetuity depending on whether the account is a AAA or BSA/IRA/CESA	Data Services
+Sweep
+2	The 100% AAMT and 100% ILAF rate should be set daily to be equal to the prior day’s AAMT/ILAF daily yield.  This should be done systematically	Data Services
+Mutual Fund Services
+3	When the account is a Trade Control H (has been opened but not incepted) it should receive the regular account (non-managed) tiered rates. Once incepted, the account should be immediately changed to the managed account BDP pricing i.e. Sweep team should send (a) interest tier maintenance record and (b) product code change record upon changing the account to a managed status. 	Data Services
+Sweep
+4	Existing business accounts to receive 90% of prior MMF for at least 6 months with tiered rates thereafter	Data Services
+Sweep
+5	The tiered rate for business accounts will be based on household assets but the household assets calculation for the business account only should exclude the assets of any Individual Retirement Accounts in the household.  As an example, a business account householded with an active assets account and an individual retirement account would exclude the IRA’s assets in the household calculation to determine the BDP tier for the business account.  
+The household calculation to determine the BDP tier for the IRA and the active assets account will use the same methodology as prior phases (no change).	Data Services
+6	New business accounts to receive the tiered rate starting when the account is opened	Data Services
+7	Guaranteed interest rates will be set using the same weekly process as in prior phases
+	Data Services
+8	Tiered interest rates will be set weekly, using the same process as in prior phases. 	Data Services
+9	Any new or existing business accounts that are managed will receive the managed account pricing	Data Services
+10	Personal Trust accounts will be identified as accounts that have a class of 9 and either a sub-class of 0 and 1	Data Services
+11	New and existing personal trust accounts will receive the 100% AAMT or ILAF rate in perpetuity depending on whether the account is a AAA or BSA/IRA	Data Services
+12	Similar to managed accounts, the 100% AAMT and 100% ILAF rate should be set daily to be equal to the prior day’s AAMT/ILAF daily yield.  This should be done systematically and not require rates to be entered manually.	Mutual Funds
+13	To support reporting process, Morgan Stanley should transmit the ‘opening fed funds rate’ to Metavante on a daily basis. Preferably, this must be in the same file as daily AAMT/ILAF rates.
+Opening fed funds rate are transmitted from ISG daily around 2 pm EST. The file name is ‘PMGS.NDM.MORGAN.INT.RATE (0). Look for the literals ‘opening fed fund rt’ to pick up the corresponding rate.
+Margins upload the same information to a DB2 table ‘MGS_INT_BASE’ soon after the file received. 
+Preferably, Mutual funds should transmit the AAMT, ILAF and the ‘Opening Fed Funds Rate’ in the same file to Metavante daily before 10 pm EST
+	Mutual Funds 
+
+18.0	Margins
+
+All processes to support BDP Phase 4 in terms of Journals, Bucket movements to track BDP numbers must continue to function as in prior phases.
+
+18.1	Development/Deliverables:
+In addition to the Margin master file that is sent to Metavante personal trust, Margins should send the daily ‘Bank Balance File’ to Metavante personal trust. The file should preferably be sent in the same time frame as the margin master. The file should contain data pertaining only to the personal trust offices. 
+
+Following is the list of Morgan Stanley Trust branches:
+                        755    Currently in use
+534    Currently in use
+558    Currently in use
+546    Currently in use 
+566    Reserved for future use
+568    Reserved for future use
+584	Reserved for future use
+
+Margins to calculate Est Yrly Income and feed to statements in the existing file. The formula to derive the value is Est Yrly Income = (Total Bank Deposits * APY). The value must be rounded to the nearest dollar.
+
+
+
+
+19.0	Performance Reporting
+Performance Reporting produces monthly and quarterly reports for managed accounts. All underlying BDP security positions are rolled into the 360 security on RTA. 
+
+
+19.1	Development/Deliverables:
+1. Interest for BDP securities flow in on transactions for 361, 364, 368 securities. Tests for the security identifiers are hard coded, so as securities are added changes need to be made. 
+
+		2. Change Quarterly Performance Reports, PAD Report  
+
+
+
+20.0	Client Mailings
+
+All BDP eligible AAA, BSA and IRA (managed, business and personal trust) accounts must receive a letter informing them of the change in their sweep fund choices.  These accounts must receive the notification letter, even if the account is BDP-eligible but is currently out of scope for the migration (i.e., currently have a tax free fund selected), the account must receive the notification letter.
+A detailed document will be published outlining the Client Mailing letter.
+
+
+21.0	Appendix A – Use cases for AAA sweep, SMA, CPS and Metavante
+
+ 
