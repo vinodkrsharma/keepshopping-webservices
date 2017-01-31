@@ -1,0 +1,751 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+Software Architecture Document
+Bank Deposit Program
+
+
+
+
+This document contains information that is confidential and proprietary to Morgan Stanley.
+
+Author:	Tom Szabo
+Date:	31 January 2017
+
+eRoom Location:	http://eroom1.msdwis.com/eRoom/wellconnected/ClientCashManagement/0_37053
+ 
+Table of Contents
+1.1	Purpose	6
+1.2	Scope	6
+1.2.1	In Scope	6
+1.2.2	Out of Scope	6
+1.3	Definitions, Acronyms and Abbreviations	6
+1.4	References	6
+2	Architecture Background	8
+2.1	System Requirements	8
+2.2	Principles	8
+2.3	Constraints	8
+2.4	Assumptions	8
+3	Current State	9
+4	System Architecture	10
+4.1	Systems	11
+4.1.1	AAA	13
+4.1.2	MGS - Margins	16
+4.1.3	IFS / MFS	19
+4.1.4	AEC / ECR - FA Compensation	20
+4.1.5	CPS	20
+4.1.6	FPT - Merlin	20
+4.1.7	MSD	20
+4.1.8	HSG - House Holding	21
+4.1.9	AJS / JAWS	21
+4.1.10	AIS	21
+4.1.11	EDB	21
+4.1.12	ClientServ	22
+4.1.13	Integrated Workstation	22
+4.1.14	RTA	22
+4.1.15	STS - Statements	23
+4.1.16	TEF 1099's	23
+4.1.17	PAD / PLX – Performance Reporting	23
+4.1.18	BOS - Branch / National Checkwriter	23
+4.1.19	BLR - Funds Paid Blotter	23
+4.1.20	ARS / IVR	23
+4.1.21	MSS	24
+4.1.22	Managed Account Fund Solutoin Porfolio Architect	24
+4.2	Batch Schedule	25
+4.3	External Interfaces	29
+4.4	Data	30
+4.4.1	Data Element Definitions	30
+4.4.2	Account Structure	30
+4.4.3	Interest	30
+4.5	Enterprise Services	30
+5	Appendix	32
+5.1	Glossary	32
+
+
+ 
+ 
+Revision History
+Date	Version	Description	Author
+2/3/05	1.0	Initial document outline.	Tom Szabo
+5/26/05	1.1	Updated based on Func Spec 1	Tom Szabo
+			
+			
+ 
+1.Introduction
+This phase will strive to answer high level design questions such as:
+How will this project fit within the larger enterprise Blueprint?
+How will this project impact the enterprise Service Oriented Architecture (SOA, that is the so-called Blue U) initially described in the Blueprint?
+What are the tools to support a messaging bus?
+What data standards and messaging standards will be followed?
+How will non functional requirements and operational service level agreements be addressed?
+
+1.1	Purpose
+This document provides an architectural overview of the proposed solution for the BDP Project.  This document was produced by incorporating analysis of the current state, business requirements and architecture artifacts existing within Morgan Stanley.  It provides a foundation for technical system design and development. 
+
+It is a living document that will be updated throughout the course of the project taking into consideration feedback from design and implementation as well as changes to requirements.
+
+1.2	Scope
+The following represents the high level scope for the Project, and is not specific to any particular phase or release of the project.
+
+1.2.1	In Scope
+The following represents the in scope items that will guide the analysis, design and implementation of the Project.  
+o	Sweep processing
+o	External Interfaces
+o	Data provider systems 
+o	Data consumer systems
+o	Customer facing or presentation systems
+
+1.2.2	Out of Scope
+The following represents the out of scope items were not considered in the analysis and design of this project.
+o	Internal reports
+o	Vendor provided reports
+
+1.3	Definitions, Acronyms and Abbreviations
+See appendix.
+
+1.4	References
+This table provides a complete list of all documents referenced elsewhere in the document.
+
+Title	Description	File Name
+BRD	Business Requirements Document	
+Func Spec 1	Functional Specifications 1	
+Func Spec 2	Functional Specifications 2	
+MV Spec	MV Functional Solution Doc	
+	BDP Change Control Addendum	
+Table 1, Reference List
+2.2	Architecture Background
+This section lists and describes factors which influence the architecture decisions in the context of this project.
+
+2.1	System Requirements
+The following are system level requirements that drive and impact the architecture of the system.  
+	Multi-bank – With 2 banks, enables FDIC insurance of $200,000 for single and $400,000 for joint accounts. And higher levels of FDIC insurance when more banks are added.  The solution should support 1 to n banks. 
+	Tiered interest rates - Enables a rate structure in line with our client segmentation approach.  The solution should support 1 to n interest rate tiers. 
+	High availability
+	High performance
+
+2.2	Principles
+The following represents the guiding principles for the design of the solution.  
+	Utilize existing information flow existing in current systems architecture. 
+	Scalability to accommodate scale out and scale up (additional banks and accounts)
+	Employ relational database technology
+	Data transparency
+	Standardized interfaces
+
+2.22.3	Constraints
+	The margin system cannot be expanded to carry the detailed bank balances without significant effort and risk
+	Integrate with existing systems wherever possible
+	Utilize existing information flow in current systems architecture to minimize development effort
+
+2.32.4	Assumptions
+The following are identified assumptions that drive and impact the design of the system.  
+	The selected vendor will support the interfaces described in this document. 
+	Processing will be done within the current batch processing window.
+3.1.13	Current State
+In the current state the AAA system drives the sweep process.  The sweep process takes as input prior day account activity from the Margin system as well as various current day debit and credit activity from various source systems.  The activity is netted and two other processes are triggered.  A transmission file is created for each vendor providing the processing for the sweep choices.  And a journal transaction is created representing the sweep from the brokerage account to the sweep account.  Current vendors include MS Trust Company and BMA.  
+
+The timing for each process is determined by cutoff times established with the supporting vendors.    Cutoff times are stored in a fund table maintained by AAA.  Current cutoff times are all at 5pm. The transmission process with these vendors in generally NDM or Connect:Direct.
+
+The process is driven by the sweep choice for each account as recorded on the account record in CPS.   Current sweep choices include AAMT, AAGS and several others supported by MS Trust Company and AAIA, AADA supported by BMA.   Sweep choices are defined in MSD with dummy security identifiers.
+3.4	System Architecture
+The system architecture describes how the solution relates and interacts with the macro systems environment.  This section outlines relationship to other systems, data, middleware, and enterprise services.
+
+The CCM project is creating a new sweep product with a new associated external vendor.  
+
+Requirements of the sweep product:
+•	Mid-day cutoff sweep 
+•	Tiered interest rates
+•	Drain / Fill migration process
+•	Multi-bank sweep
+•	IIG processing of 1099s and backup withholding
+
+This is a AAA sweep enhancement project.  It involves creation of a new sweep process and an interface to a new vendor.  To support the new sweep process, changes are required to CPS and Merlin to control offering the sweep choice to appropriate eligible accounts.  An additional subsystem is required to drive interest tier assignment based on the account’s total household assets. 
+
+The drain / fill process is used to begin to move client’s assets with negative consent.  The AAA system will implement the drain / fill process.  Due to drain / fill, though an account has a single sweep choice, it will have 2 sweep sub-accounts (the primary and the previous sweep).  To support this, the Margin system A record will be redesigned to hold the previous sweep account balance along with the total sweep balance. 
+
+This is an integration project.  Bank account record keeping is performed by the vendor.  MS continues to maintain master record keeping for the brokerage account.  The solution architecture is an integration approach that synchronizes and supplements the brokerage record keeping with the vendor bank account record keeping.  The integration architecture uses file exchange to synchronize the systems.  
+
+ 
+4.1	Process View
+From a process view there are 5 major processes.  Each process involves multiple systems within Morgan Stanley as well as Metavante systems.   Following outlines the major processes and their sub-processes. 
+4.1.1	Account Maintenance
+•	Selection of BDP as a sweep choice
+•	Opening MV account 
+•	Closing MV account
+•	Tier change
+•	Account re-registration
+•	Account swings
+4.1.2	Sweeps
+•	Normal BDP sweep
+•	Drain and Fill sweep
+•	BDP Full Sell
+4.1.3	BDP Presentation
+This is not a distinct process but a data distribution function.
+
+Internal Presentation
+•	AIS
+•	IWS
+•	Advent
+
+Client Facing Presentation 
+•	ClientServ
+•	IVR
+
+4.1.4	End of Month
+•	Interest posting
+•	Statement production
+4.1.5	End of Year
+•	Annual statement production
+•	1099 production
+
+4.2	Systems View
+The following systems are involved in the CCM solution.  They have major or minor enhancements, job schedule changes or may only be involved in testing. 
+
+The systems break down into the following categories:
+1.	Systems that have a core functional or processing role. Impact will be implementation of new logic to support required functionality.
+2.	Data suppliers – impact may be changes to input, store and supply new required data items.
+3.	Data consumers – impact may be none or large. Data access can be subdivided into:
+a. Systems that are customer facing. Impact will involve presentation of customer account balances held at each bank and their interest rates. 
+b. Systems that require access to both new and previous sweep vehicle balances. E.g. Drain / Fill.  Impact will involve the access and presentation of 2 sweep vehicle balances. 
+c. Systems that require summary cash position.  Impact should be minimal or none. 
+
+Application	Role	Build	Type
+AAA	Process	Y	Batch
+MGS – Margins	Process	Y	Batch
+IFS / MFS	Process	Y	Batch
+AEC / ECR - FA Compensation	Process	N	Batch
+CPS	Data supplier	Y	Online
+AJS / JAWS	Data supplier	N	Online Distributed
+FPT- Merlin	Data supplier	Y	Online Distributed
+MSD	Data supplier	N	Reference Data
+STS / STP – Statements	Data consumer	Y	Batch
+RTA	Data consumer	Y	Batch
+MSS	Data consumer	Y	Batch
+TEF - 1099's	Data consumer	N	Batch
+EDB / Data Model & API Changes	Data consumer	Y	Data
+BLR - Funds Paid Blotter	Data consumer	N	Online / Batch
+BOS - Branch / National Checkwriter	Data consumer	N	Online / Batch
+ARS / IVR	Data consumer	Y	Online / Batch
+AIS	Data consumer	Y	Online / Batch
+IWS - Integrated Workstation	Data consumer	Y	Online Distributed
+ClientServ	Data consumer	Y	Online Distributed
+Performance Reporting	Data consumer	Y	Online Distributed / Batch
+
+
+
+ 
+
+4.2.1	AAA
+AAA is the system that performs all aspects of sweep processing.  AAA processing functions and responsibilities include:
+•	Account maintenance – account opening at MV due to new account opening or fund switch; swings; account re-registration between single and joint; FA change; interest tier change.  Driven by CPS/Merlin account maintenance activity and EDB API for interest tier assignment. 
+•	Sweep 1 – a process that provides for all sweep accounts an ‘open to buy estimate’ which is used for the FDR credit line and to assess the account opening threshold of $1000 minimum. 
+•	Sweep – process to summarize activity for all accounts into a net position and creation of sweep transactions to sweep out credits or sweep in for debits.  
+For BDP, this also includes identifying drain and fill accounts (previous fund is AAMT or AAGS and BDP date is 11/21/05) and normal sweep (any other previous fund) and full sells. 
+•	BDP Interest posting and backup withholding to Margins at the bank level 
+•	BDP Interest adjustment booking to Margins (phase 2)
+•	Support for AAIA to BDP conversion on 11/21/05 (full sell, account open and full buy)
+•	Account opening for migrated accounts (starting on 11/21/05, but some accounts may be delayed until the account has a credit balance > $0)
+
+Interest tier assignment will be accomplished by utilizing an API that performs the HH valuation and interest tier assignment logic.  AAA will call the API to lookup the interest tier based on where the balance falls in the ranges defined in the BDP interest tier table.   This result is sent to the vendor in the account maintenance file. 
+  
+BDPS Interest Tier Table
+Interest tiers are being collapsed. See change control. 
+
+Product	Total HH Balance range low	Total HH Balance  range hi	Interest Tier
+AAA	$0	$99,999	001
+AAA	$100,000	$999,999	002
+AAA	$1,000,000	$9,999,999	003
+AAA	$10,000.000	+	004
+AAA
+AAMT Exception			005
+AAA
+AAGS Exception			006
+
+•	Clients who open an account after Launch, selecting the BDP sweep will receive a tiered interest rate
+•	Clients who switch into the BDP after Launch will receive a tiered interest rate
+•	All converted AAIA account holders will receive a tiered interest rate
+•	Rate exceptions: Due to regulatory issues (NYSE and Anti-tying), the following exceptions must be implemented to override the interest tier assigned to an account.
+	Clients invested in AAMT / AAGS pre-launch (before 10/10/05) will receive AAMT/AAGS comparable rate.  These pre-existing migrated accounts will get an exception for a limited period (up to 1 year) as shown below.  
+	If a pre-existing account switches to a different fund after launch and later switches back to BDPS, they will they receive a tiered rate.
+
+Vendor Interest Tier Table
+The products and interest plans will be configured in the vendor system. The vendor system maintains a table like the one shown below which controls account interest processing.   See MV Data Interface Layouts document for the corresponding interface file DPI03. 
+
+Product	Interest Plan	Nominal Interest rate
+001	001	
+001	002	
+001	003	
+001	004	
+001	005	
+001	006	
+
+ 001 = ‘AAA’
+
+ 
+
+Performance Issue
+AAA will call the Data Services API for each BDPS account to determine tier changes.  In phase 1 this will be 600,000 calls to DB2. 
+
+Tier Override
+A change control is being initiated that will define a process to set the tier manually and override the tier assignment by HH asset value.  This process is used to account for assets that are not visible to HH such as commodities or futures.  The change will impact the current interest tier table, the API and require a new front end application (to be added to Householding) for administration of the tier overrides. 
+
+4.2.1.1	Fund Table
+This is a table that defines sweep funds and publishes cut-off times for sweep choices.  BDP will have a 2:15 cut-off time.  However, there is no special pending process that will be implemented for transactions that are posted after cutoff.  Transactions posted after cutoff will be held in the MS account until the next day.  In the case of a drain and fill account, if transactions posted after cutoff result in a debit position, it will be satisfied by a debit transaction to the drain fund at 5pm. 
+
+It maps funds codes used in Margins to MSDW security ID.  
+
+4.2.2	MGS - Margins
+Margins is the primary brokerage accounting system for Morgan Stanley IIG brokerage accounts.  Margins processing is generally unchanged.  The major change is to support the storage of 2 sweep balances that result from negative consent and drain / fill and the population and maintenance of those 2 sweep balances as transactions are posted by AAA.  Margins processing will be applied to both buckets except for BDP which only effects bucket 1.
+
+Bucket 1, formerly AAA sweep fund balance,  is redefined as the total cash equivalent which includes balances held at the primary sweep account and the previous sweep account.  A new bucket 2 is defined as the previous sweep account balance (or drain balance).  Bucket 1 is the field currently read by other applications that need to determine availability of funds to cover a transaction. 
+
+Margins functions and responsibilities include:
+•	Initial load of AAMT or AAGS balance to bucket 2
+•	AAMT redemption reduces bucket 1 and 2
+•	AAGS redemption reduces bucket 1 and 2
+•	BDP deposit increases bucket 1
+•	BDP withdrawal reduces bucket 1
+•	AAMT dividend increases bucket 1 and 2
+•	AAGS dividend increases bucket 1 and 2
+•	DBP interest increases bucket 1
+•	Feed data to firm G/L
+
+Cash Equivalent Balance
+Margin will redefine the A record to represent the total cash equivalent.  A second bucket will be added to represent the previous sweep balance to support the drain and fill.   For most scenarios bucket 1 behaves as it does today.  After drain and fill is complete the bank balance will be in bucket 1.  The table below shows the values in the buckets in various scenarios. 
+
+	Bucket 1
+AAA-CLOS-POS	Bucket 2
+AAA-CLOS-POS-DRAIN
+Account with sweep choice = AAMT	AAMT balance	0
+Account with sweep choice AAMT 
+after launch. 
+(Negative consent) 	AAMT + Bank balance (update balance to reflect net combined balance)
+	AAMT balance
+(copy previous balance from bucket 1)
+Account with sweep choice BDPS 
+after drain / fill is complete. 	Bank balance
+(AAMT component is 0)	0
+(AAMT has been drained to 0)
+
+AAA will read bucket 2 for drain purposes only until balance has been exhausted. 
+
+This bucket, the AAA_CLOS_POS, is the primary source for an account’s cash equivalent balance to support validation of buys, outbound wire transfers, outbound funds transfers, etc.  This data is also fed to RTA and Shadow Balance for downstream data distribution purposes.
+
+Various balances can be derived from the fields as follows:
+•	Cash Equivalent Balance = AAA-CLOS-POS
+•	BDP Balance = AAA-CLOS-POS – AAA-CLOS-POS-DRAIN
+•	AAMT or AAGS Balance = AAA-CLOS-POS-DRAIN
+
+For additional detail, data is available in the BDPS Balance Table. 
+
+4.2.2.1	DB2 BDPS Balance Table (implemented by Margins team)
+Detailed balance data is held in the BDP balance table. The make-up of that total cash equivalent will be stored in the BDP balance table.  In addition to current balances, APY, accruals and month-end historical balances will also be stored.  
+
+Logically, this is an extension to the RTA tables.  The primary reason for these extensions is that RTA could not hold bank level detail.  
+
+BDP Balance table functions and responsibilities include:
+•	Nightly load of vendor balance file to balance table
+•	Nightly load of previous fund position to balance table 
+•	Nightly reconciliation between Margins and balance table
+•	Provide access to data consumers that require bank level detail, APY and accruals via Data services API
+
+ 
+
+
+Account 	APY	Sweep	Bankid	balance	MTD accrual	
+123-123456	1.51	BDPS	001	98,000	119.59	
+123-123456	1.51	BDPS	002	27,000	33.29	
+123-123456	na	Aamt	Na	500,000		
+
+
+
+
+4.2.3	IFS / MFS
+MFS is the mutual fund system and is classified as a processing system because it receives vendor interface files.  It receives 2 files from the vendor (Program Interest rates (weekly on Tuesdays) and FA Comp (monthly) files).  
+
+ 
+The program interest rate file is parsed and the data is updated to the BDP program interest rate tables. The rates will be presented on the Morgan Stanley public web site and Ideas and ClientServ.  An additional table will be added to support the BDP product tiered rate structure which does not fit into the current schema. 
+There is no user interface to edit the rates. 
+
+The FA Comp file is passed to the FA Comp system.
+
+4.2.4	AEC / ECR - FA Compensation
+FA Comp system processes FA compensation based on data received from the sweep account vendors through the MFS system.  The file contains Branch gross revenue for each account based on a factor (10bps) multiplied by the average daily balance for the prior month. 
+
+4.2.5	CPS
+CPS is a data provider system.  It is the reference system for account information – specifically the current sweep choice and prior sweep choices.  This data is used by the AAA system to control sweep processing on all accounts.  In addition it is used for some account opening and maintenance.
+CPS functions and responsibilities include:
+•	Reference for current and prior sweep choice for all accounts
+•	Control selection of sweep choice according to account eligibility specifications for new accounts and account maintenance
+•	Source of information that drives bank account maintenance including swings, FA changes, re-registration.  
+•	CPS will run a Conversion and migration program to switch AAIA, AAMT and AAGS to BDPS.  Accounts with GIMII = Y will be excluded from conversion and migration.  
+
+4.2.6	FPT - Merlin
+Merlin is a data provider system. It is the system that performs most account opening and account maintenance. 
+Merlin functions and responsibilities include:
+•	Reference for current sweep choice for all accounts
+•	Control selection of sweep choice according to account eligibility specifications for new accounts and account maintenance
+4.2.7	MSD
+MSD is a data provider system.  It is a reference system that defines all securities – specifically it defines dummy security entries for the BDP and its participating banks.
+MSD functions and responsibilities include:
+•	Reference for sweep fund and bank information
+
+Sweep Choice
+Sweep choice is an indicator in CPS and Merlin of the sweep choice (AAMT, AAIA, etc.).  In addition, the sweep choice has a record in the MSD reference data file which gives it a DWR#.
+	Fund Symbol	DWR#	Mod1	Mod2	Mod3	Mod4
+AAMT	AAMT	310	MUT	MMK	PRO	SWP
+AAIA	AAIA	320	MUT	MMK	PRO	SWP
+AAGS	AAGS	303	MUT	MMK	PRO	SWP
+BANK DEPOSIT PROGRAM	BDPS	00360	MUT	MMK	PRO	SWP
+BDP MORGAN STANLEY BANK	MSBNK	00361	MUT	MMK	PRO	SWP
+
+CCM will require multiple entries.  One for the sweep choice and one for each bank in the program. Interest will be booked at the bank level using the bank level DWR#.  A different mod code may be needed to differentiate processing for this product. 
+There is no functional change to this system. 
+
+4.2.8	HSG - House Holding
+House Holding is a data provider system.  It provides the household asset value that is used as an input to interest tier assignment.   There is no change to this system.
+
+4.2.9	AJS / JAWS
+AJS / JAWS is a source of transactions that provide input to the AAA daily sweep process.    AJS / JAWS are also data consumers because they access RTA and Shadow Balance to validate transactions against total cash balance.  
+AJS / JAWS responsibilities include:
+•	Provide transaction file at 2:15pm each day including prior day credits, current day debits and current adjustments
+4.2.10	AIS
+AIS is used for account inquiry and must be enhanced to show the total cash equivalent and display the fund symbols that make up the total cash equivalent. 
+CPS functions and responsibilities include:
+•	Display total cash equivalent and current and prior sweep choices for drain / fill accounts.  
+•	Data will be provided through a UIQ file from Margins.
+
+4.2.11	EDB
+EDB is the enterprise database. Data Services provides data modeling and data access API support for the above systems that require new or modified databases and access to new data.  See Data Services Technical specifications for details.  
+New tables added to the environment include:
+1.	BDP balance tables
+2.	BDP program interest rate tables
+3.	BDP interest tier tables
+
+In addition to the tables, APIs are provided to access data from each set of tables. 
+Reference EDB technical specifications for more information. 
+
+
+4.2.12	ClientServ
+ClientServ is an extranet website for MS IIG clients.  It provides a near-realtime view of their accounts. 
+ClientServ functions and responsibilities include:
+•	Display total cash equivalent
+•	Display DBP balance at the bank level
+•	Display current BDP APY
+•	Display drain position in previous sweep choice
+•	Display statements (HTML and PDF versions) showing detailed BDP balances, interest and transactions
+•	Data will be provided by EDB apis that access RTA tables (balances) and the BDP balance table (for APY).
+4.2.13	Integrated Workstation
+IWS is an intranet website for MS users.  It provides a near-realtime view of client’s accounts. 
+IWS functions and responsibilities include:
+•	Display total cash equivalent
+•	Display DBP balance at the bank level
+•	Display current BDP APY
+•	Display current BDP MTD interest accrual
+•	Display drain balance in previous sweep choice
+•	Data will be provided by EDB apis that access RTA and the BDP balance table 
+4.2.14	RTA
+RTA is a data consumer in this project, but, to other systems, it is a data supplier.  
+
+RTA changes reflect changes to Margins master file – redefining AAA sweep balance to total cash equivalent balance.   Those systems accessing RTA for total cash balance information require no change.  Data will be provided by a feed from Margins. 
+
+Due to Performance Reporting requirements, RTA will adopt a different approach for loading positions from Margins.  For drain/fill accounts, the following approach will be used. 
+ 
+RTA to Break out BDP and AAMT when loading from Margins to Position tables
+RTA will breakout balances for drain/fill accounts by examining the sweep fund indicators.  Accounts with current fund = BDPS and previous fund = AAMT or AAGS and the drain bucket is greater than 0 are drain/fill.  BDP balance = AAA-CLOS-POS - AAA-DRAIN-POS.  
+Should a 0 balance BDP be broken out?  [On day 1, most BDPS accounts will be drain/fill accounts but BDP balance will be 0.  So bucket 1 and 2 will be equal.]
+
+RTA to look up yield from BDP balance table 
+For all accounts with BDP, RTA will lookup the yield for each account from the BDP balance table.  This value will be provided to Perf Reports.
+
+RTA to calculate estimated annual income for BDP 
+RTA will use the BDP yield for each account to calculate the estimated annual income using current methods. 
+
+Those systems accessing RTA for client presentation purposes must be aware that a sweep balance with fund = BDPS requires a lookup in the DB2 balance table if they need access to bank level balance. 
+
+
+4.2.15	STS - Statements
+Statements presents a client’s position at month end and details all balances, positions and transactions.  
+Statements responsibilities include:
+•	Present bank level balance (Margin A record or DB2 balance table)
+•	Present earned APY (DB2 balance table)
+•	Present opening and closing balance of BDP and the drain fund if any (Margin A record)
+•	Present drain fund balance (Margin A record)
+•	Statements also supports HTML and PDF statements displayed on ClientServ.
+
+4.2.16	TEF 1099's
+This system produces tax reporting for client’s using income transactions (interest and withholding) as posted to the Margins system.   Data will be provided through core. 
+
+4.2.17	PAD / PLX – Performance Reporting
+Performance reporting includes cash and equivalents in their reports.  BDP will be included in cash equivalents.   Data is provided by RTA.
+
+Performance to accept yield data from RTA.
+All BDP data (balance, income and yield) will be provided by RTA.  Contrary to the current process which retrieves the yield from an MSD DB2 table, RTA will retrieve the yield for BDP from the BDP balance tables.  
+
+4.2.18	BOS - Branch / National Checkwriter
+This system reads total cash balance to validate transactions.   Data is provided by Shadow Balance. 
+
+4.2.19	BLR - Funds Paid Blotter
+This system reads total cash balance to validate transactions.  Data is provided by Shadow Balance.
+
+4.2.20	ARS / IVR
+The voice response system provides account balance information to client’s via a touch tone telephone. It will present BDP and drain fund balances.  Data is provided by Shadow Balance. 
+
+4.2.21	MSS
+Advent
+This system reads sweep fund balances to support delivery to Advent for reporting purposes.  Data is provided by Margins and MSD.  Posiition data comes from the Margin A record.   For drain / fill accounts the BDP and previous fund balances are broken out.  Transaction data also comes from Margins.  For BDP interest transactions, MSS will map the security ID for the bank level to the roll up to ensure that transactions tie back to the balances.
+
+GIM II
+Investigation shows that some in scope accounts have a GIM II indicator which enables them to receive supplemental reports.  Account data is passed to GIM II via MSS.  32 Accounts have this feature.  
+
+4.2.22	Managed Accounts - Fund Solutions / Porfolio Architect
+Managed accounts are out of scope.  These managed account systems block accounts that have BDPS as their sweep choice.  The branch will have to swtich the account to another sweep choice before enrolling the account in the managed product. 
+ 
+
+ 
+5	Implementation View
+5.1	Code Coverage
+
+Application	Function	
+AAA	Account maintenance
+Daily sweep 
+Interest posting
+Swings
+Fund table
+Conversion	
+MGS – Margins	Bucket conversion
+A record update
+BDP balance table update
+MV Reconciliation 	
+IFS / MFS	Load BDP APY
+FA Comp	
+AEC / ECR - FA Compensation	FA Comp	
+CPS	Front end edits
+Conversion	
+AJS / JAWS	2:15 schedule	
+FPT- Merlin	Front end edits	
+MSD	Data setup	
+STS / STP – Statements	BDP reporting	
+RTA	Load drain/fill positions
+Load APY	
+MSS	Feed to Advent	
+TEF - 1099's	BDP reporting	
+EDB / Data Model & API Changes	Ref data
+Tier ranges
+Tier assignment	
+BLR - Funds Paid Blotter	2:15 schedule	
+BOS - Branch / National Checkwriter	2:15 schedule	
+ARS / IVR	BDP presentation	
+AIS	BDP presentation	
+IWS - Integrated Workstation	BDP presentation	
+ClientServ	BDP presentation
+AAA rates
+BDP rates	
+Performance Reporting	DBP presentation
+BDP yield 	
+
+ 
+5.2	Roll out dependencies
+Draft analysis of application interdependencies. 
+
+Application	Can deploy 
+Pre launch 	Comment	Dependent on other systems
+AIS			Y
+Margins
+ARS / IVR	?		Y
+Shadow balance
+IWS - Integrated Workstation	N		Y
+RTA
+EDB
+ClientServ	N		Y
+RTA
+EDB
+Performance Reporting	N	Label changes to be coordinated with statements	Y
+RTA
+BLR - Funds Paid Blotter	N	Schedule change	N
+BOS - Branch / National Checkwriter	N	Schedule change	N
+AJS / JAWS	N	Schedule change	N
+TEF - 1099's	NA		Y 
+Statements
+CPS	NA	CPS has a specific schedule of releases on 10/24 and 11/17	N
+FPT- Merlin	NA	Merlin has specific schedule of releases on 10/24 and 11/17	N
+STS / STP – Statements	N	Not active until Nov prelim and Nov statements	Y
+Margins
+RTA	Y	Not active until accounts with BDP exist	Y
+Margins
+MSS	Y	Not active until accounts with BDP exist	Y
+Margins
+MGS – Margins	Y	Not active until accounts with BDP exist	N
+IFS / MFS	Y	Not active until MV sends rates	N
+AEC / ECR - FA Compensation	Y	Not active until first fa comp received from MV	N
+EDB / Data Model & API Changes	Y	Structure changes are adds.  
+API changes are dependent on structure changes. 	N
+MSD	Y	Security setup only	N
+AAA	Y, 
+Except pnsedit	Not active until accounts with BDP exist	Y
+AJS, JAWS, BLR, MGS
+
+ 
+5.3	Batch Schedule
+A majority of the solution is batch.  This section summarizes changes to the batch schedule. 
+
+Normal Daily Schedule
+•	AAA will send account maintenance to MV daily by 10am.  This process is dependent on CPS and HH data (~10,000 records)
+•	AJS and related systems will run a new intra-day schedule to collect transactions to be fed to the sweep at 2:15pm in addition to the existing scheduled job at 5pm.  The AAA process is dependent on this job. 
+•	AAA will run the BDPS sweep process at 2:30pm.  Following creation of the MV daily activity file, a job will initiate the file transfer to MV at 2:45pm (~50,000 records)
+•	MV will send a nightly balance file by midnight that will be processed by Margins and AAA.  (~ 600,000 records).  This is not an input to Margin nightly process. Margins will load the data into the BDP balance table which has dependent systems including IWS and ClientServ.  AAA will extract prior period interest adjustment transactions to be posted the next day. 
+•	From Margins, BDP balance data is provided to RTA
+•	From Margins, BDP balance data is provided to AIS
+•	From AIS, BDP balance data is provided to Shadow Balance
+
+Monday Weekly Schedule 
+•	AAA sends account maintenance including account swings to MV by 10am. 
+
+Tuesday Weekly Schedule
+•	IFS receives and posts program interest rates by 8am. 
+•	AAA sends account maintenance including interest tier updates for all BDP accounts.
+
+Monthly Schedule (Next to day business day)
+•	AAA to receive and post interest by 8pm. 
+
+Monthly Schedule (Last business day)
+•	Margins to receive and process BDP balance file by 11:59pm with APY Earned for the month.  Statements is dependent on getting APY Earned for the month. 
+
+Monthly Schedule (First business day)
+•	AAA sends account maintenance including account swings to MV by 10am. 
+
+Monthly Schedule (Second business day)
+•	MFS to receive and process FA Comp file from MV by 12:00pm.   Send to FA Comp system.
+
+
+
+
+
+
+5.4	External Interfaces
+
+Freq	Start time	End time	Function	Type	From	To
+Daily		10:00 AM	Account maintenance file 	interface	MS (AAA)	Vendor
+Daily	2:00 PM	3:00 PM	Daily activity file	interface	MS  (AAA)	Vendor
+Daily		11:59 PM	Account Balance file	interface	Vendor	MS (Margins and AAA)
+ad hoc		10:00 AM	As of adjustments file	interface	MS (AAA)	Vendor
+Monthly - Business day before the last business day of the month.	8:00 PM	8:00 PM	Interest posting file	interface	Vendor	MS (AAA)
+Weekly - Every Monday AM		10:00 AM	Account maintenance file (includes swings)	interface	MS (AAA)	Vendor
+Monthly - First Business Day of the Month		10:00 AM	Account maintenance file (includes swings)	interface	MS (AAA)	Vendor
+Monthly – Second  day of month   		8:00 AM	FA comp file	interface	Vendor	MS (MFS)
+Weekly – Every Tuesday		8:00 AM	Program Interest rate file	interface	Vendor	MS (MFS)
+
+
+Sends from MS to MV: 
+•	Maintenance file (PAAA.NVS.PAAADCMV.METMAINT)
+•	Daily Activities file (PAAA.NVS.PAAAD215.MTVTFND)
+
+Receives from MV to MS: from MV: 
+•	Balances (PAAA.NDM.MTV.PAAADCIA.BALANCE)
+•	Interest (PAAA.NDM.MTV.PAAADCIP.INTEREST)
+•	APY (PIFS.NDM.MTV.PIFSW600.APYTIER)
+•	FAComp (PMFS.NDM.MTV.PMFSNU28.FACOMP)
+•	Daily Rejects (PAAA.NDM.MTV.PAAADREJ.REJECT)
+
+
+5.5	Data 
+5.5.1	Data Element Definitions
+	Account number – vendor will use the IIG account number and store it as an attribute of the client account.  All interface files will use IIG account number.  All inquiries will be by IIG account number.  Account number is 111-222222-333.  The bank level sub-accounts will use the 9 digit account number with a bank suffix – 111-222222-1.
+	HH tier – platinum, gold, blue tiers determine IIG services 
+	Account type – AAA, BSA, IRA (also product)
+	Client type – individual or joint account holder
+	FA Comp factor – factor applied to average monthly balance to provide FA compensation
+	Revenue share factor – factor that determines IIG revenue share received from bank
+	Balance threshold – account balance limit at which deposits are sent to the next bank in the sequence, or at which deposits are rebalanced.  Typically $98,500 for single.  Only applies for multi-bank. 
+
+5.5.2	Account Structure
+For every IIG account that has the BDP sweep choice, there will be accounts set up at the vendor to track money held within this program.  There will be no direct client accounts at the banks.  All funds will be held in omnibus accounts at the bank.
+
+IIG	Vendor	Bank
+AAA Account
+111-222222-333
+	Accounts for each bank
+Subledgers for MMDA and TA 
+111-222222-333
+111-222222-1
+111-222222-2
+…	Omnibus accounts at each bank for each product with MMDA and TA subaccounts
+
+
+5.5.3	Interest
+BDPS is a bank deposit product and pays interest on the client’s account balance.  The interest applied is a factor based on a nominal annual interest rate.  The nominal annual interest rate is determined by an interest rate tier structure.
+
+
+5.5.4	BDP Data Dependencies
+Data	System of Record	Source for batch Systems	Source for Distributed Systems
+Security ID	MSD	MSD	EDB MSD
+BDP APY	Metavante	IFS	IFS
+BDP balance rollup	Margins	Margins A records	RTA TPOS_INTRA
+BDP balance bank	Metavante	BDP Balance table extract	BDP Balance table
+BDP accrual	Metavante	NA	BDP Balance table
+Account information	CPS	CPS	EDB Merlin
+Positions	Margins	Margins	RTA TPOS_INTRA
+Transactions	Margins	Margins	RTA 
+
+Systems reading BDP data
+	BDP balance rollup	BDP balance bank	BDP APY	BDP accrual
+AAA	Y	N	N	Y
+MGS – Margins	Y	Y	N	N
+IFS / MFS	N	N	N	N
+AEC / ECR - FA Compensation	N	N	N	N
+STS / STP – Statements	Y	Y	Y	N
+RTA	Y	N	Y	N
+MSS	Y	N	N	N
+TEF - 1099's	N	N	N	N
+EDB / Data Model & API Changes				
+CPS	N	N	N	N
+BLR - Funds Paid Blotter	N	N	N	N
+BOS - Branch / National Checkwriter	N	N	N	N
+ARS / IVR	Y	N	Y	N
+AIS	Y	N	N	N
+AJS / JAWS	Y	N	N	N
+FPT- Merlin	N	N	N	N
+IWS - Integrated Workstation	Y	Y	Y	Y
+ClientServ	Y	Y	Y	Y
+Performance Reporting	Y	N	Y	N
+MSD	N	N	N	N
+
+5.6	Enterprise Services
+The solution utilizes several enterprise services as part of the overall solution. 
+
+NDM or Connect:Direct
+All IIG to MV interfaces are file transfers that utilize Connect Direct. 
+A new communications infrastructure is being put in place to support these interfaces.  The infrastructure will provide T1 bandwidth and support BCP requirements. 
+7.6	Appendix
+7.16.1	Glossary
+Term	Description
+Books and Records (BNR)	- It is a requirement of the Securities and Exchange Commission that trading firms keep “Books and Records (BNR).”  Full requirements for BNR are found in SEC Rule 17a-3, SEC Rule 17a-4, and later addendums in 17 CFR Part 240 and 242. The following is a summary, only:
+Every member of a national securities exchange, transacting business in securities must keep on file, in written or electronic form, the detailed information contained in blotters, order tickets (whether trades are executed or not),  memorandum of each brokerage order, all confirmations, asset and liability ledgers, income and expense ledgers, ledgers of capital accounts, ledgers of the firm’s employee’s transactions, ledgers of house cash, securities and accounts, and itemized ledgers of each cash and margin account owned by a customer, by the customer’s counterparty, by the firm and by the firm’s counterparty. 
+Further, ledgers (or other records) reflecting securities in transfer, dividends and interest received, securities borrowed and securities loaned, moneys borrowed and moneys loaned (together with a record of the collateral therefore and any substitutions in such collateral), securities failed to receive and failed to deliver,  details of all long and all short securities including location, all long and all short securities record differences, copies of all confirmations of purchases and sales, and repurchase and reverse repurchase agreements must be kept on file in written or electronic form.
+Detailed securities records must be kept including, as of the clearance date all “long” or “short” positions.  A detailed memorandum of each purchase, sale and order with another firm must also be stored.
+Futher, detailed records of each cash and margin account, a record of all puts, calls, spreads, straddles and other options, a record of the proof of money balances of all ledger accounts in the form of trial balances, and a record of the computation of aggregate indebtedness, and net capital as of the trial balance date are also requirements for retention.
+
+Detailed records about each employee, each consultant, and any associated person employed by the firm in a non-clerical and non-ministerial capacity shall also be obtained and stored. In addition, records regarding any internal broker-dealer system must be kept, including, records of customers who has access to an internal broker-dealer system, securities transactions executed through these systems, details of transaction volumes, and time-sequenced records of each transaction. 
+
+Further, detailed customer and customer account records shall be preserved along with  all written complaints from customers. Purchase and sale of securities attributable for monetary and non-monetary compensation purposes, to an associated person of the firm shall be stored. All communication with the public shall be recorded, a record of the principals of the firm and a list of all persons who can explain the firm’s recordkeeping shall be recorded.  Records about the activities of each office and copies of exception reports on unusual activities in customer accounts shall also be recorded. 
+
+For complete requirements, please see SEC Rule 17a-3, SEC Rule 17a-4, and 17 CFR Part 240 and 242.
+
+EDB	Enterprise Database (Morgan Stanley’s DB2 Database)
+Nominal Interest rate	The nominal interest rate is the stated annual interest rate on a financial instrument.
+
+7 day rate	SEC yield is the standardized yield calculation required by the U.S Securities and Exchange Commission. Funds are required to disclose this rate in their prospectus. It expresses the amount of income that a fund has paid out in proportion to its price. SEC yields are stated in annualized terms.  Money funds generally report a 7-day SEC yield. The rate expresses how much the fund would yield if it paid income at the same level as it did in the prior month for a whole year. It is calculated by taking the sum of the income paid out over the period divided by 7, and multiplying that quantity by 36500 (365 days x 100).
+
+Annual Percentage Yield (APY)	The percentage, required by Truth in Savings regulations, to be disclosed on interest-bearing deposit accounts that reflects the total interest to be earned based on an institution’s compounding method, assuming funds remain in the account for a 365-day year.
+
+Earned APY	The annual percentage yield earned for periodic statements under § 230.6(a) is an annualized rate that reflects the relationship between the amount of interest actually earned on the consumer's account during the statement period and the average daily balance in the account for the statement period.
+
