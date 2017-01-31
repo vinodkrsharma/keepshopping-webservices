@@ -1,0 +1,2211 @@
+
+
+
+
+
+Functional Requirements
+-	New and Existing Money Offerings (NEMO)
+
+
+Author: 	Shrushti Parikh
+Version:	1.0
+Version Date:	December 21st, 2015
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Table of Contents
+
+1.	General Information	4
+1.1	Version Management	4
+1.2	Document Review and Approval	4
+2.	Introduction	54
+2.1	Overview	54
+2.2	Current Process	5
+2.3	Assumptions	5
+2.4	Applications	6
+3.	Offerings Setup – Manage Offerings	6
+3.1	Offering Details	6
+3.2	Cusip Details	7
+4.	Eligibility	8
+5.	Exceptions	9
+6.	NEMO Overview	10
+6.1	In a Nutshell	10
+6.2	High Level Context Diagram	10
+6.3	Functionality Overview	11
+6.4	Offerings Application – UI Overview	12
+6.5	EPR Requirements	13
+6.6	Offerings Status	16
+7.	Front-End Screens	1920
+7.1	Launch Point	1920
+7.2	Overview Page	20
+7.3	Manage Eligible Accounts	22
+7.4	Manage Offerings	3029
+7.5	Manage Exceptions	48
+8.	Promotional CD Trading	51
+8.1	Overview	51
+8.2	Launch Ticket from Other Applications	5251
+8.3	IMS – MQ	5352
+8.4	Secondary Market	53
+8.5	Assumptions	53
+9.	Promotional HYS Trading	53
+9.1	Overview	53
+9.2	Launch Ticket from Other Applications	54
+9.3	BBB – MQ	54
+10.	NEMO to Order Entry	55
+11.	New Money Calculations – Real Time	5655
+12.	Information provided by NEMO	57
+12.1	High Yield Savings (HYS)	57
+12.2	Deposit Order Entry (DOE)	58
+12.3	NEMO Services	6160
+13.	Services used by NEMO	6160
+13.1	EBC – Security Details Service (MSD)	6160
+13.2	EBC – AppAuth Service	6261
+13.3	EBC – Branch Service	6261
+13.4	EBC – Account Activity Service	6362
+13.5	PADT Service	6463
+13.6	RTAB Service	6463
+13.7	Offering Balance Service – RTA??	6564
+14.	TeraData Batch Processing	6564
+14.1	TD Batch Flow	6564
+14.2	Logical Breakdown of Offerings TeraData Batch	6665
+14.3	BAU Eligibility Check	7270
+15.	NEMO Feed File to TeraData	7471
+16.	FA Alerts	7571
+17.	Mainframe Jobs	7672
+18.	NEMO Reports	7973
+
+
+
+
+
+
+
+1.	General Information
+1.1	Version Management
+
+Version #	Date Completed	Author	Revision Notes
+1.0		Shrushti Parikh	Initial Version
+			
+			
+			
+1.2	Document Review and Approval
+
+Name	Functional  Area	Reviewer & Approver	Reviewer Only
+Davide Brocato	Business – Banking Services		
+Steve Cambor	Technology		
+Prakash Venkataraman	Technology		
+Arjun Sabharwal	Technology		
+Deepa Joshi	Technology		
+Andy Fong	Business – Banking Services		
+Pamela Schwartz	Business – Banking Services		
+Deborah Kakaris	Operations		
+Thomas Back	Operations		
+John Bertrand	UAT		
+Nitu Bharti	QA		
+Anamika Revankar	Technology		
+Amit Diwan	Technology		
+Karen Nimmons	Technology		
+Farhad Jalifar	Technology		
+Kara Wynne	PMO		
+
+
+
+
+
+
+
+
+
+2.	Introduction
+2.1	¬¬Overview
+
+This document outlines the functional requirements for creating an application called “New and Existing Money Offerings (NEMO)” that will offer all Deposits Promotional and BAU offerings from one place. This will help in attracting new money in the firm by offering promotional products to clients. The application is aimed to address the following key business requirements:
+•	Create Offerings:
+1)	NEMO will allow a business user to create the different types of offerings for Deposits. Currently, NEMO will offer Certificate of Deposits (CD) and High Yield Savings (USD Savings/HYS). 
+2)	CD offerings will be only promotional products.
+3)	HYS Savings offerings can be either Promotional or BAU products.
+4)	All the above together are termed as Deposit Offerings.
+
+•	Offer and Buy Promotional and BAU Offerings: 
+After a new money promotion offering is created and activated, FAs will be alerted about these promotionsofferings. BAU offerings will be shown on the home page too. ¬¬
+For each offering: 
+1)	NEMO will display a list of eligible clients that can buy into the offering.
+2)	FAs through NEMO can purchase these offerings by creating tickets.
+3)	CD purchases will be redirected to Fixed Income Order Entry (FIOE) system.
+4)	HYS Savings purchases will be redirected to Deposit Order Entry (DOE) system.
+2.2	Current Process
+
+Currently, an application called New Money Filter offers and allows FAs to purchase promotional CDs for their clients. This system filters a client’s eligibility based on the amount of new money that they have brought into the firm. FA can place one CD trade per client per product. The transaction is processed and settlement is driven by the product (for CDs, T+3). 
+Following are the limitations based on the current process described above:
+•	New money filter needs to incorporate the new product High Yield Savings (HYS) which needs to check new money also, to offer promotional HYS Savings products.
+•	BAU CDs are directly purchased from FIOE. But, HYSSavings being a new product is owned by Deposits. NEMO will thus offer both Premium/Promotion and BAU HYS for purchase. 
+
+2.3	Assumptions
+
+•	New offering will be available to branch users from next day onward along with the list of eligible accounts. For example, if a promotion is created on Monday, it will be available to the branch users from Tuesday (if the specified promotion start date is Tuesday).
+•	Suspended and closed offerings will be removed from user FA view. However business users can still view these offerings.
+•	For accounts associated with shared FA numbers, if two FA’s are placing an order for the account at the same time, they should not be allocated the same portion of the new money balance for their orders. For example, if the client has $10,000 of new money and FA 1 opens a ticket for $6,000, FA 2 should be prevented from placing an order larger than $4,000 for that account. 
+2.4	Applications
+
+The following applications will either have built-outs as a result of these specifications, or will be required to participate in testing as part of the impacted downstream system flow.
+•	Fixed Income Order Entry (FIOE) / IMS
+•	Deposit Order Entry (DOE) / BBB
+•	MSD
+•	PTI Client View
+•	PTI Business View 
+•	FA Alerts
+•	RTAB
+•	RTA
+•	3D Mega Menu
+•	Data Warehouse
+
+3.	Offerings Setup – Manage Offerings
+
+NEMO will display all the different types of offerings:
+•	CD – Promotional
+•	HYS – Premium/Promotional, Emergency, BAU
+
+1.	All the offering details and cusip details will be set when creating the offering. 
+2.	“Manage Offerings” page can be accessed by the business users through a separate link and not through 3D.
+3.	A business user will be allowed to:
+a)	Create Offerings
+b)	Update Offerings
+c)	Add Cusips
+4.	Offering to Cusip will be a ‘one to many’ relationship. One offering can be associated with one to manyor more cusips. But at any given point of time, only one of the cusips associated with it can be active.
+
+3.1	Offering Details
+
+•	When an offering is created, following fields will need to be set:
+o	Offering Type 
+o	Offering TitleName
+o	Offering Short Name
+o	Offering Start Date
+o	Offering End Date
+o	Minimum Balance
+o	Maximum Balance
+o	Inventory
+o	APY Rate
+o	Rate Expiry Date
+o	Bank
+o	Tier Code
+o	Tier Description
+•	Which field is specific to which offering type is specifically mentioned in Section 7.4.1.
+3.2	Cusip Details
+
+•	CD offering can be associated with multiple Cusips, whereas HYS Savings offering will be associated with only one cusip.
+•	But at one point of time, only one cusip will be active per offering for CD.
+•	Cusips can be added when creating the offering.
+•	Cusips can also be added after the offering is created, only for CD.
+•	When adding cusip details for an offering, following fields will need to be set:
+o	Cusip
+o	Security Number (MSD)
+o	Deal Symbol
+o	Cusip Description
+o	Price
+•	Additionally for CD:
+o	Maturity Date
+o	Settlement Date
+o	Term (Months)
+o	Cusip Start Date
+o	Cusip End Date
+o	Cusip APY
+3.2.1	Cusip Setup for CD
+
+1.	Business team will get in touch with the CD Trading Desk to define the CD offering. 
+2.	CUSIP will have to be created in both MSD and IMS. At the CUSIP level, they will set the interest rate, term, settlement date, pricing, and sales credit percentage for the CD.
+3.	In IMS, the user from the CD Trading Desk will then have to switch the new money flag for this CUSIP to “Yes”. This will indicate to IMS and other downstream systems that this is a promotional CD.
+The promotion will be the primary offering for the CDs. Since it is a primary offering, the promotional CDs will always be offered at par value. Par value = $100 for 100 units. The CDs have to be purchased in multiples of 1,000 units, so the minimum order value is 1,000 units at a price of $1,000. In NEMO, we will always assume price to be $1/unit. 
+The promotional CDs will be expected to settle weekly. Typically, the CD will be offered for one week, with all the purchases from that week settling on the same day the following week (with settlement date as defined in the CUSIP). 
+Since the CDs need to settle weekly, we will associate more than one cusip per CD offering and hence promotion. If the business wants to run a promotion/campaign for a month, the CD offering created to run this campaign will be associated with 4 Cusips; one for each week.
+3.2.2	Cusip Setup for HYS
+
+1.	Business team will get in touch with the Trading Desk to define the HYS offering. 
+2.	CUSIP will have to be created in MSD. At the CUSIP level, they will set the price and description.
+The HYS offerings will settle daily, that is settlement is T+0. Typically, HYS will be offered from anywhere between three to six months. All the purchases in the offering period will settle the same day as the trade date.  
+Since HYS settles daily, one offering will be associated with only one cusip.
+
+4.	Eligibility
+
+•	Eligibility calculations determine the list of eligible accounts for all deposit offerings. 
+•	Eligible clients are calculated not only for new money offerings but also for emergency and BAU offerings. 
+•	Eligibility conditions vary for different kinds of offerings.
+•	Thus, eligibility will be calculated at an offering level. 
+•	Selection criteria are as follows: 
+
+1)	Generic Details – Cannot be changed by business and is applicable to all offerings that are created.
+•	DVP and RVP accounts are restricted from participating.
+a)	Accounts with pending outgoing ACAT transactions, Closed, Red-Flag, Undeliverable, Prospect Accounts and Margin/Parent Roll Up accounts, STP accounts with IRA codes 500, 501, 502 & 503, accounts that do not belong to the Savings Country Eligiblity list (only for Savings) will not be eligible for offerings.
+
+2)	New Money Type – 
+•	Net Cash (Selected by default)
+•	Net Acquired Assets (not available for this phase)
+
+3)	Offering Specific Details – As determined by business.
+•	New Money Start Date – New money will be calculated from new money start date till today’s date.
+Calculation:
+New Money = (Inflows – Outflows – New Money Trades)
+•	Minimum New Money Amount – Net new money for an account to be eligible should be more than minimum new money amount.
+•	Minimum Eligible Amount – Minimum amount (Cash available equivalent) for an account to be eligible should be more that the minimum eligible amount.
+•	Length of service of participating FAs - For a group FA number, all of the FA’s sharing the number should meet the length of service requirement to be eligible. This will be in months.
+
+4)	Account Types – Several options will be provided to select the different accounts: 
+•	PWM/GWM (Both selected by default)
+•	Managed/Non-Managed (Non-Managed selected by default)
+•	Business/Individual  (Both selected by default)
+•	AAA/ BSA/ IRA (All selected by default)
+
+5)	Account Tier – By default, all tiers will be selected as eligible for the offerings
+•	Reserved
+•	Non Reserved
+
+6)	Offering Access – determined by business, can be set at the following levels:
+•	National Sales
+•	Division
+•	Region
+•	Complex
+•	Office
+ 
+5.	Exceptions
+
+•	An account can be given exceptions to qualify for an offering. 
+•	Exceptions can be added for any account, including accounts that are not already in the Eligible Account list. Exception accounts bypass offering eligibility rules like minimum new money amount, minimum length of FA service, account types, tier, banking services information and offering access rules.
+•	For CD, Exceptions can be granted at any time between offering start date and settlement date.
+•	For HYS Savings – Promo and Emergency, Exceptions can be granted between offering start date and offering endrate expiry date. 
+•	For HYS Savings – BAU, exceptions can be given any time.
+•	Exceptions can be given by Business and Operations users.
+•	Exceptions will be granted at an account and offering level.
+•	Exceptions are added real-time. Exception accounts should be visible in a separate Exception Accounts List which will be beside the Eligible Accounts List. A FA should be able to buy into the offering as soon as it is added in the Manage Exceptions tab. 
+•	When an already eligible account is given an exception; it will be removed from the Eligible Accounts list.
+•	Exception Management will be offered to the business users through a separate link and not through 3D.
+•	Exceptions can be given only to Active and Extended offerings.
+•	Exception accounts that were added to the offering while it is in an active status will not perpetuate after the offering changes to extended. These accounts will still be seen in the Manage Exceptions tab to Business, but will no longer be visible in the Manage Eligible Accounts list to FAs. That is, eligible exception accounts added when offering is Active should be visible on the Offerings UI and should be allowed to buy in till offering end date.
+•	Only accounts that are granted an exception while the offering is in the extended state will be able to purchase the offering while it is extended. 
+•	A business user can:
+a)	Add an exception
+b)	Delete an exception
+c)	Update exception amount
+
+•	Exceptions allows a business user to:
+1. Grant an exception amount
+o	When giving the exception, an exception amount is granted at the account level and offering level.
+o	Exception amount will be the account’s new money balance for all promotional offerings and the account’s eligible amount for emergency offerings. This amount overrides the new money/eligible amount calculated in the TeraData batch process. 
+o	Exception amount will be validated against the remaining inventory amount. The user will not be able to save the exception if it is greater than the remaining inventory. 
+o	A user is allowed to buy into that offering up to its exception amount granted.
+o	When an exception is granted, the account will not bypass any minimum balance and maximum balance rules. It will be treated like any normal account.
+o	The exception account will also not bypass any rules set at the order entry ticket level. For eg.: UVE rules for Deposit Order Entry.
+o	If an exception account needs to buy less than minimum balance or more than maximum balance, the business users will need to give that account for that offering a “Minimum Override” and “Maximum Override” which is done through the BBB UI.
+
+
+6.	NEMO Overview
+
+6.1	In a Nutshell
+
+ 
+
+6.2	High Level Context Diagram
+		
+Following is a high level context diagram highlighting systems that will be impacted and the flow of information. Details about these systems are described in subsequent sections:
+ 
+
+
+6.3	Functionality Overview
+
+1)	All FAs and Business users will have access to the NEMO application based on entitlements.
+a)	NEMO  Promotion Manager (Business) – to create offerings and apply exceptions
+b)	NEMO  Trading Group – to purchase CD and HYS
+c)	NEMO  Read Only User – to view the Offerings  application (IT)
+d)	NEMO  Operations User – to manage exceptions
+2)	Offerings details, rules and eligible account lists are stored in the NEMO database. 
+3)	TeraData batch process will extract the offering eligibility criteria from the NEMO database to create a list of eligible accounts. Eligible accounts list will be provided on an everyday basis as part of morning batch from Monday to Friday including holidays.
+4)	NEMO application will display all the active and extended offerings. 
+5)	Once the list of eligible accounts is created, alerts are sent to the FAs using the 3D Alerts API. The alert is sent only once for each offering.
+6)	Alerts are stored in the Alerts data store and retrieved and displayed in 3D. 
+7)	From the NEMO application, FAs can place an order through the Fixed Income Order Entry for CDs and Deposit Order Entry for HYS. The order entry screen will auto-populate security and account lookup.
+8)	Once the order is submitted from the Fixed Income Order Entry for CDs, NEMO application will receive an MQ confirmation from IMS Queue based on the success/failure of the Order. The confirmation is sent on a real time basis. 
+9)	Once the order is submitted from the Deposit Order Entry for HYS and the trade is executed, NEMO application will receive an MQ confirmation from BBB Queue based on the success/failure of the Order. The confirmation is sent on a real time basis. 
+10)	NEMO application will allow business users to provide exception to accounts. 
+11)	After the order is placed, Margins and FA comp will get updated through the nightly batch process.
+12)	The account holdings are updated in real-time through RTA and the transactions are stored in the transactions table in the data warehouse through the nightly batch process. This is orchestrated via Fixed Income Order Entry and IMS for CDs and via Deposit Order Entry and BBB for HYS.
+13)	Confirms will be generated on trade date in a batch process and sent to the clients the next day.
+6.4	Offerings Application – UI Overview
+
+ 
+
+	
+Offerings Application has three functionalities:
+
+1)	Manage Offerings (Business Users):
+a)	Create Offerings:
+i.	User enters the CUSIP, which then pre-populates the relevant security details.
+ii.	User enters offering details with a specified name/title. 
+iii.	User also enters the additional eligibility criteria for that offering. 
+
+b)	Update Offerings: 
+i.	After the offering is created, additional Security / CUSIP can be added. Existing cusip associated with it, once active cannot be data cannot be updated.
+ii.	Offering details and eligibility criteria can be updated. 
+•	Only Inactive, Active and Suspended offerings can be updated.
+•	Any updates made to an offering will be available next day onward after the TeraData batch runs. 
+•	Changes made will not be reflected real time on the UI. Only available next day onward.
+iii.	Offering can be suspended, which would stop showing the offering immediately on the UI.
+iv.	A suspended offering can be reactivated which would start showing the offering on the UI again. If any updates have been made to a suspended offering, changes will be reflected next day onward, even if the offering is reactivated the same day.
+v.	Offering status can be updated by business.
+•	Can make an Active offering Suspended.
+•	Can Reactivate a Suspended offering. 
+•	Can Delete an Inactive offering. 
+vi.	Historical tracking of offering updates 
+•	Tracks all offering updates. 
+
+2)	Manage Exceptions (Business and Ops):
+a)	Create, edit and delete exceptions for an account for an offering.
+
+3)	Manage Eligible Accounts (Business and FA): 
+a)	Offering Account List displays the eligible accounts for a particular offering.
+b)	Offering Account Detail displays account details and account activity once an account is selected from the account List.
+c)	FAs can buy promotional CDs and HYS by viewing and selecting eligible accounts. After the account has been selected and a quantity has been submitted, a Fixed Income Order Entry ticket is launched for CD and a Deposit Order Entry is launched for HYS.
+6.5	EPR Requirements
+
+Entitlements to functionalities will be enforced via EPR roles below. Users are also subject to data entitlements from their AIS level. Users should only see eligible accounts that they are entitled to. 
+Here is a high level view of the functionalities permitted for each EPR role:
+Functionality		Business (Promotion Manager)	Trading Branch /FA	Read Only Branch	IT	Operations
+Manage Offerings	Read and Write	No Access	No Access	Read Only	Read Only
+Manage Exceptions 	Read and Write	No Access	No Access	Read Only	Read and Write
+Manage Eligible Accounts	Read Only	Read Access and Purchase offerings	Read Only	Read Only	Read Only
+Reports	Read only	No Access	No Access	Read Only	Read Only
+
+Here are detailed requirements for each EPR role:
+	Business	Trading Branch/ FA	Read Only Branch	IT	Operations
+Manage Offerings – Create	- Create Offerings	No Access	No Access	No Access	No Access
+Manage Offerings – Update 	- Update Offerings                           
+- Search Offerings                           
+- View Offerings 
+- Add Cusip                          
+- Suspend, Delete (only for Inactive Offerings), Reactivate button should be visible                                                                - History button should be visible                                
+
+	No Access	No Access	- Read Only                                                                            - View Offerings - Search Offerings 
+- Suspend, Update, Reactivate, Delete buttons should not be visible                                                                                - History button should be visible                               	- Read Only                                                                            - View Offerings 
+- Search Offerings 
+- Suspend, Update, Reactivate, Delete buttons should not be visible                                                                                - History button should be visible                                  
+Manage Exceptions	- Create, Edit, Delete Exceptions                                                         - View Offerings & Exceptions                                                                - Search Offerings	No Access	No Access	- Read Only                                                                            - View Offerings and Exceptions                                                        - Add, Edit, Delete buttons be inactive
+- Search Offerings	- Create, Edit, Delete Exceptions                                                         - View Offerings & Exceptions                                                                - Search Offerings
+Manage Eligible Accounts	- Read Only                                                                          - View Offerings 
+- View eligible and exception accounts                                                                                              - View account details                                                        - View account activity                                                       - Create Ticket button should not be visible	- View Offerings 
+- View eligible and exception accounts                              
+- View account details  
+- View account activity                                 - Create Ticket button is visible and can submit orders	- Read Only                                                                          - View Offerings 
+- View eligible and exception accounts                                                                                              - View account details                                                        - View account activity                                                       - Create Ticket button should not be visible	- Read Only                                                                          - View Offerings - View eligible and exception accounts                                                                                              - View account details                                                        - View account activity                                                       - Create Ticket button should not be visible	- Read Only                                                                          - View Offerings 
+- View eligible and exception accounts                                                                                              - View account details                                                        - View account activity                                                       - Create Ticket button should not be visible
+
+The Enterprise Role mappings in EPR are designed to automatically provision registered users with the Branch/FA trading role and non-registered users with the Read Only Branch role. The other three roles will have to be manually requested via EPR by Business/Operations/IT users. Below are the mappings set for automatic provisioning. 
+Enterprise Role Name	Profile to be Provisioned
+CAC Acquisition Specialist Trainee	NEMO Read Only Users 
+CAC Business Analyst 	NEMO Read Only Users
+CAC Client Service Associate 	NEMO Read Only Users
+CAC Service Associate	NEMO Read Only Users
+Client Service Associate (Not Registered)	NEMO Read Only Users
+Complex Managers Assistant	NEMO Read Only Users  
+Divisional Administrative Assistant   	NEMO Read Only Users
+Divisional Business Service Manager	NEMO Read Only Users
+Divisional Management	NEMO Read Only Users
+Divisional Management Admin	NEMO Read Only Users  
+Divisional Risk Manager	NEMO Read Only Users
+Financial Advisor Trainee	NEMO Read Only Users
+Intern	NEMO Read Only Users
+PBAA Apprentice	NEMO Read Only Users 
+PWM Client Associate (Not Registered)	NEMO Read Only Users
+Receptionist	NEMO Read Only Users
+Regional Business Development Manager	NEMO Read Only Users
+Regional Business Service Officer	NEMO Read Only Users
+Regional Director	NEMO Read Only Users  
+Regional Management Admin	NEMO Read Only Users  
+Regional Risk Officer	NEMO Read Only Users
+Service Associate	NEMO Read Only Users
+WAA Apprentice	NEMO Read Only Users 
+Associate Complex Manager	NEMO Trading Group
+Branch Managers Assistant	NEMO Trading Group
+Business Service Manager	NEMO Trading Group
+CAC Acquisition Specialist	NEMO Trading Group 
+CAC Registered Client Service Associate 	NEMO Trading Group
+CAC Registered Service Associate	NEMO Trading Group
+Complex Business Development Officer	NEMO Trading Group
+Complex Business Service Officer	NEMO Trading Group
+Complex Manager	NEMO Trading Group
+Complex Risk Officer	NEMO Trading Group
+Financial Advisor	NEMO Trading Group
+Non-Producing Branch Manager	NEMO Trading Group
+PBAA Intermediate	NEMO Trading Group 
+Producing Branch Manager	NEMO Trading Group
+PWM Branch Manager	NEMO Trading Group
+PWM Branch Managers Assistant	NEMO Trading Group
+PWM Branch Operations Associate	NEMO Trading Group
+PWM Business Service Manager	NEMO Trading Group
+PWM Client Associate (Registered)	NEMO Trading Group
+PWM Complex Business Service Officer	NEMO Trading Group
+PWM Complex Risk Officer	NEMO Trading Group
+PWM Private Wealth Advisor	NEMO Trading Group
+PWM Senior Complex Risk Officer	NEMO Trading Group
+Registered Client Service Associate	NEMO Trading Group
+Senior Complex Risk Officer	NEMO Trading Group
+Senior Service Associate	NEMO Trading Group
+WAA Intermediate	NEMO Trading Group 
+
+
+6.6	Offerings Status
+	
+		Offerings in all states, except Deleted, will be available in the application for 7 years.
+ 
+
+ 
+Offering Status Update
+Every day at 8pm; the offering status is updated by looking at the current date and the offering start date and end date. It will be run every day, irrespective of weekends and holidays. 
+	
+HYSSavings has settlement on the same day that is T+0, whereas CD has settlement T+3.  An offering is in the extended state after the promotion end dateits expiry and before it settles/rate expires. Since, HYS settles on the same day, it does not have an extended state. 
+Case 1:
+If Offering Start Date <= Today Current Date +1 and Offering Status = Inactive and Offering End Date > Today Current Date
+ Then Offering Status updated to Active. 
+
+Case 2: 
+		If Offering End Date <= Today Current Date and Offering Status not equal to Extended or Closed
+Then Offering Status updated to Extended, only for CD. Offering Status updated to Closed, for HYS.
+
+Case 3:
+For CD: If Offering Settlement date <= TodayCurrent Date and Offering status not Equal to Closed
+For HYS: If Offering Rate Expiration Date = Current Date and Offering status not equal to Closed
+Then Offering Status updated to Closed.
+
+Case 4: 
+For CD: If Offering Settlement date <= Today Current Date + 1 and Offering status Equal to Suspended
+For HYS: If Offering End Rate Expiration Date <= TodayCurrent Date + 1 and Offering status Equal to Suspended
+Then Offering Status updated to Closed.
+
+Case 5:
+		When offerings are reactivated from a suspended status from the UI:
+		If Current Date < Offering End Date, offering status is updated to Active.
+		If Current Date > Offering End Date
+		For CD: If Current Date < Settlement date, offering status gets updated to Extended.
+		For HYS: If Current Date < Rate Expiration date, offering status gets updated to Extended.
+
+Note: Date is checked as “<=” to cover the case where 8pm job does not run successfully one night. If only checking equal to and the batch service does not run for that date, the Offerings status will never change after that. 
+Offering Status	Transition Triggered	Description
+Inactive	When an Offering is saved successfully.	•	When a new Offering is created, the default status will be Inactive.
+•	Inactive Offerings visible only to the Business (Not FAs).
+•	Inactive Offerings can be updated; changes will be effective real time.
+•	Inactive Offerings can be deleted.
+•	Inactive Offerings cannot be suspended.
+•	FA Alerts will not be sent.
+Active	At 8pm, a job will automatically update the status of an Offering from Inactive to Active when current date + 1 is equal to the Offering start date.
+
+Business user can change a Suspended Offering to Active via the UI by reactivating it.  	•	Active Offerings visible to Business and FAs.
+•	Active Offerings can be traded by FAs.
+•	Active Offerings can be suspended by Business; will stop showing on the UI real time.
+•	Offering is can be updated by Business, changes will be effective next day onward.
+•	Active Offerings cannot be deleted.
+•	FA Alerts will be sent.
+Suspended	When user changes status from Active to Suspended via the UI.
+
+	•	Suspended Offerings are visible only by Business (Not FAs).
+•	Suspended Offerings cannot be traded by FAs.
+•	Offering status can be changed to Active or Extended by reactivating the Offering by Business, status changed real time. 
+•	Suspended Offering can be updated; though changes will be reflected next day only after the Offering has been reactivated again.
+•	Suspended Offerings cannot be deleted.
+•	FA Alerts will not be sent.
+•	Suspended Offerings will be automatically closed for CD on settlement date and for HYS on offering endrate expiry date.
+Extended	When the Offering is between Offering end date and Offering settlement date, the Offering status is automatically updated to Extended at 8pm; only for CDs.	•	Status only for CD Offerings.
+•	Extended Offerings visible to Business and selective FAs who have been granted an exception for that particular Offering.
+•	Only exception trades can be placed.
+•	Extended Offerings can be suspended by Business; will stop showing on the UI real time.
+•	Extended Offering cannot be updated.
+•	Extended Offering cannot be deleted.
+•	FA Alerts will not be sent.
+Closed	When Current date = Offering settlement date for CD; When current date + 1 = Offering end date for HYS; the Offering will be closed automatically at 8 pm.	•	Closed Offerings are visible only by Business (Not FAs).
+•	Closed Offerings cannot be traded by FAs.
+•	Closed Offerings cannot be suspended.
+•	Closed Offering cannot be updated.
+•	Closed Offering cannot be deleted.
+•	FA Alerts will not be sent.
+•	Will remain in Offerings application for 7 years.
+Deleted	When business user clicks on Delete button, the Offering is deleted.	•	Offering will be deleted permanently.
+•	Offering can be deleted only when it is Inactive.
+•	Deleted Offerings will not be visible to Business and FAs.
+
+Summary of the Offering States:
+Offering Status	Visible to Business	Visible to FA's	Can be Traded	Can be Updated	Can be Suspended	Can be Deleted	Can be Reactivated	Alerts Sent
+Inactive	Y	N	N	Y	N	Y	N	N
+Active	Y	Y	Y	Y	Y	N	N	Y
+Suspended	Y	N	N	Y	N/A	N	Y	N
+Extended (Only for CD)	Y	Y – By FA’s that have exception	Y – By FA’s that have exception	N	Y	N	N	N
+Closed	Y	N	N	N	N	N	N	N
+Deleted	N	N	N	N	N	N/A	N	N
+
+
+7.	Front-End Screens
+7.1	Launch Point
+
+•	For the FAs to place trades, NEMO application is hosted on 3D at the following location:
+3D   Orders  Orders WorkflowBanking Services  Deposits  Offerings 
+ 
+
+ 
+
+	
+•	For the business users to manage offerings and manage exceptions, Offerings will accessible through a separate link. as below:
+	
+http://nemo.webfarm-dev.ms.com:2400/nemo/nemo_ui/#/manageOfferings
+Insert link given by Dev!
+
+7.2	Overview Page
+
+When a user clicks on the Offerings link from the above mentioned path in section 7.1, the following overview page will open up. This page will display the following in form of tiles as shown:
+•	All active offerings that FA is allowed to buy into.
+•	Offerings will be shown irrespective of whether FA has eligible clients or not as long as FA meets the criteria of length of service and org access for that offering.
+•	All extended offerings that the FA has been granted an exception for.
+•	All active BAU offerings will be always shown on the UI irrespective of whether FA has eligible clients or not.
+Every offering tile will display the offering details, eligibility details and will have a button “View Eligible Clients”. When clicked on this button, it will open the “Offerings Name” page for that offering displaying all the eligible clients for that FA for that offering. 
+Also, Deposits will be displayed as a Tab on 3D just below the Mega Menu when Orders page has been opened.
+ 
+ 
+
+Each and every title will display the details as shown in the above mock-upfollowing. All the sections will be displayed one below the other. in the tile as shown in the mockup above. 
+o	1st Section:
+•	Offering Name
+•	Offering End Date
+•	Offering CUSIP (Will show the Active cusip associated with it)
+
+o	2nd Section:
+•	APY
+•	Bank (Only for HYS)
+•	Rate Expiration Date (Only for HYS Promotion and Emergency)
+•	Settlement Date (Only for CD)
+•	Maturity Date (Only for CD)
+
+o	3rd Section:
+•	Number of Eligible Accounts for that Offering
+•	If FA does not have any eligible clients for that offering, it will display “0 Accounts Eligible for Offering”. 
+
+o	4th Section:
+•	Eligibility Requirements: [For Promotional Offerings; Not BAU Offerings]
+	Minimum New Money (Only for all CD and HYS Promotional offerings)
+	Minimum Initial DepositInvestable Amount (Only for Emergency HYS)
+	Minimum Balance
+	Maximum Balance
+•	Rates: [For BAU Offerings]
+	Tier Values and corresponding rates will be shown
+
+o	Each tile will additionally have a “View Eligible Clients” button that will open a separate tab for that offering to display the list of the eligible accounts. 
+o	BAU tiles will have a “Create Ticket” button that will directly open the Deposit Order Entry.
+
+UI Fields	CD Promo	Savings Promo	Savings Emergency	Savings BAU
+Top Section Title	Certificate of Deposits	Savings	Savings	Savings
+No. of Eligible Accounts	Y	Y	Y	N
+Offering Name	Y	Y	Y	Y
+Promotion End Date	Y	Y	Y	N
+CUSIP	Y	Y	Y	Y
+APY	Y	Y	Y	Tiered
+Bank	N	Y	Y	Y
+Rate Expiration	N	Y	Y	N
+Settlement Date	Y	N	N	N
+Maturity Date	Y	N	N	N
+Minimum New Money	Y	Y	N	N
+Minimum Initial Deposit	N	N	Y	N
+Maximum Balance	Y	Y	Y	N
+Rates Table	N	N	N	Y
+View Eligible Clients button	Y	Y	Y	N
+Create Ticket Button	N	N	N	Y
+
+
+7.3	Manage Eligible Accounts
+When FA clicks on “View Eligible Clients” button of a particular offering tile, a new tab will open up with the Offering Name as the tab name.
+This page will display the following details:
+
+ 
+o	Top Section: Offering Details
+•	This section will display all the offering and cusip details:
+UI Fields	CD Promo	HYS Promo	HYS Emergency	HYS BAU
+CUSIP	Y	Y	Y	Y
+Description	Y	Y	Y	Y
+Offering Start Date	Y	Y	Y	N
+Offering End Date	Y	Y	Y	N
+Status	Y	Y	Y	Y
+APY	Y	Y	Y	Y (Will show all tiers) (Will show the word “Tiered”)
+Minimum Balance	Y	Y	Y	N
+Maximum Balance	Y	Y	Y	N
+Remaining Inventory	Y	Y	Y	N
+Settlement Date	Y	N	N	N
+Maturity Date	Y	N	N	N
+Bank	N	Y	Y	Y
+Rate Expiration Date	N	Y	Y	N
+
+
+o	2nd Section: Eligible Accounts List and Exception Accounts List
+•	This section will display a grid or a table with a list of all the eligible clients for this offering.
+•	At the top will be offered a search functionality that allows the user to filter the eligible accounts list using the following filters: 
+o	Office
+o	Account
+o	FA
+•	This search needs to be an incremental search that is the search will keep filtering the list of eligible accounts below the filters as and when the user types. A user need not wait to hit the search button to update the list as per the filtering criteria. This will be a type-ahead functionality.
+•	If FA does not have any eligible clients for that offering, it will display “You do not have any eligible accounts for this offering.” Display on the Offerings page? Or display in a pop up message? Need to confirm with Business  Pop-Up the “View Eligible Clients” button will be disabled.
+•	The “Eligible Account List” table will show the list of eligible accounts for the selected offering  with following columns:
+	Office
+	Account
+	FA number
+	Client name
+	Current Balance ($) – Only principle balance
+	Eligible New Money ($) [For CD and HYS Promo]
+	Eligible Amount ($) [For HYS Emergency]
+	Account Type – AAA, BSA, IRA
+•	Note that the second last column displaying eligible money value will not be displayed for BAU as BAU requires only investable amount to buy into it. 
+•	Exception Accounts will be shown in a separate tab which is “Exception Accounts List”. This list will have all the same columns as above except for Eligible New Money and Account Type. The exception list will display “Exception Amount”. This will however be treated like new money and its value will be reduced real time whenever any new money trades are placed.
+
+UI Fields	CD Promo	HYS Promo	HYS Emergency
+Eligible Accounts List
+Office	Y	Y	Y
+Account	Y	Y	Y
+FA Number	Y	Y	Y
+Client Name	Y	Y	Y
+Current Balance ($)	Y	Y	Y
+Eligible New Money ($)	Y	Y	N
+Eligible Money ($)	N	N	Y
+Account Type	Y	Y	Y
+Exceptions Account List
+Office	Y	Y	Y
+Account	Y	Y	Y
+FA Number	Y	Y	Y
+Client Name	Y	Y	Y
+Current Balance ($)	Y	Y	Y
+Exception Amount ($)	Y	Y	Y
+Account Type	Y	Y	Y
+
+•	The above tab will not be displayed on the UI when there are no exception accounts in the eligible accounts list above it.
+
+ 
+•	Pagination controls
+i.	20 accounts per page is default.
+ii.	User has option to select the maximum accounts per page to be displayed
+iii.	User can navigate to next / previous page, first / last page and to a particular page by selecting the page number from page dropdown in the pager control.
+iv.	User will have an option to view 20/40/60/80/100 accounts in one page.
+•	All the columns in the table have column headers with sorting facility.
+•	Eligible New Money, Current Balance, Remaining Inventory and Exception Amount will be updated real time based on Buys and Cancels. This will be covered in detail in Section 11.
+
+o	3rd Section: Account Details
+
+•	When a user selects an account:
+o	The account details section will be displayed which will show: 
+1.	Client Name – Shown at the top without the label
+2.	Account Number – Shown at the top without the label
+3.	Eligible New Money [CD and HYS Promo]
+3.	Eligible Amount [HYS Emergency]
+3.	Exception Amount [For Exception Accounts]
+4.3.	Investable Amount Cash Available (Only for HYS offerings)
+5.4.	Current Promotion Balance 
+o	Also, the value in the Eligible New Money/ Eligible Amount/ Exception Amount column of the grid will become clickable once the account is selected.
+•	When user clicks on this amount; a pop up message will be displayed that will show the activity details that is Inflows and Outflows for this account.
+o	It will be displayed in a table that will show Date, Activity and Amount.
+o	These activities will be net cash account activity details for this account in the last 99 days.
+o	There will be no pagination in the pop-up.
+o	A user can scroll through all the different activities.
+o	These activity details are fetched by the EBC Activity service using the method “GetAccountActivityHistory”.
+
+ 
+ 
+•	Below the account details, order entry section will allow a FA to enter a trade amount to buy into this offering.
+•	When FA enters an amount and hits on the Create Ticket button; FA will be re-directed to FIOE if it is a CD offering and to DOE if it is a HYS offering.
+•	Before the order entry ticket is opened; FDIC Insurance disclaimer pop-up will be displayed with action buttons “OK” (opens order entry ticket) and “Cancel” (back to NEMO application).
+•	Disclaimer:
+Investors are responsible for monitoring the total amount held with each depository institution. All deposits at a single depository held in the same insurable capacity will be aggregated for the purposes of the $250,000 federal deposit insurance limit, including, for example, deposits held through the Morgan Stanley Bank Deposit program and/or Global Currency (where the USD equivalent is included in the aggregation).
+This will be displayed only for CD Promotions. 
+•	This order entry section will be a view only section for Business. Business Users will not be allowed to place any orders.
+
+7.3.1	Validations before Launching Tickets
+
+NEMO will carry out the following validations before launching FIOE or DOE:
+First Buy v/s Subsequent Buy:
+If an account has ever held a positive position for a cusip, the current buy will be considered a subsequent buy.
+Else, it will be considered a first buy.
+
+Use Cases: 
+•	Account1 – Day1 – First Buy into HYS – Buy Cancelled  Next buy trade will be considered first buy
+•	Account1 – Day1 – First buy into HYS – Fsell same day  Next buy trade will be considered subsequent buy
+For CD:
+1.	Deposit Amount > 0
+2.	Deposit Amount >= Offering Minimum Balance [Only for first buy]
+3.	Deposit Amount + Current Balance <= Offering Maximum Balance
+4.	Deposit Amount <= Remaining Inventory
+5.	Deposit Amount <= New Money
+For Exception accounts, exception amount granted will be treated exactly the same as new money.
+Use Case:
+Offering	Offering Min Balance	Offering Max Balance	Inventory
+CD Promo	$5,000 	$20,000 	$100,000
+
+Account	Trade	New Money	Current Balance	Deposit Amount	Launch FIOE	Error	Checks
+123456	First Buy	$30,000 	$0 	$3,000 	No	Does not meet promotion minimum buy	$0 < Deposit Amount <= New Money
+							Offering Minimum Balance <= Deposit Amount <=  Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	First Buy	$30,000 	$0 	$10,000 	Yes	 	$0 < Deposit Amount <= New Money
+							Offering Minimum Balance <= Deposit Amount <=  Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	Subsequent Buy	$20,000 	$10,000 	$5,000 	Yes	 	$1,000 <= Deposit Amount <= New Money
+							Current Balance + Deposit Amount <= Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	Subsequent Buy	$15,000 	$15,000 	$15,000 	No	Exceeds promotion maximum balance	$1,000 <= Deposit Amount <= New Money
+							Current Balance + Deposit Amount <= Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	Subsequent Buy	$15,000 	$15,000 	$25,000 	No	Insufficient New Money	$1,000 <= Deposit Amount <= New Money
+							Current Balance + Deposit Amount <= Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	Subsequent Buy	$15,000 	$15,000 	$125,000 	No	Insufficient Inventory	$1,000 <= Deposit Amount <= New Money
+							Current Balance + Deposit Amount <= Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+123456	Subsequent Buy	$15,000 	$15,000 	$5,000 	Yes	 	Deposit Amount <= New Money
+							Current Balance + Deposit Amount <= Offering Maximum Balance
+							Deposit Amount <= Remaining Inventory
+
+For HYS:
+		1. Deposit Amount >0
+2. Deposit Amount <= Cash Available Investable Amount
+•	All the other checks for HYS with respect to 
+o	New money
+o	Promotion Minimum Balance
+o	Promotion Maximum Balance 
+o	Minimum Override for Account
+o	Maximum Override for account
+Will be done on Deposit Order Entry (DOE).
+•	Also, there will be no inventory check on HYS real-time either by NEMO or DOE.
+•	Inventory check will be done before calculating eligible clients on the TeraData side. 
+•	Thus, if inventory for HYS is reached today, accounts will still be allowed to buy into that offering until 4pm that day.
+•	Next day onward, TeraData will not calculate eligible clients for this offering as the remaining inventory will be equal to or less than 0. 
+
+
+7.3.2	Error Messages on NEMO FA Facing Screens
+
+The below error messages will be displayed to alert the user of an error.
+All the messages will be displayed in an Error message box above the Account Details section.
+The message will be marked with an error sign.
+
+Sr. No.	Condition	Error Message
+1	User clicks on “Create Ticket” without entering the quantity to buy	Quantity to buy must be entered in order to proceed.
+CD Eligible Accounts/Exception Accounts
+2	Deposit Amount > New Money	Buy amount cannot be greater than the net new money.
+3	Deposit Amount > Exception Amount	Buy amount exceeds the balance amount under the exception.
+3	Deposit Amount < Offering Minimum Balance (This check is only for First Buy)	Buy amount does not meet the minimum balance required for this deposit offering.
+4	Deposit Amount + Current Balance > Offering Maximum Balance 	Buy amount exceeds the allowed maximum balance of the deposit offering.
+5	Deposit Amount > Remaining Inventory	Buy amount exceeds the remaining inventory amount of the deposit offering.
+Savings
+6	Deposit Amount > Cash Available Investable Amount	Buy amount cannot be greater than available cash.
+
+
+7.4	Manage Offerings
+Manage Offerings is a business facing page that allows business users to create and update offerings. This page will not be offered through 3D. A separate link will be provided to access this page to Business and Ops. 
+Insert Link!
+Environment	Link
+PROD	http://nemo-prod.webfarm.ms.com/nemo/nemo_ui/#/manageOfferings
+QA1	http://nemo-qa1.webfarm-qa.ms.com/nemo/nemo_ui/#/manageOfferings
+QA07	http://nemo.webfarm-qa.ms.com/nemo/nemo_ui/#/manageOfferings
+DEV	http://nemo.webfarm-dev.ms.com:2400/nemo/nemo_ui/#/manageOfferings
+
+•	The final UI mock-ups for the business facing screens are available at:
+http://office-na.ms.com/sites/BDP2007/New%20Money%20Filter/Forms/AllItems.aspx?RootFolder=%2fsites%2fBDP2007%2fNew%20Money%20Filter%2fPhase%202%2fBusiness%20Analysis%2fUI&FolderCTID=&View=%7b9A67E659%2dF72E%2d4354%2dBDF1%2dC5F279F68803%7d
+
+•	Initially, when user clicks on Manage Offerings; following page will be displayed.
+•	A table is displayed at the top of the page with all the offerings in NEMO.
+•	This table will display the following properties of an offering:
+1.	Type
+2.	Title
+3.	Short Name
+4.	Start Date
+5.	End Date
+6.	Status
+•	This table can be filtered on Type and Status using the Search functionality provided above the table. 
+•	This table will have sorting functionality on all columns.
+•	Also, pagination will be provided for this table.
+ 
+•	This page will have a “Create Offering” button that a business user will click to create a new offering.
+•	User can select an offering to view its details.
+•	Several action buttons will be provided for an offering based on its status when user selects an offering from the list of offerings.
+•	The action buttons will be discussed in detail in Section 7.4.2.
+
+7.4.1	Create Offerings
+
+•	When a user clicks on the “Create Offering” button, following section opens up under the list of offerings table.
+
+ 
+•	Create Offering section will be blank until an offering type is selected.
+•	The three sub sections it will have are:
+1.	Offering Details
+2.	Eligibility Criteria
+3.	Cusip Details
+•	These sections are expandable sections that will not be displayed until an offering type is selected.
+•	The different offering types that can be selected are:
+1.	CD Promo
+2.	HYS Promo
+3.	HYS Emergency
+4.	HYS BAU
+•	The different fields in the expandable sections will depend on the offering type that is selected.
+
+Sr. No.	Field	Type	Functionality	CD Promo	HYS Promo	HYS Emergency	HYS BAU
+ 	Offering Type	Mandatory	Lists all Offering types available in the application. Values: CD Promo, HYS Promo, HYS Emergency, HYS BAU
+Order: As listed above
+Default Value: Blank	 	 	 	 
+Section 1: Offering Details
+1	Offering Title	Mandatory	 	Y	Y	Y	Y
+2	Short Name	Mandatory	 	Y	Y	Y	Y
+3	Offering Start Date	Mandatory	Should be greater than today’s date.	Y	Y	Y	N
+4	Offering End Date	Mandatory	Should be greater than or equal to Offering Start Date.	Y	Y	Y	N
+5	Minimum Balance	Mandatory	Minimum first buy amount required to buy into the promotion.	Y	Y	Y	N
+6	Maximum Balance	Mandatory	Maximum balance up to which an account can have balance in this promotion.	Y	Y	Y	N
+7	Inventory	Mandatory	Total allowed balance in the offering for all accounts	Y	Y	Y	N
+8	Status	Auto-Filled	Values: Inactive, Active, Extended, Closed, Suspended	Y	Y	Y	N
+9	Promotional APY (%)	Mandatory	Rate to be set for HYS promotion only.	N	Y	Y	N
+10	Bank	Mandatory	Dropdown that will indicate for which bank the offering is being created. Values: MSBNA and MSPBNA. Default: Blank	N	Y	Y	Y
+11	Rate Expiry Date	Mandatory	Date at which the promotional rate will expire. 
+Check: Should be greater than today's date.
+Should be greater than or equal to offering end date.
+Should be last calendar day of a month.	N	Y	Y	N
+12	Tier Code	Mandatory	Tier code associated with the rate	N	Y	Y	N
+13	Tier Description	Mandatory	 	N	Y	Y	N
+Section 2: Eligibility Criteria
+1	New Money	Disabled	Method to be used to calculate New Money. Two radio buttons,
+Values: Net cash and Net Acquired Assets.
+Only Net Cash will be available in this phase. Hence, Net Cash will be selected by default.	Y	Y	N	N
+2	New Money Start Date	Mandatory	Should be less than or equal to Offering Start Date.
+Can be at most 60 days before the current date.	Y	Y	N	N
+3	Minimum New Money Amount	Mandatory	Minimum new money amount required for the client to be eligible for this offering.	Y	Y	N	N
+4	Minimum Investable Amount	Mandatory	Minimum Investable Amount required for the client to be eligible for this promotion. – For HYS Emergency offerings only.	N	N	Y	N
+5	Length of FA Service	Mandatory	In months.	Y	Y	Y	N
+6	Account Details:
+ 	UI check to make sure at least one value is selected in all the below fields before creating the offering. 
+ 	BUI	Mandatory	Check boxes.
+Values: PWM, GWM
+Default: All	Y	Y	Y	N
+ 	Advisory Indicator	Mandatory	Check boxes.
+Values: Managed and Non-Managed.
+Default: Only Non-Managed will be selected.
+Should be greyed out with only Non-Managed selected when offering type is HYS.	Y	Y	Y	N
+ 	Business Indicator	Mandatory	Check boxes.
+Values: Business and Individual.
+Default: All	Y	Y	Y	N
+ 	Account Type	Mandatory	Check boxes.
+Values: AAA, BSA and IRA.
+Default: All	Y	Y	Y	N
+ 	Tier	Mandatory	Check boxes.
+Values: Non Reserved and Reserved.
+Default: All	Y	Y	Y	N
+7	Offering Access	Mandatory	This is used to restrict the offerings to a particular Division, Region, Complex, and Office. It can be edited when the user clicks on the “Org Access” button. Further explained in section 7.4.1.2 below	Y	Y	Y	N
+8	Should have had HYS Balance in last	Mandatory	In days.	N	N	N	Y
+Section 3: Cusip Details: Security details auto filled from MSD database based on cusip.
+1	Cusip	Mandatory	Cusip to be filled by business.	Y	Y	Y	Y
+2	Deal Symbol	Auto-Filled	Fetched from MSD based on cusip.	Y	Y	Y	Y
+3	Security Number	Auto-Filled	Fetched from MSD based on cusip.	Y	Y	Y	Y
+4	Price	Auto-Filled	Fetched from MSD based on cusip.	Y	Y	Y	Y
+5	Description	Auto-Filled	Fetched from MSD based on cusip.	Y	Y	Y	Y
+6	Promotional APY (%)	Auto-Filled	Rate set in MSD for a CD. Fetched from MSD based on cusip.	Y	N	N	N
+7	Settlement Date	Auto-Filled	Fetched from MSD based on cusip.	Y	N	N	N
+8	Maturity Date	Auto-Filled	Fetched from MSD based on cusip.	Y	N	N	N
+9	Term (Months)	Auto-Filled	Fetched from MSD based on cusip.	Y	N	N	N
+10	Cusip Start Date	Mandatory		Y	N	N	N
+11	Cusip End Date	Mandatory		Y	N	N	N
+12	Status	Auto-filled	One offering will have only one cusip active at a time.	Y	N	N	N
+ 	CD will have multiple cusips associated with it. Hence, the UI provides an "Add Cusip" button when the Offering Type selected is a CD Promo. A user can add multiple cusips which will be sub sections in the "Cusip Details" section. Each sub-section will be labeled as Cusip1, Cusip2 and so on.
+
+•	Below the three sections, will be two buttons:
+o	Create: Will create the offering. It is saved in the database in an inactive status.
+o	Cancel: This button will cancel the creation of the offering. The whole CREATE OFFERINGS section will disappear. 
+
+7.4.7.1	Create Offering Screens
+Following are the mock-ups of the offering screens for all the different types:
+		The UI mock-ups are also on SharePoint at the following location: 
+http://office-na.ms.com/sites/BDP2007/New%20Money%20Filter/Forms/AllItems.aspx?RootFolder=%2fsites%2fBDP2007%2fNew%20Money%20Filter%2fPhase%202%2fBusiness%20Analysis%2fUI&FolderCTID=&View=%7b9A67E659%2dF72E%2d4354%2dBDF1%2dC5F279F68803%7d
+
+CD Promo:
+ 
+
+
+HYS Promo:
+ 
+HYS Emergency:
+ 
+
+
+HYS BAU:
+ 
+7.4.7.2	Error Messages
+•	Date Fields – Will be handled dynamically in the calendar. But all the checks need to be performed again when user clicks on “Create” button as date can be entered manually.
+•	All the error messages will be displayed on the screen itself.
+•	Error Messages will be positioned right of the input box of the fields. (Subject to change)
+•	Error messages will be red in color.
+Sr. No.	Condition	Error Message
+1	All mandatory fields cannot be left blank	<Field Label> cannot be left blank.
+2	Offering Start Date > Current Date	N/A - Should be handled dynamically in the calendar.
+Offering start sate has to be after today’s date.
+3	Offering End Date > Offering Start Date	N/A - Should be handled dynamically in the calendar.
+Offering end date has to be after offering start date.
+4	Maximum Balance > 0	Maximum Balance for Offering has to be greater than zero.
+5	Inventory > 0	Inventory for Offering has to be greater than zero.
+6	New Money Start Date < Current Date	N/A - Should be handled dynamically in the calendar.
+New money start date has to be before today’s date.
+7	BUI - At least one value has to be checked	Please select at least one value for BUI.
+8	Advisory Indicator - At least one value has to be checked	Please select at least one value for Business Indicator.
+9	Business Indicator - At least one value has to be checked	Please select at least one value for Advisory Indicator.
+10	Account Type - At least one value has to be checked	Please select at least one value for Account Type.
+11	Tier - At least one value has to be checked	Please select at least one value for Tier.
+12	For CD - First cusip, Cusip Start Date = Offering Start Date	N/A - Should be handled dynamically in the calendar.
+First cusip’s start date has to be equal to offering start date.
+13	For CD - Subsequent cusips, Offering Start Date < Cusip Start Date < Offering Start End Date	N/A - Should be handled dynamically in the calendar.
+Cusip start date has to be between offering start date and end date.
+14	For CD - Cusip End Date >= Offering End Date	N/A - Should be handled dynamically in the calendar.
+Cusip end date has to be before or same as offering end date.
+15	For HYS - Rate Expiry Date > Offering Start Date	N/A - Should be handled dynamically in the calendar.
+Rate expiry date has to be after or same as offering start date.
+
+
+If there is a second cusip;
+2nd cusip’s start date should next 
+
+
+
+
+7.4.7.27.4.7.3	Offering Access
+
+This is a pop up screen for changing offering access criteria. The check boxes are used to control offering access at different levels: National Sales, Division, Region, Complex and Office. 
+This screen should function as follows:
+a)	Expand/collapse functionality at Division, Region, Complex and Office levels.
+b)	The “Offering Access” section of the Manage Offerings screen will by default will show “ALL” levels. 
+ 
+c)	After clicking the org access button, the pop-up will show:
+•	Checkboxes at all levels selected. The user should have the ability to deselect a particular level if they do not want the offering to be offered there.
+d)	Changes made to a parent should propagate down to lower levels. Changes made at lower levels should override parent level settings.
+e)	If one check box is deselected, then all of the associated parent boxes should also be deselected. 
+f)	Any updates made to the org access should immediately be reflected on the “Manage Offerings” UI after clicking save. User should not have to refresh the offering page to see the updates. 
+g)	When reopening the org access page, the previous settings should be reflected in the check boxes. 
+h)	All of these settings should be properly reflected in the accounts returned by the TeraData batch overnight. 
+i)	Any changes made here should be captured in the “Access History” tab of the History page. If the user clicks “Cancel” to discard any changes, they will be redirected back to the Manage Offerings screen.
+j)	If particular values are selected for Division, Region, Complex and Office are selected; those values need to be displayed on the Manage Offerings screen under Offering Access in a tabular format.
+k)	If all the values are selected for offering access, then the table should just display “ALL” under all the four Division, Region, Complex and Office.
+ 
+¬
+7.4.2	View Offerings
+
+•	When a user selects an offering from offerings list, all the offering details will be displayed in a read only mode. 
+•	The section header will now say “View Offering”.
+•	None of the fields can be edited.
+•	Only one offering can be selected at a time to view.
+•	If a CD Promo offering is selected, all the cusips associated with it will be shown one below the other.
+•	Once an offering is selected, based on its status, different action buttons will be available for the offering.
+•	All the buttons will be displayed just before the offering details sections starts on the right side as seen in the screen shot.
+•	All the possible values of the action buttons are as follows:
+o	Delete
+o	Edit
+o	Suspend
+o	Reactivate
+o	History  (Please note that this button will be available in NEMO Phase2)
+•	Note that there will be no Create or Cancel button at the end of the page.
+•	If a user now wants to create an offering, user will have to click on the “Create Offering” button at the top of the page.
+•	A user can view offerings of any status. When viewing, all the fields will be read only irrespective of the status.
+
+ 
+•	If a user clicks on the Org Access button, the offering access pop-up should open which again will be in a read-only mode.
+•	The different buttons that will be displayed according to the offering status are as follows:
+
+Status - Button	History	Edit	Suspend	Reactivate	Delete
+Inactive	Y	Y	N	N	Y
+Active	Y	Y	Y	N	N
+Suspended	Y	Y	N	Y	N
+Extended	Y	N	Y	N	N
+Closed	Y	N	N	N	N
+
+7.4.3	Edit Offerings
+A business user can update an offering by selecting an offering from the Offerings list and clicking on the “Edit” button.
+•	Only Inactive, Active and Suspended promotions can be edited.
+Thus, the edit button will be available on the UI only for these offerings.
+•	All the changes that are made to an offering will be effective next day onward.
+•	The following fields will be editable depending on the offering status:
+
+Sr. No.	Field	Inactive	Active	Suspended
+ 	Offering Type	N	N	N
+Section 1: Offering Details
+1	Offering Title	Y	Y	Y
+2	Short Name	Y	Y	Y
+3	Offering Start Date	Y	N	N
+4	Offering End Date	Y	Y	Y
+5	Minimum Balance	Y	Y	Y
+6	Maximum Balance	Y	Y	Y
+7	Inventory	Y	Y	Y
+8	Status	N	N	N
+9	Promotional APY (%)	Y	Y	Y
+10	Bank	N	N	N
+11	Rate Expiry Date	Y	Y	Y
+12	Tier Code	Y	Y	Y
+13	Tier Description	Y	Y	Y
+Section 2: Eligibility Criteria
+1	New Money	N	N	N
+2	New Money Start Date	Y	Y	Y
+3	Minimum New Money Amount	Y	Y	Y
+4	Minimum Investable Amount	Y	Y	Y
+5	Length of FA Service	Y	Y	Y
+6	Account Details:
+ 	BUI	Y	Y	Y
+ 	Advisory Indicator	Y	Y	Y
+ 	Business Indicator	Y	Y	Y
+ 	Account Type	Y	Y	Y
+ 	Tier	Y	Y	Y
+7	Cash Management Engagement (CME)	Y	Y	Y
+8	Offering Access	Y	Y	Y
+9	Should have had HYS Balance in last	Y	Y	Y
+Section 3: Cusip Details - Cusip status same as offering status
+1	Cusip	Y	N	N
+2	Deal Symbol	Y	N	N
+3	Security Number	Y	N	N
+4	Price	Y	N	N
+5	Description	Y	N	N
+6	Promotional APY (%)	Y	N	N
+7	Settlement Date	Y	N	N
+8	Maturity Date	Y	N	N
+9	Term (Months)	Y	N	N
+10	Cusip Start Date	Y	N	N
+11	Cusip End Date	Y	N	N
+12	Status	N	N	N
+
+•	All the checks that are performed before creating an offering, will be checked before updating an offering too.
+•	Thus the errors and checks discussed in Section 7.4.1.2 will be applied before updating an offering.
+•	The edit offering page will have two buttons at the end of the page:
+o	Update: Will update the offering details. It is saved in the database and all the changes will be reflected next day onward.
+o	Cancel: This button will cancel updating the offering. The Edit Offering page will be replaced by a View Offering page. 
+
+7.4.4	Delete Offerings
+
+•	Only an Inactive Offering can be deleted.
+•	Thus, the Delete button will be available only when viewing an inactive offering.
+•	Once deleted, the offering is deleted from the UI and will never show up in the Offerings list on Manage Offerings page.
+•	The offering will not be deleted from the database.
+•	The message “Are you sure you want to delete this offering?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before deleting the offering.
+
+7.4.5	Suspend Offerings
+
+•	Only Active and Extended offerings can be suspended.
+•	Thus, the Suspend button will be available on the UI only when viewing Active and Extended offerings.
+•	As the name suggests, suspend button actually suspends the offering real-time.
+•	The status in the database for this offering will be changed to “Suspended”.
+•	A suspended offering will stop showing on the UI immediately.
+•	Trades will not be allowed to place for a suspended offering. 
+•	However, TeraData will still calculate eligible clients for suspended offerings as I can be reactivated next day.
+•	The message “Are you sure you want to suspend this offering?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before suspending the offering.
+
+7.4.6	Reactivate Offerings
+
+•	Only Suspended offerings can be reactivated.
+•	Thus, the Reactivate button will be available on the UI only when viewing a Suspended offering.
+•	As the name suggests, reactivate button will reactivate the suspended offering real-time.
+•	The status in the database for this offering will be changed to “Active” or “extended” depending on what its status was at the time of suspending the offering.
+•	A suspended offering cannot be reactivated after its offering end date/settlement date as offering will change to “Closed” status. 
+•	A reactivated offering will start showing on the UI immediately.
+•	Trades will be allowed to place for a reactivated offering. 
+•	If an offering was suspended at 10am, changes were made at 11am, and offering was reactivated at 12pm; note that these changes will be reflected the next day onward.
+•	The message “Are you sure you want to reactivate this offering?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before reactivating the offering.
+
+7.4.7	Offerings History – Available in NEMO Phase2 [Not to be tested in Phase1]
+
+This screen can be accessed by clicking on the “History” button when viewing an offering. The History page will have three tabs. 
+
+7.4.7.1	Core History
+a.	This tab will display all changes made to the offering eligibility criteria, not including the banking services. 
+b.	Both automatic and manual changes to offering status are recorded in this tab. Automatic changes include offering status updates. 
+c.	The following fields are captured for each change: 
+•	Date and Time
+•	User ID
+•	Field Name
+•	Old Value
+•	New Value
+ 
+7.4.7.2	Banking Services History
+d.	This tab will display all changes made to the banking services promotion criteria (Debit Card, Checking, Direct Deposit, etc.)
+e.	The following details are captured for each change:
+•	Date and Time
+•	User ID
+•	Account Features
+•	Enrolled/Usage
+ 
+7.4.7.3	Access History
+f.	This tab will display any changes made to the promotion org access or multipliers. 
+g.	The following details are captured for each change:
+•	Date and Time
+•	User ID
+•	Division, Region, Complex, Office, Multiplier
+ 
+7.5	Manage Exceptions
+	
+An account can be given exceptions to qualify for an offering. This page will be used to view, add, edit, and delete exceptions for an offering. Since this is also a non-FA facing page, it will not be accessible through 3D. A separate link that is provided will have both Manage Offerings and Manage Exceptions for both Business and Ops users.
+Insert Link provided by Dev!
+•	Exceptions can be given only to Active and Extended offerings.
+•	Manage Exceptions will be as follows:
+ 
+•	Similar to Manage Offerings page, the Manage Exceptions page will display an Offerings list.
+•	The Offerings list will display only Active and Extended  all the offerings. However, it will be filtered on Active Offerings.
+•	When an offering is selected, below the Offerings list is populated a section with a list of all the exception accounts for that offering.
+•	The Exceptions list shows the following details:
+o	Office
+o	Account
+o	FA
+o	Client Name
+o	Exception Amount ($)
+o	Exception Amount Used ($)
+o	Key Account
+•	Both the above lists will have pagination.
+•	The lower most section will allow the user to add an exception to an offering.
+•	The “Add Exception” button will be visible only when an Active or Extended offering is selected from the Offerings list.
+
+7.5.1	Add Exception
+
+•	Users can open the ADD EXCEPTION section by selecting an active or extended offering and then clicking on the “Add exception” button.
+•	User will need to add office and account number. FA number and client name will be populated automatically.
+•	Exceptions can be added to only Active and Extended offerings.
+•	Once the exception is added, it will start showing in the above list immediately.
+•	Once an account is given an exception amount, it will also start showing in the “Exception Accounts List’ on 3D.
+•	Exception amount overrides any previous new money an account has.
+•	Whenever a buy is placed, the “Exception Amount Used ($)” value will be updated real-time.
+•	The message “Are you sure you want to add this exception?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before adding the exception.
+
+7.5.2	Edit Exception
+
+•	User can also edit an exception. The only field that can be updated is the “Exception Amount”.
+•	The “Edit” button will be available only when an exception of an active or extended offering is selected.
+•	Same checks will apply for adding and updating an exception.
+•	User can edit an exception by selecting an offering, selecting an exception and then clicking the “Edit” button.
+•	Note that, the Exception Amount Used does not change when the exception amount granted is changed.
+•	Use Case:
+Account1 granted and exception for Promotion1:
+Exception Amount Granted = $100,000
+Buy Promotion1 = $50,000
+Exception Amount Remaining = $50,000
+Now, if Exception amount granted is edited and changed to $200,000
+User will have a total of $150,000 remaining to be used.
+•	The message “Are you sure you want to update this exception?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before editing the exception.
+•	When editing an exception, the new exception amount that is added should be more than the Exception Amount Used value for that account and offering.
+
+ 
+
+•	New value added should be reflected immediately in the above list of exceptions and also on 3D in the “Offerings” page. 
+
+7.5.3	Delete Exception
+
+•	User can also delete an exception. Any exception can be deleted.
+•	The “Delete” button will be available only when an exception of an active or extended offering is selected.
+•	User can delete an exception by selecting the exception in the list and then clicking on the “Delete” button.
+•	The message “Are you sure you want to delete this exception?” should be popped-up in a message box with action buttons “Confirm” and “Cancel” before editing the exception.
+•	If “Cancel” is clicked, pop-up message will disappear and user will be brought back to the previous page.
+•	If “Confirm” is clicked, exception will be deleted. Pop-up message will disappear and that exception account will be immediately removed from the exception list of accounts above.
+
+
+7.5.4	Flow
+
+1)	Select an Offering  Exceptions list table will appear. [Section below it will be blank]
+2)	Select an Account  “View Exception” section will appear with the details of the selected account. There will be Delete and Edit buttons on the top right corner of this section.
+3)	Click on the Edit button  “View Exception” becomes “Edit Exception” and field becomes editable.
+4)	Click on Add Exception button  “Add Exception” section will appear.
+
+7.5.47.5.5	Error Messages
+
+Error messages will be displayed in a pop-up message box. It will have one action button “OK”.
+Sr. No.	Condition	Error Message	Type	Position 	Color
+1	User adds an invalid account number	No account data found.	On screen.	Right side of the text box.	Red
+2	User adds an exception amount > Remaining inventory for offering	Exception amount exceeds the running inventory amount.	On screen.	Right side of the text box.	Red
+3	User adds exception amount = 0	The exception amount should be a non-zero positive amount.	On screen.	Right side of the text box.	Red
+4	When editing an exception, user adds exception amount < Exception Amount Used	The exception amount should be greater than already used exception amount.	On screen.	Right side of the text box.	Red
+
+8.	Promotional CD Trading
+8.1	 Overview
+
+1.	A FA has the option to buy into CDHYS from the following four locations on 3D.
+FA logs into Offerings application through 3D  Selects a CD promotion  View Eligible Accounts.
+2.	Selects an account from the list of eligible accounts  Enter “Quantity to Buy” and click on “Create Ticket” button.
+3.	Quantity entered will be validated against the account’s net “New Money Balance” and “Remaining Inventory” of the offering.
+4.	If validation fails then user will start from Step 2.
+5.	If validation is a success, user will be taken to Fixed Income Order Entry screen.
+6.	User enters applicable account details and clicks on Review button. If validation is a success, user will be able to see Submit button. If validation fails, the user will correct the error or exit the Fixed Income Order Entry.
+7.	Upon validation, the FA will then get a CD disclosure statement pop-up. (CD disclaimer pop-up will be shown every time the user tries to place an order.)
+8.	User clicks on “Submit” button to submit the order.
+9.	Order is submitted to IMS:
+a.	Order receipt confirmation from IMS will be sent and displayed on the ticket.
+b.	Ticket will not allow the user to put in another order from the screen.
+c.	User should close the ticket pop-up.
+10.	Order Execution in IMS:
+a.	Successful execution message is sent to Offerings application via MQ.
+b.	If trade is not successfully executed, a “Rejected” message will be sent via the MQ and will trigger a rollback of the account’s new money balance and the promotion inventory amount for that order. 
+11.	Upon receiving a success message, New Money Balance and Offering Remaining Inventory are updated in Offerings database.
+
+8.2	 Launch Ticket from Other Applications
+
+Trading of Promotional CD in Fixed Income Ticket is allowed only if Ticket is launched from Offerings application. If FA tries to enter a promotional CUSIP directly into the Fixed Income ticket, an error message will display at the top of the order instructions and all sections other than order instructions will be disabled. The same error message will be displayed if the Fixed Income ticket for a promotional CUSIP is launched from anywhere besides Offerings, including Bond Calculator and 3D Positions. The following error should be displayed: “Cannot process the order. Please open ticket for this security through 3D > Orders > Orders Workflow > Deposits > Offerings.”
+The promotional CD’s should not be offered to FA’s through any application besides Offerings. They should be suppressed from being shown in Fixed Income Offerings (NOMS). This does not require a change from Fixed Income Offerings. When IMS sends this CUSIP to fixed income offerings, it will zero out the quantity, and therefore it will not be displayed on NOMS. 
+
+ 
+8.3	 IMS – MQ
+
+IMS will send the Offerings application a message via the MQ with the status of the submitted order. One of these three messages will be sent back to NEMO:
+1)	If the order is a success, an Executed message - “E” - is sent to Offerings. 
+2)	If the order is being processed, a Pending message – “O” - is sent to Offerings.
+3)	If the order is a failure, a Rejected message - “R” - is sent to Offerings.
+4) 	If the order is cancelled, a Cancel message - “X” - is sent to Offerings. We will receive two “X” messages on the MQ for a cancelled order at the following times: 
+				a. When the order is initially cancelled in IMS, but still “Pending Cancellation”
+				b. When the order is fully cancelled via IMS 
+New Money Amount and Remaining Inventory will be updated based real-time based on the above messages.
+8.4	 Secondary Market
+
+While the promotional CD’s are being offered through Offerings, they will be primary market CD’s. This will be indicated at the CUSIP level by certain fields in IMS. Once the promotional CD settles, it should be available on the secondary market for purchase. On settlement date, IMS should automatically switch these CUSIP’s to be secondary market CD’s. The promotional flag will also have to be manually switched off. At this point, the promotional CD should behave exactly the same as a regular CD on the secondary market, and no special logic should be built in. 
+8.5	 Assumptions
+
+1)	Fixed Income trades can be placed on holidays and weekends, but will have a trade date of the following business day. 
+2)	Note: TeraData batch will not run on the weekends, so eligibility lists and new money balances will not be updated on Saturday and Sunday. However, most typical promotions will run Monday-Friday, so the promotions will be in “Extended” status over the weekend and will not be visible to FA’s to place a trade unless they were granted an exception by the business. 
+3)	Due to the concept of exceptions in Offerings, it is possible for the FA to place a promotional CD trade for a value greater than the current balance in the account. In this case, the Fixed Income ticket will warn the FA that they do not have sufficient funds, but it will not stop the trade from executing. These exceptions are granted on the assumption that the client will bring that money into their account by the settlement date. 
+4)	Actual screens of the user interface may differ (error messages, etc.) from the screenshots shown above. 
+9.	Promotional Savings HYS Trading
+9.1	 Overview
+
+1.	A FA logs into Offerings application through 3D  Selects a HYS promotion  View Eligible Accounts.
+2.	Selects an account from the list of eligible accounts  Enter “Quantity to Buy” and click on “Create Ticket” button.
+3.	Quantity entered will be validated against the account’s Cash Available Investable Amount.
+4.	If validation fails then user will start from Step 2.
+5.	If validation is a success, user will be taken to Deposit Order Entry screen.
+6.	User enters applicable account details and clicks on Review button. If validation is a success, user will be able to see Submit button. If validation fails, the user will correct the error or exit the Deposit Order Entry.
+7.	Upon validation, the FA will then get a HYS disclosure statement pop-up. (HYS disclaimer pop-up will be shown every time the user tries to place an order.)
+8.	User clicks on “Submit” button to submit the order.
+9.	Order is submitted to BBB and processed there.
+10.	Order Execution in BBB:
+a.	Successful execution message is sent to Offerings application via BBB MQ.
+b.	If trade is not successfully executed, a “Rejected” message will be sent via the MQ. 
+11.	Upon receiving a MQ message, New Money Balance and Offering Remaining Inventory are updated in Offerings database and UI.
+
+9.2	 Launch Ticket from Other Applications
+
+1.	HYS DOE can also be launched from 3D Positions, 3D Mega Menu and PTI Client View apart from NEMO.
+2.	Unlike CDs, HYS trades can be placed from all the above launch points and not only NEMO.
+3.	HYS trades will be placed from the Deposit Order Entry as below:
+
+ 
+
+9.3	 BBB – MQ
+
+BBB will send the Offerings application a message via the MQ with the status of the submitted order. One of these three messages will be sent back to NEMO: (Need exact details from Mark)
+1)	If the order is a success, an Executed message - “E” - is sent to Offerings. 
+2)	If the order is being processed, a Pending message – “O” - is sent to Offerings.
+3)	If the order is a failure, a Rejected message - “R” - is sent to Offerings.
+4) 	If the order is cancelled, a Cancel message - “X” - is sent to Offerings. We will receive two “X” messages on the MQ for a cancelled order at the following times: 
+				a. When the order is initially cancelled in IMS, but still “Pending Cancellation”
+				b. When the order is fully cancelled via IMS 
+New Money Amount and Remaining Inventory will be updated based real-time based on the above messages.
+
+10.	NEMO to Order Entry
+
+•	FA will enter the quantity to buy in the text box field and click on “Create Ticket” button. 
+•	NEMO will then perform a series of validations with the order quantity against the account’s new money balance or exception amount, remaining inventory for the offering, and maximum/minimum buy amounts for the offering (Section 7.3.1). These validations will be done assuming that 1 unit = $1. If the order amount passes all of the validations, NEMO will proceed with the following steps. Else, it will display one of the error messages described in section 7.3.2. 
+1.	For CD: Launches the Fixed Income Order Entry Ticket
+NEMO passes parameters to the Fixed Income ticket in a query string of the following format: srcId=NMF&SEC=250375DA7&QUANT=5000&OFF=101&ACT=162647&FA=225&side=BUY
+•	Application = NMF
+•	Offering Security ID – CUSIP associated with the offering that the FA was viewing
+•	Quantity – the amount that was entered in the “Quantity” field in NMF
+•	Office, Account and FA number – the account that the FA was viewing in NMF
+•	Side = Buy for all purchases from NMF
+
+2.	For HYS: Launches the Deposit Order Entry Ticket
+NEMO passes the following parameters to the Deposit Order Entry Ticket
+•	Offering Security ID – CUSIP associated with the offering that the FA was viewing
+•	Quantity – the amount that was entered in the “Quantity” field in NMF
+•	Office, Account and FA number – the account that the FA was viewing in NMF
+•	Transaction Type = BUY
+Confirm with VP!
+
+3.	After successful execution of the trades, messages are received on respective MQ as discussed in Section 8.3 and Section 9.3. New Money, Remaining Inventory, and Current Offering Balance on the NEMO UI will be updated real time. 
+
+4.	The new money balance and inventory are updated in the NEMO Database in real time. This means that if another FA tries to place an order for this account at the same time, the validations will check against the correct new money balance and inventory values that are in the database, even if the UI has not been updated. This addresses the scenario for accounts associated with a shared FA number. 
+
+5.	The system will display an FDIC Insurance message that the FA will have to acknowledge before the FI ticket is launched. 
+ 
+11.	New Money Calculations – Real Time
+
+1.	This phase will offer new money calculated by “Net cash”. 
+2.	The next phase will also include new money calculated by “Net Assets”. 
+3.	Net Cash is a subset of Net Acquired Assets. 
+4.	To calculate new money, all the transactions from new money start date till the current date are considered.
+5.	New Money is calculated per key account per offering.
+6.	New money will be calculated in TeraData batch as follows:
+
+•	New Money (Per Offering) = Cash Inflow – Cash Outflow – New Money Purchases + New Money Cancels
+Note:
+o	New Money is calculated for Net Cash.
+o	All transactions are between new money start date and current date, including transactions on the start date.
+o	New Money Purchases and Cancels will be for all new money offerings and not only the offering in consideration.
+o	New Money Purchases and Cancels will include both new money and exception trades for all new offering offerings. 
+
+7.	The above calculated new money is then stored in the Offerings database and displayed on the Offerings UI start of the day.
+8.	The nightly batch runs once a day and thus the new money value in the TeraData will be updated only once a day
+9.	But the new money value on the Offerings UI and database will be updated real time. 
+For e.g.: 
+Account 1	Eligible Offering	New Money
+	CD Promo1	$100,000.00
+	Buy CDPromo1 = $70,000.00
+	CD Promo1	$30,000.00
+
+10.	Also, new money reduction happens at an account level and not an account + offering level.
+For e.g.:
+Account 1	Eligible Offering	New Money
+	HYS Promo1	$200,000.00
+	CD Promo1	$100,000.00
+	Buy CDPromo1 = $70,000.00
+	HYS Promo1	$130,000.00
+	CD Promo1	$30,000.00
+
+11.	Thus, New Money that is updated real time in the Offerings database and shown on the UI uses the formula:
+
+•	New Money (Per Offering) = Existing New Money – New Money Purchases + New Money Cancels
+Note: 
+o	Existing New Money is of the offering, new money is being calculated for.
+o	New Money Purchases and Cancels are all new money offering transactions that take place the same day. 
+o	New Money Purchases and Cancels will include both new money and exception trades for all new offering offerings. 
+
+12.	Exception trades will be considered as any normal new money trades and exception amount will be considered as regular new money for both the above calculations.
+13.	A list of all the different use cases that will be possible for reduction of new money due to premium offering buys, premium offering cancels, BAU buys, BAU cancels, exception buys, exception cancels and exception deletion can be found at:
+http://office-na.ms.com/sites/BDP2007/_layouts/xlviewer.aspx?id=/sites/BDP2007/New%20Money%20Filter/Phase%202/Business%20Analysis/New%20Money%20Reduction%20Use%20Cases.xlsx
+12.	Information provided by NEMO
+
+NEMO will provide offering details, eligible clients and new money to the following applications:
+•	High Yield Savings
+•	Deposit Order Entry – 3D Positions, 3D Mega Menu
+•	PTI Client View
+12.1	High Yield Savings (HYS)
+
+As a part of SOD, HYS will pull all the active offering details to Savings (BBB). HYS will fetch all the offering details and its corresponding cusip details.
+Details that will be pulled are as follows:
+Offering Details:
+1)	Offering Name
+2)	Offering Short Name
+3)	Offering Start Date
+4)	Offering End Date
+5)	Offering Minimum Balance (First Minimum Buy)
+6)	Offering Maximum Balance
+7)	Inventory
+8)	Offering Status
+9)	Bank 
+10)	APY 
+11)	Rate Expiry Date 
+12)	Tier Code 
+13)	Tier Description
+Cusip Details:
+1)	Cusip
+2)	Cusip Status
+3)	Deal Symbol
+4)	Price
+5)	Security Number (MSD)
+6)	Description
+
+12.2	Deposit Order Entry (DOE)
+
+Deposit Order Entry (DOE) interacts with NEMO to get the eligible offerings for an account and its respective new money.
+Whatever is the launch point for the Deposit Order Entry:
+•	DOE will fetch the new money amount from NEMO for an account for a cusip when:
+1. Whenever a DOE is launched
+2. Whenever the “Review” button is clicked on the ticket before submitting it.
+•	This will be done to check if account has enough new money to buy into the offering before submitting the ticket. 
+•	DOE will pass the key account and the cusip/offering id and NEMO will return the corresponding new money amount.
+•	Services used will be:
+a) GetEligibleNewMoney(KeyAcct, CUSIP)
+b) GetEligibleNewMoney(KeyAcct, OfferingId)
+
+12.2.1	    3D Positions
+
+•	When DOE is launched from 3D Positions, office, account, FA and cusip are all already in context.
+•	NEMO will provide the new money for that cusip and account.
+•	DOE will fetch new money before launching the DOE and when the review button is clicked as discussed above.
+•	Services used will be:
+a) GetEligibleNewMoney(KeyAcct, CUSIP)
+b) GetEligibleNewMoney(KeyAcct, OfferingId)
+
+
+12.2.2	     3D Mega Menu
+
+•	One can launch the Order Entry ticket directly from the 3D Mega Menu. 
+•	Path would be 3D   Orders  Orders Workflow  Deposits  Order Entry 
+•	This will open a blank order entry ticket with account, office and FA in context. NEMO will provide the following:
+
+1) List of Offerings that the account is eligible for in the drop down as seen below:
+
+
+
+
+
+
+
+
+2) New Money amount for each of these offerings.
+3) Services that will be used are as:
+	a) GetEligibleOfferings(KeyAcct)
+b) GetEligibleNewMoney(KeyAcct, CUSIP)
+c) GetEligibleNewMoney(KeyAcct, OfferingId) [Only one will be used]
+
+
+12.2.3	     PTI Client View
+
+•	PTI Client View is another launch point for the DOE. PTI Client View looks as follows:
+ 
+•	Client View shows offerings at both a single account and household account level.
+•	Client View will fetch all the offerings that an account is eligible for from NEMO for its single account view. Also, NEMO will provide the corresponding new money amount for each offering.
+•	Services:
+GetEligibleOfferings(KeyAcct)
+GetEligibleNewMoney(KeyAcct, CUSIP)
+GetEligibleNewMoney(KeyAcct, OfferingId)
+•	Client View will fetch all the offerings that a household is eligible for from NEMO for its household. Also, NEMO will provide the corresponding new money amount for each offering and each account of that household.
+•	Client View will pass a list of accounts and NEMO will return list of offerings and new money for all the accounts of a household.
+•	For an emergency HYS offering, investable amount needs to be considered instead of new money. Hence, NEMO service, when sending the new money for an eligible emergency offering; should send “N/A”. 
+•	Services:
+GetEligibleOfferings(groupId, List<KeyAcct>) 
+GetEligibleNewMoney(KeyAcct, CUSIP) 
+GetEligibleNewMoney(KeyAcct, OfferingId)
+
+12.3	NEMO Services
+
+Sr. No.	Services	Used By
+1	GetEligibileAccounts(RacfID, OfferingId)	NEMO
+2	GetEligibleOfferings(KeyAcct)	DOE, PTI Client View
+3	GetEligibleOfferings(groupId, List<KeyAcct>)	PTI Client View
+4	GetEligibleNewMoney(KeyAcct, CUSIP)	DOE
+5	GetEligibleNewMoney(KeyAcct, OfferingId)	DOE
+
+
+
+13.	Services used by NEMO
+
+13.1	EBC – Security Details Service (MSD)
+	
+•	Cusip information for both HYS and CD will be set up in MSD. 
+•	Cusip information needs to be fetched into Offerings to be displayed on 
+o	Offering Management
+o	FA Facing – Offering Details
+•	Details that will be fetched are as follows:
+o	Cusip
+o	Deal Symbol
+o	Price
+o	Security Number (MSD)
+o	Description
+o	Promotional APY (%)
+o	Maturity Date
+o	Settlement Date
+o	Term (Months)
+•	Security Service is called when user changes tab from CUSIP text box after adding some value.
+•	FSN and URL Details for this service are as follows:
+FSN	refdata-securitydetail
+Web Method	GetSecurityDetails
+DEV URL	http://ebc-securities.webfarm-dev.ms.com/securities/securitydetail.svc
+QA URL	http://ebc-securities.webfarm-qa.ms.com/securities/securitydetail.svc
+PROD URL	http://ebc-securities.webfarm.ms.com/securities/securitydetail.svc
+
+UAT URL	http://ebc-securities.webfarm-uat.ms.com/securities/securitydetail.svc
+•	Input and Output from Security Details service:
+  
+13.2	EBC – AppAuth Service
+
+•	EBC AppAuth service is used to check the roles of user in an application.
+•	This service will be called whenever user enters the home page of the application.
+•	FSN and URL Details for this service are as follows:
+FSN	entitlements-appauth
+WebMethod	GetOfficeFA, GetAppRoles
+DEV URL	http://ebc-appauth.webfarm-dev.ms.com/appauth/appauth.svc
+QA URL	http://ebc-appauth.webfarm-qa.ms.com/appauth/appauth.svc
+PROD URL	http://ebc-appauth.webfarm.ms.com/appauth/appauth.svc
+UAT URL	http://ebc-appauth.webfarm-uat.ms.com/appauth/appauth.svc
+•	Input and Output from Branch Service
+  
+13.3	EBC – Branch Service
+
+•	When creating an offering, business user has the facility to set Division, Region, Complex and Office for the offering. 
+•	All the values for the above mentioned fields are populated using the branch service.
+•	These values need to be displayed in a pop up box when a user clicks on the “Org Access” button for a offering. This button is in the eligibility criteria for offerings.
+ 
+
+•	The tree structure that is populated using this service for Org Access will be as below:
+ 
+•	All the values for the above fields will be stored in the NEMO database.
+•	This service will be called every time user clicks on “Org Access” when creating the offering.
+•	FSN and URL Details:
+FSN	branchsupport-branchprofile
+WebMethod	GetDivisionInformation
+DEV URL	http://ebc-branch.webfarm-dev.ms.com/branch/branch.svc
+QA URL	http://ebc-branch.webfarm-qa.ms.com/branch/branch.svc
+PROD URL	http://ebc-branch.webfarm.ms.com/branch/branch.svc
+
+UAT URL	http://ebc-branch.webfarm-uat.ms.com/branch/branch.svc
+•	Input and Output from Branch Service
+  
+
+13.4	EBC – Account Activity Service
+
+•	When a FA views the client details in the Eligible Accounts List in NEMO (in 3D), it shows all the inflow and outflow activity details for that account.  
+•	All the activity details for an account are fetched using this service.
+•	Account Activity Service is called when user clicks on account details on the Eligible Accounts List for an offering in NEMO. 
+•	FSN and URL Details:
+FSN	clientfininfo-activity
+WebMethod	GetAccountActivityHistory
+DEV URL	http://ebc-activity.webfarm-dev.ms.com/activity/activity.svc
+QA URL	http://ebc-activity.webfarm-qa.ms.com/activity/activity.svc
+PROD URL	http://ebc-activity.webfarm.ms.com/activity/activity.svc
+
+UAT URL	http://ebc-activity.webfarm-uat.ms.com/activity/activity.svc
+•	Input and Output from Account activity service
+		  
+
+13.5	PADT Service
+
+•	When adding an exception to an offering, a user adds the account number on the screen.
+
+ 
+•	Upon tabbing out of the account number, the PADT service is called to display the client name on NEMO.
+•	Client name returned will be the Primary on the account
+•	 Wikki Link - http://wiki-na.ms.com/PADTIntegrationServices/AccountService
+o	Service url prototype (below url is of Dev) : 
+o	http://padtaccountsvc.webfarm-dev.ms.com:2520/padtaccountsvc/services/PADTAccountIntegrationSvc/Account?KeyAcct=2011-01-07-15.43.46.813485&fetch=ACCTCORE
+
+
+13.6	RTAB Service
+
+•	RTAB Service will be called to fetch the Adjusted Investable Amount for an account.
+•	Call will be made to the BIS service.
+•	This Adjusted Investable Amount is a real time value that will be displayed in the account details section on the NEMO offering page.
+  
+•	RTAB Service will be called only for HYS offerings. CD offerings need not display the investable amount.
+•	RTAB Service will be called every time the user selects an account from the eligible accounts list to view the account details for that account.
+•	Input: Key Account; Output: Adjusted Investable Amount
+
+13.7	EBC – GetPosition ServiceOffering Balance Service – RTA??
+
+•	EBC GetPosition Offering Balance Service will be called when a user clicks on a particular account on “View Eligible Clients” on the NEMO homepage.
+•	This service will be used to fetch the existing CD and HYS balance for a particular offering for an account.
+•	Current CD/HYS Balance will be displayed both on the Eligible Accounts List and in the Account Details section when a user selects a particular account. It will be displayed in the Account Details section when an account is selected from the list.
+•	Input: Key Account, Cusip/Offering ID; Output: Position/Current Balance
+
+
+14.	TeraData Batch Processing
+14.1	TD Batch Flow
+
+1.	After an offering is created by the business user, the offering gets saved in the NEMO database in an Inactive state.
+2.	At 8pm every day, a job that runs on the NEMO side, will update the offering status based on the offering start, offering end and offering settlement date.
+3.	All offering details will be captured in a file and pushed to a shared location. 
+4.	This file will contain: 
+a.	All offerings that eligibility needs to be calculated for (Active, Suspended status).
+b.	Find the earliest new money start date from all the offerings in (a). This file will also contain all he offerings that have been active in the period “Earliest New Money Start Date to Current Date”.
+5.	As a part of the TeraData morning batch, all offering details will be copied from this file at the shared location to the TeraData data warehouse. 
+6.	Eligible client’s list will be calculated for all active, suspended and extended offerings.
+7.	Eligible clients will not be calculated for those offerings for which remaining inventory is less than or equal to zero.
+8.	Batch processing will apply filters against remaining inventory, account types, offering rules, qualifying transactions, and minimum length of service based on the eligibility criteria set in each offering. 
+9.	After the processing is completed, one list of eligible accounts per offering is created and stored in the TeraData data warehouse. 
+10.	These lists are then copied into a file at a shared location from where it will be read and copied into the NEMO database. 
+11.	The batch process will also create an FA Alerts mainframe file, containing the list of FA’s that should be notified about each offering, which is saved in the 3D Alerts database.
+12.	The FA Alerts application sends notifications to each eligible FA.
+13.	FAs will launch Offerings application through 3D.
+14.	Eligible accounts are displayed on the ‘Manage Eligible Accounts’ page on Offerings. 
+15.	FA proceeds to drop a ticket through Fixed Income Order Entry for CD and Deposit Order Entry for HYS.
+
+14.2	Logical Breakdown of Offerings TeraData Batch
+
+ 
+
+The TeraData batch process runs five days per week, irrespective of holidays. The batch process will output one list of eligible accounts per offering. It starts with a list of all firm accounts and proceeds by eliminating accounts if they do not meet offering requirements. This is done by applying a series of filters. Eligibility will be calculated for all different types of offerings namely:
+a)	Premium HYS and CD Offerings
+b)	Emergency HYS Offerings
+
+Premium CD, Premium and Emergency HYS offerings criteria are as follows:
+
+1.	Remaining Inventory Check:
+•	First step is to check remaining inventory of all the offerings for which eligible accounts need to be calculated.
+•	All offerings for which remaining inventory is less than or equal to zero, will be excluded from eligibility accounts calculation.
+
+2.	Universal filters:
+Applied next. These filters are for the eligibility criteria that are applicable to all offerings and are not shown in the Offerings UI, since they are expected to always be applied. They filter out the following accounts:
+b)	DVP and RVP accounts
+c)	Undeliverable accounts
+d)	Red flag accounts
+e)	Closed accounts
+f)	Limited Purpose Accounts 
+g)	Prospect Accounts
+h)	Parent Roll Up accounts
+
+3.	Offering specific filters:
+Applied next. The offering eligibility criteria can be categorized into two types of fields:
+•	Pre- Calculated fields: These fields can be pre-calculated and stored as indicators that can be referenced for all active offerings.
+a)	Account BUI
+b)	Account Advisory Indicator
+c)	Account Business Indicator
+d)	Account Type
+e)	Account Tier
+•	Run-time calculated fields:  These fields cannot be calculated in advance since they require offering specific details. These will be calculated at runtime when we are applying the offering filters to the account lists.
+a)	New Money
+b)	New Money Start Date
+c)	Minimum New Money Amount
+d)	Length of Service of FA
+e)	Offering Access
+
+High level steps followed by this batch process:
+1.	Send Offering Details:
+•	Offering details for all offerings for which eligibility is being calculated are sent.
+•	All offerings which have been active in the period of new money start date of the above offerings to current date will also be sent. These will be required to calculate new money value. 
+•	Offering details will be sent from the NEMO database to the Teradata warehouse every day. 
+•	This will be a push action. 
+•	Data from the NEMO database will be copied in files and stored on a shared location.
+•	Stored procedure in place will read data from the file at the shared location and store it in the Teradata data warehouse.
+	 Common Details
+Location	\\v\region\na\appl\bbb\bbb_datawarehouse\data\dev\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai1\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\uat\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\prod\nemo\fromnemo
+File Delimiter	Pipe (|)
+Footer	“FTLR|<row count>”
+For e.g.:  FLTR|458
+	Specific Details
+File 1	
+File Name	nemo_offering_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_offering_20150728_20150728192023.dat
+Header	Column Names are expected in the header.
+IDN_OFFERING|NME_OFFERING|OFFERING_INVENTORY|AMT_MIN_BUY|AMT_MAX_BUY|DT2_PROMO_START|DT2_PROMO_END|STA_PROMO|CLA_PRODUCT|CLA_PRODUCT_SUB
+ 
+File 2
+File Name	nemo_eligibility_org_access_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_eligibility_org_access_20150728_20150728192023.dat
+Header	Column Names are expected in the header.
+IDN_OFFERING|DIVISION|REGION|COMPLEX|BRANCH
+ 
+File 3
+File Name	nemo_gen_eligibility_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_gen_eligibility_20150728_20150728192023.dat
+Header	Column Names are expected in the header.
+IDN_OFFERING|CAT_ELIG|VALUE|DT2_NEW_MON_START|AMT_MIN_NEW_MON|AMT_MIN_INVESTABLE|FA_LOE|NEW_MONEY_TYPE
+ 
+File 4
+File Name	nemo_offer_cusip_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_offer_cusip_20150728_20150728192023.dat
+Header	Column Names are expected in the header.
+CUSIP|CDE_MSDW_SEC|NME_SYM|IND_ACTIVE|DT2_MATURITY|DT2_SETTLE|IDN_OFFERING
+
+2.	Create Eligible Accounts List:
+•	A Wrapper stored procedure is called to start the process of creating eligible account lists. 
+•	This wrapper SP calls a series of subsequent stored procedures to produce the final output. 
+•	First step is to check remaining inventory of all the offerings for which eligible accounts need to be calculated.
+•	All offerings for which remaining inventory is less than or equal to zero, will be excluded from eligibility accounts calculation.
+•	The following tasks are executed by the stored procedures:
+a.	All firm-wide accounts in the TCLT_ACCT table are copied into a driver table and the universal filters are applied. Any accounts that do not pass the universal eligibility criteria are removed from the driver table.
+b.	Each account in this driver table is then updated with the appropriate Y/N values for BUI, Advisory Indicator, Business Indicator, Account Type, Account Tier and Cash Management Engagement depending on what values have been set for the same in the offering details by Business. These values are stored as indicators that the offering filters will reference later on. This is how the indicators are set:
+
+i.	For BUI, it checks the 
+1.	If CDE_BUS_UNIT = PWMUS, PWMLAT, then BUI is PWM
+2.	Else, the BUI is GWM
+
+ii.	For Advisory Indicator, it checks the 
+1.	If   CAT_TRDCTL = J,K,Y,Z,L,T,B,M,U,D, then advisory indicator is Managed
+2.	Else, the advisory indicator is Non-Managed
+
+iii.	For Business Indicator, , it checks the
+1.	If  ‘CLA_ACCT and CLA_SUB’ = ''4 ','AC','AI','C ','3 ','DU','3P','3S','3F','3A','3L','3T','3G','3E','3I','4S','4N','5 ','DS', then business indicator is Business
+2.	Else, the business indicator is Individual
+
+iv.	For Account Type indicator, it checks the Divpay for the account
+1.	If Divpay = 3 or 4, then account type is AAA
+2.	If Divpay = 5 or 6, then account type is IRA
+3.	If Divpay = 0, 1, 2, or 8, then account type is BSA
+4.	Else, account type is not defined
+
+v.	For Account Tier indicator, it checks the tier for the account
+1.	If account tier = Select or Prestige, the account tier indicator is set to “Reserved”
+a.	SELECT  > 1Mil asset/Liabilities or 10K Comm Rev
+b.	PRSTIG  > 5Mil asset/Liabilities or 50K Comm Rev
+2.	Else account tier indicator is set to “Non-Reserved”
+a.	STDCAP > 500k asset/Liabilities or 5K Comm Rev
+b.	STD -  the rest
+
+c.	New Money will need to be calculated for each account:
+
+New Money = Inflows – Outflows + New Money trades [Between New Money Start Date and Current Date]
+•	Note that New Money will be calculated for CD Promo and HYS promo offerings.
+•	New Money Trades will include Buys, Sells, full Sells and Cancels of all new money cusips that have been active between the new money start date and current date.
+•	New Money Trades:
+
+Type	Action
+Buy	Subtract
+Sell	Add
+FullSell	Add
+Cancel	Subtract
+ 
+•	New Money trades will for all cusips that have been active in the period new money start date to current date.
+•	Example:
+Promo1 – Active from 1/1 to 1/31
+Promo2 – Active from 2/1 – 2/29
+Promo3 – Active from 3/1 – 3/31
+
+Now, let’s say we are calculating eligibility for a new Promo4
+Promo4 –
+New Money Start Date – 2/1
+Offering Start Date – 4/1
+Offering End Date – 4/30
+
+Current Date – 4/10
+
+New Money = Inflows [from 2/1 – 4/10] – Outflows [from 2/1 – 4/10] + New Money Trades [trades of offerings that have been active from 2/1 to 4/10 that is Promo2, Promo3 and Promo4]
+
+•	For Emergency Offerings:
+We will calculate Eligible Amount instead of New Money.
+
+Eligible Amount = BDP Balance + Sweep Balance + Unsettled Cash
+
+d.	After calculating the New Money, it will be compared with the Minimum New Money Amount value for that offering.
+This check will be done only if the account has not done a first buy into this offering yet.
+
+Check: Has the account ever had a positive balance in this Cusip/Offering (from Offering Start Date to   Current Date),
+	If Yes, account is eligible if New Money > 0 [subsequent buy]
+	Else, account is eligible if New Money >= Minimum New Money Amount [first buy]
+
+For HYS Emergency Offerings:
+ Eligible Amount calculated will be compared with the Minimum Eligible Amount for that offering.
+
+Check: Has the account ever had a positive balance in this Cusip/Offering (from Offering Start Date to   Current Date),
+	If Yes, account is eligible if Eligible Amount > 0 [subsequent buy]
+	Else, account is eligible if Eligible Amount >= Minimum Eligible Amount [first buy]
+
+e.	As an iterative process, the below steps are performed for each active and suspended offering:
+i.	Offering specific filters are applied in the below sequence to get a list of eligible accounts. If an account does not meet the requirements for a particular filter, it is no longer considered for the subsequent filters.
+1.	Filter 1: BUI Criteria [from Step (b)-(i)]
+2.	Filter 2: Advisory Indicator Criteria [from Step (b)-(ii)]
+3.	Filter 3: Business Indicator Criteria [from Step (b)-(iii)]
+4.	Filter 4: Account type criteria [from Step (b)-(iv)]
+5.	Filter 5: Account tier criteria [from Step (b)-(v)]
+6.	Filter 6: Cash Management Engagement (CME) [from Step (b)-(vi)]
+7.	Filter 7: Organization access criteria (calculated at runtime based on offering)
+8.	Filter 8: Net new cash / net acquired asset criteria, new money start date and minimum new money amount criteria [from step (c) and (d)]
+9.	Filter 9: FA length of service criteria (calculated at runtime based on offering)
+ii.	Push the eligible account list for the current offering to another table. 
+iii.	Reset the offering specific columns for the accounts in the driver table. 
+f.	Calculate the gross transaction amount for each offering. This is the total value of the offering that has been purchased so far.
+
+1.	Eligible accounts list (from step c) and offering gross amounts (from step d) from TeraData will be sent back to the NEMO Database.
+2.	This will be done by storing all the eligible accounts in a file on a shared location.
+
+	Details
+File Name	nemo_eligible_accounts_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_eligible_accounts_20150728_20150728192023.dat
+Location	\\v\region\na\appl\bbb\bbb_datawarehouse\data\dev\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai1\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\uat\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\prod\nemo\tonemo
+File Delimiter	Pipe (|)
+Header	Column Names are expected in the header.
+KEY_ACCT|NME_CLIENT|CUSIP|NUM_OFFFICE|NUM_ACCT|ACCT_TYPE|ACCT_TIER|AMT_TOT_INFLOW|AMT_TOT_OUTFLOW|AMT_TRADE|AMT_NEW_MONEY|AMT_INVESTABLE|AMT_HH_ASSETS|IDN_OFFERING|NUM_DIVISION|NUM_REGION|NUM_COMPLEX|NUM_BRANCH
+Footer	“FTLR|<row count>”
+For e.g.:  FLTR|458
+
+
+
+3.	NEMO database will read the contents from this file and store the eligible accounts accordingly.
+4.	Using the eligible accounts lists, the mainframe file for FA alerts is created and pushed to mainframe using NDM.
+5.	History will be maintained for the list of eligible accounts for all offerings in the data warehouse for the last 7 calendar days.
+6.	History will be stored in a separate archive table.
+7.	History will be wiped off day by day. At any point of given time, the system should have eligible accounts for all the active offerings for the last 7 calendar days. 
+
+ 
+14.3	BAU Eligibility Check
+
+BAU Eligibility will be calculated by NEMO and not TeraData. But every night, NEMO will send all the BAU eligible accounts to TeraData to check the Universal Filters and remove any accounts that fail to pass this filter.
+Input: All BAU eligible accounts (NEMO to TeraData)
+
+Check: Remove all accounts that are – 
+•	DVP accounts
+•	Undeliverable accounts
+•	Red flag accounts
+•	Closed accounts
+•	Limited Purpose Accounts 
+•	Prospect Accounts
+•	Parent Roll Up Accounts
+
+Output:  All BAU eligible accounts hat passed the above check successfully.
+1.	NEMO will push all the BAU eligible accounts in a file on a shared location. 
+ 	Details
+File Name	nemo_bau_eligible_accounts_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_bau_eligible_accounts_20150728_20150728192023.dat
+Location	\\v\region\na\appl\bbb\bbb_datawarehouse\data\dev\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai1\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\uat\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\prod\nemo\fromnemo
+File Delimiter	Pipe (|)
+Header	Column Names are expected in the header.
+IDN_OFFERING|CUSIP|KEY_ACCT
+Footer	“FTLR|<row count>”
+For e.g.:  FLTR|458
+
+2.	TeraData will read these accounts from the file and perform the check for universal filters.
+3.	All the good accounts will then again be stored in a file and pushed on a shared location. 
+
+ 	Details
+File Name	nemo_bau_eligible_accounts_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_bau_eligible_accounts_20150728_20150728192023.dat
+Location	\\v\region\na\appl\bbb\bbb_datawarehouse\data\dev\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai1\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\uat\nemo\tonemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\prod\nemo\tonemo
+File Delimiter	Pipe (|)
+Header	Column Names are expected in the header.
+IDN_OFFERING|KEY_ACCT|NME_CLIENT|CUSIP|NUM_OFFFICE|NUM_ACCT|ACCT_TYPE|ACCT_TIER|AMT_HH_ASSETS|NUM_DIVISION|NUM_REGION|NUM_COMPLEX|NUM_BRANCH
+Footer	“FTLR|<row count>”
+For e.g.:  FLTR|458
+
+4.	NEMO will read this file and store all the good accounts in the NEMO database.
+
+
+
+
+
+
+
+15.	NEMO Feed File to TeraData
+
+A feed file will be sent every day from the NEMO database to the warehouse providing details of all the accounts and the details as mentioned below:
+ 	Details
+File Name	nemo_exception_YYYYMMDD_YYYYMMDDHHMMSS.dat
+For e.g.: nemo_exception_20150728_20150728192023.dat
+Location	\\v\region\na\appl\bbb\bbb_datawarehouse\data\dev\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\qa\qai1\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\uat\nemo\fromnemo
+\\v\region\na\appl\bbb\bbb_datawarehouse\data\prod\nemo\fromnemo
+File Delimiter	Pipe (|)
+Header	Column Names are expected in the header.
+DT2_BUSINESS|KEY_ACCT|IDN_OFFERING|NUM_CUSIP|AMT_PROMO_EXCEPTION| AMT_PROMO_EXCEPTION_USED|IDN_CREATE_USER| AMT_NET_NEW_MONEY| AMT_GROSS_TRANSACTION
+Footer	“FTLR|<row count>”
+For e.g.:  FLTR|458
+
+Use Cases:
+
+Use Case	AMT_PROMO_EXCEPTION	AMT_PROMO_EXCEPTION_USED	IDN_CREATE_USER	AMT_NET_NEW_MONEY (EOD)	AMT_GROSS_TRANSACTION
+Account is only an eligible account	NULL	NULL	NEMOBATCH	12,345.00	7,600.00
+Account is only an exception account	700,000.00	45,000.00	P53FHY	NULL	NULL
+Account is an eligible account and exception account	500,000.00	50,000.00	P34CYP	106,869.00	4,000.00
+
+
+Below are the EDB tables that need to updated before the MRTG SWITCH table is updated with the Business Date
+EDW Batch Name	Table Name	BCP Job name	PROD Job Name	Extended Job name	Approx. Completion time(EST)
+NRS	T12_TEAM	BDWGD100	PDWGD100	PDWGD@CWNRS
+21:30
+MSD1	TISS_IDENTIFIER	BDWGDBZM	PDWGDBZM	PDWGD@CWMSD1
+23:30
+NRS            	T13_TEAM_AE	BDWGD100	PDWGD100	PDWGD@CWNRS
+21:30
+NRS            	T07_AE	BDWGD100	PDWGD100	PDWGD@CWNRS
+21:30
+LOCATION	TDTM_LOCATION	BDWGDCGQ	PDWGDCGQ	PDWGD@CWLOCATION
+21:30
+MSDN	TMSD_MSD	BDWGDN43	PDWGDN43	PDWGD@CWMSDN
+23:30
+	DIM_FA				
+RTAS	TSEC_ACTIVITY_BRCH	BDWGDD38	PDWGDD38	PDWGD@CWRTAS	23:30 
+MERACSWG 	TCLT_ACCT	BDWGDBOB	PDWGDBOB	PDWGD@CWMERACSWG	22:30
+	TPHN_ADDR_CLT				
+
+16.	FA Alerts
+
+1.	Once the TD batch process determines the eligible account lists, a mainframe file is created to generate FA Alerts on 3D, which will notify FA’s of any new offerings.
+2.	Notifications of new offerings will be sent to the FA’s only for Active offerings. FA’s will receive notifications via the Alerts section in 3D.
+3.	Notifications will be sent at the Office-FA-CUSIP level. There will be no account specific notifications. For these alerts, the “Account” column will be populated as XXX-000000-YYY, where XXX is the office and YYY is the FA number. 
+4.	A notification will be sent to only those FAs who are eligible for the offering. For example, Office 101 might have FA’s 123, 456, 789 and 112. However, since only FA 112 has eligible accounts for the offering, only this FA will receive the notification.
+5.	Alerts will be sent to an FA only once during the offering. 
+a.	For example: FA 101-123 has 100 eligible accounts on day 1 of the offering. On that day, the FA will receive an alert notifying him that he/she has eligible accounts. If the FA gets more eligible accounts on day 2 or 3, another alert will not be sent. 
+b.	FA 101-456 has no eligible accounts on day 1 of the offering. On day 1, that FA will not receive an alert. However, if this FA gets eligible accounts on day 2, he/she will then receive an alert. 
+6.	Alerts will be sent only for CD and HYS offeringal offerings and HYS Emergency offerings.
+7.	No alerts will be sent for HYS BAU.
+8.	Alerts will be sent per offering. That is if a FA is eligible for HYS Promo and CD Promo at the same time, the FA will receive two alerts. One for each offering. 
+9.	Notification will have the following verbiage: 
+
+Alert Type: Deposits Offerings
+Description: Promotional CUSIP XXXXXXXX 
+Alert Detail:
+Please note that a promotional offering is available for one or more of your clients.
+To view the offering details and eligible client account(s), please launch the Deposits Offerings application through 3D > Orders > Orders Workflow > Deposits > Offerings or click here.
+
+Offering Type	Alert Type	Alert Description	Alert Detail
+CD	Promotional Offerings	Promotional New Money CD CUSIP XXXXXXXX	Please note that a promotional new money CD offering is available for one or more of your clients. This promotion ends on XX/XX/XXXX.
+To take advantage of this opportunity, click here to launch the Deposits Offerings application and view the offering details and eligible account(s).
+Savings Promo	Promotional Offerings	Promotional New Money Savings Plus CUSIP XXXXXXXX	Please note that a promotional new money Savings Plus offering is available for one or more of your clients. This promotion ends on XX/XX/XXXX.
+To take advantage of this opportunity, click here to launch the Deposits Offerings application and view the offering details and eligible account(s).
+Savings Emergency	Promotional Offerings	Promotional Savings Plus CUSIP XXXXXXXX	Please note that a promotional Savings Plus offering is available for one or more of your clients. This promotion ends on XX/XX/XXXX.
+To take advantage of this opportunity, click here to launch the Deposits Offerings application and view the offering details and eligible account(s).
+
+10.	Nothing will be populated in the “Client” field since the alert is sent at the Office-FA-CUSIP level and is not client specific. 
+11.	“Date” column will be populated with the date the alert was sent. There will be no “Due Date” for the alert. 
+12.	Priority will be “FYI”. 
+13.	In the dropdown arrow for the alert, the NEMO link should open New Money Filter within the 3D Framework and should not launch an outside browser. This option in the dropdown will only be visible to AIS Level 20 and 40 users. 
+14.	The “My Pending” status page shows alerts pending action from the FA’s specific RACF ID.
+15.	If no action is taken on the alert (i.e. acting on any of the options in the drop down), it will be displayed on the Alerts Homepage until the offering end date. Once the offering expires (expiration = offering end date), the notification will be closed and moved to the Alerts History page. 
+17.	FA Alerts TeraData File and Mainframe Jobs
+
+FA Alerts Mainframe File from TeraData:
+This file will contain a list of all the eligible accounts and FAs that need to receive the alerts.
+
+File generated: 
+PEDB.NDM.ETL.NMFDTL.GDG.G0366V00
+
+File Fields:
+Sr. No.	Fields
+1	NEMO-ACCTS-REC
+2	NEMO-OFFERING-ID
+3	FILL1
+4	NEMO-OFFERING-END-DATE
+5	NEMO-OFC
+6	NEMO-ACCT
+7	NEMO-FA
+8	NEMO-CUSIP
+9	NEMO-TYPE
+10	FILL3
+
+Mapping:
+Offering Type	Code
+CD Promo	CD
+HYS Promo	SP (Savings Promo)
+HYS Emergency	SE (Savings Emergency)
+
+    Copybook:
+FIELD	PICTURE	FIELD NUMBER	START	END	LENGTH
+NEMO-ACCTS-REC	 	 	1	100	100
+NEMO-OFFERING-ID	9(4)	1	1	4	4
+FILL1	X	2	5	10	6
+NEMO-PROMO-END-DATE	9(10)	3	11	20	10
+NEMO-OFC	999	4	21	23	3
+NEMO-ACCT	9(6)	5	24	29	6
+NEMO-FA	999	6	30	32	3
+NEMO-CUSIP	X(9)	7	33	41	9
+NEMO-TYPE	XXX	8	42	44	3
+FILL3	X(18)	9	45	100	56
+
+   Mainframe Jobs:
+
+There are two mainframe jobs that run to create the FA Alerts. The first job takes the FA Alert mainframe file created from the NEMO TeraData batch as an input, and the output of the second job sends the alerts to the FA Alerts MQ.
+Job Name	Input Files	Output Files
+JAAADNMF	PEDB.NDM.ETL.NMFDTL.GDG.G0366V00	PAAA.NVS.PAAADNMF.ALERTTXT.PROMOCDS
+HYS File1
+HYS File2
+JAAADNM1	PAAA.NVS.PAAADNM1.ALERTTXT.PROMOCDS	N/A
+
+Job 1 – Separates CD and USD (Job Name = JAAADNMF)
+INPUT: FA Alerts Mainframe file
+o	Compared with previous files (60 days in the past stored in Mainframe) and removes duplicates based on Offering ID + Office + FA combination
+o	File is sorted on Office + FA number combination
+o	Puts the data in a format that the FA Alerts API can read
+o	Outputs three files, separating alerts for CD offerings, HYS Promotions and HYS Emergency promotions.
+
+ Job 2 – calls the FA Alerts API to read the input file (Job Name = JAAADNM1)
+INPUT: Output file from Job 1 
+o	Output drops the alerts on the FA Alerts MQ, which are then moved to their DB for display
+ 
+18.	 NEMO Reports
+
+NEMO will generate the following 3 reports from the data warehouse:
+•	NEMO Buy Report
+•	NEMO Exception Report
+•	NEMO FA Stats Report
+Reports details are as follows:
+o	Each report will have a running list of all the offerings for the given date.
+o	All reports will be created for business users to view by the beginning of the next business day.
+o	All reports will be created for business users to view by the beginning of the next business day.
+o	Reports should be generated only for business days (except holidays).
+o	A report should be generated even if a offering has no eligible accounts for that day.
+o	A report should be generated even if eligible accounts have no trades for that day.
+o	Cancelled orders on same day should not be shown on the report. Cancel orders on different days (example: buy on Monday and cancel on Tuesday) should be displayed as 2 lines in the report – one for Buy and one for Cancel.
+o	FA Number & FA Name – If client is associated with FA team, then FA team name and number should be on the report. And if client is associated with primary FA then primary FA name should be displayed on the report.
+o	Reports should be generated per the NYS calendar.
+o	Edge case that will not be covered in any of the below reports 
+1.	If an account is added as Exception, trade placed against it and then Exception is deleted before EOD.
+2.	If CD trades placed on an eligible account after-market hours and account is not in the Eligible list the next day then trade will not show up on any reports.
+3.	If trades placed after market-hours and before 7PM when the NMF feed file is created, then the Remaining Inventory amount reported for a Promotion on the next day’s reports will be incorrect as it will not include trades placed after-market hours but those trades would have decremented the Remaining Inventory same day. 
+
+18.1	NEMO Buy Report
+
+•	Report will include all the trades that are placed on a given date, irrespective of the status of the offering.
+•	Purpose: 
+To show eligible new money amount/eligible amount and total purchase made at the offering + account level for that particular business date. 
+•	Content:
+a.	This report will include all buy trades for Eligible accounts as well as Exception accounts.
+b.	There should be exactly 1 row per Account + Offering level.
+c.	If an FA places 2 trades for $1000 and $2000 for a client against a particular offering then Purchased amount should be $3000.
+Sr. No.	Field	Details
+1	Offering Type	 
+2	Offering Title	 
+3	Offering Start Date	 
+4	Offering End Date	 
+5	Cusip	 
+6	Bank	Only for HYS
+7	Maturity Date (CD)/Rate Expiry Date (HYS)	 
+8	Starting Inventory	 
+9	Remaining Inventory	 
+10	Account Number	 
+11	Account Name	 
+12	FA Number	 
+13	FA Name	 
+14	New Money Eligible Amount (Promo) /Eligible Money Amount (Emergency) [SOD]	 
+15	New Money Eligible Amount (Promo) /Eligible Money Amount (Emergency) [EOD]	 
+16	Trade Amount	 
+17	Trade Date	 
+18	Region Name	 
+
+d.	For an Eligible account, when trade is placed
+o	New money eligible account SOD will be Eligible new money.
+o	New money eligible account EOD will be Eligible new money remaining.
+o	Starting Inventory for such accounts will be whatever it was in the beginning of the day
+o	Remaining Inventory will be = Starting Inventory – Trades placed for both eligible and exception accounts against that offering.
+
+e.	For an Exception account, when trade is placed
+o	New money eligible account SOD will be 0.
+o	New money eligible account EOD will be 0.
+o	Starting Inventory for such accounts will be whatever starting Inventory is for the respective offerings.
+	For Extended offerings we will see starting Inventory as 0.
+o	Remaining Inventory = Starting Inventory – Trades placed for both eligible and exception accounts against that offering.
+
+f.	If an account belongs to Eligible list is given an exception then it will show on both the NEMO buy report and the NEMO Exception report, provided a trade is placed
+o	New money eligible account SOD will be Eligible new money (not the Exception amount)
+o	New money eligible account EOD will be Eligible new money (not the Exception amount) – so in this case SOD and EOD amounts will be the same
+o	Starting Inventory for such accounts will be whatever it was in the beginning of the day
+o	Remaining Inventory will be = Starting Inventory – Trades placed for both eligible and exception accounts
+
+•	Frequency: Daily report for all offerings
+•	Where to house: Piper for 7 years
+
+
+18.2	NEMO Exception Report
+
+•	Purpose: To provide a list of all exceptions and all different kinds of exceptions granted at an Offering + Account level whether or not trades placed against them. 
+•	Content:
+a.	Exceptions Report will include only offerings that have a status equal to Active, Suspended, Extended.
+b.	The different kinds of exceptions that will be captured are:
+1.	Exceptions granted on NEMO
+2.	Minimum Override for HYS on BBB
+3.	Maximum Override for HYS on BBB
+4.	Exception Rate granted for HYS BAU on BBB
+c.	Report will display multiple lines per offering depending on number of exceptions granted. This should also be a running list over the course of the offering. 
+Sr. No.	Field	Details
+1	Offering Type	 
+2	Offering Title	 
+3	Offering Start Date	 
+4	Offering End Date	 
+5	Cusip	 
+6	Maturity Date/ Rate Expiry Date	 
+7	Starting Inventory	 
+8	Remaining Inventory	 
+9	Account Number	 
+10	Account Name	 
+11	FA Number	 
+12	FA Name	 
+13	New Money Eligible Amount (Promo) /Eligible Money Amount (Emergency) [SOD]	 
+14	New Money Eligible Amount (Promo) /Eligible Money Amount (Emergency) [EOD]	 
+15	Exception Amount	 
+16	Exception Amount Used	 
+17	Exception Granted By	 
+18	Minimum Override	 
+19	Maximum Override	 
+20	Exception Rate Granted	 
+21	Trade Amount	 
+22	Trade Date	 
+23	Region Name	 
+
+d.	One line will be displayed for each offering + account on the NEMO Exceptions Report. Example: If an account is granted exceptions of $1000 at 10am and $2000 at 1pm on the same day, the report will have one line for the account with exceptions amount as $2000. Similarly, for exception amount used, there will be only one line. 
+e.	For Account A, if the exception amount given is $1000 on 8/4 and $2000 on 8/5, then the NMF Exception Report generated on 8/5, will have one line for Account A with exception amount as $2000. Similarly, the ‘Exception Amount Used’ column will show a rolled up amount.
+f.	All exceptions provided to an account for a given date, needs to be shown on the report, even if the account has not placed a trade for that offering. For e.g. – if Account A has been provided an exception of $1000 for Offering XYZ on 8/26, and no trade for that account was placed on 8/26, the exception report generated for that day should include this account (Account A) and exception amount ($1000) for Offering XYZ.
+g.	All exceptions given to an offering with Offering Status = Active, Suspended and Extended (since the time the offering has been created) should be in the report.
+h.	For accounts that are Exception only then new Eligible amount SOD and new Eligible amount EOD will always be 0.
+i.	When an account is given a maximum override, minimum override or exception rate for BAU on HYS through the BBB UI, it will also be captured in this report.
+j.	Exception should not be visible for an Offering after an offering is closed.
+
+•	Frequency: Daily report.
+•	Where to House: Piper for 7 years.
+•	Use Case:
+
+Client1: 
+10 am New Money --> 5k 
+11 am New Money Buy Trade --> 3k, Total New Money left --> 2k
+12pm Exception Granted --> 10k
+1pm Exception Buy Trade --> 9k, 
+Total Exception Amount left --> 1k
+
+Buy Report:
+New Money SOD 5k
+New Money EOD  2k 
+Trade Amount 12k
+
+Exception Report:
+New Money SOD 5k
+New Money EOD  2k
+Exception Amount  10k
+Exception Amount Used  9k
+Trade Amount  12k
+
+
+
+18.3	NEMO FA Stats
+
+•	Purpose: To show per FA, how much new money is available (for the current date) across their book and how much has been leveraged to buy promotions (over the lifetime of that promotion). This will allow business to target certain FA's if they are not using the promotions. The report should show data for only all those FA's with eligible accounts. 
+
+•	Contents: 
+
+a.	Report is a day-over-day report and will include rolled up amounts.
+b.	Report will include all offerings (irrespective of status) as long as there is a trade placed for that offering.
+Sr. No.	Field	Details
+1	Offering Type	 
+2	Offering Title	 
+3	Offering Start Date	 
+4	Offering End Date	 
+5	Cusip	 
+6	Maturity Date/ Rate Expiry Date	 
+7	Office Number	 
+8	FA Number	 
+9	FA Name	 
+10	New Money Eligible Amount (SOD)	 
+11	New Money Eligible Amount (EOD)	 
+12	New Money Eligible # Accounts	 
+13	Purchased Amount	Over the lifetime of the promotion till today’s business date
+14	Purchased # Accounts	 
+15	Region Name	 
+
+c.	Use Cases:
+
+#	Scenario	Expected output	New Money eligible # accounts	Purchased # accounts
+1	FA1 has 10 eligible clients for Promotion1 and no trades placed	This FA should show up on FA stats report with Purchased amount =0 	10	0
+2	FA1 has 10 eligible clients for Promotion1and trade placed for 1 client	This FA should show up on FA stats report	10	1
+3	FA1 has 10 eligible clients for Promotion1 and 1 exception account (trades not placed for any account)	This FA should show up on FA stats report	10	0
+4	FA1 has 10 eligible clients for Promotion1 and 1 exception account (trade placed for exception account)	This FA should show up on FA stats report	10	1
+5	FA has no eligible clients for Promotion1 and 1 exception account and trade placed for Exception account	this FA should show up on FA stats report	0	1
+
+DAY1	Eligible clients	Trade	Eligible amount SOD	Eligible amount EOD	 	FA Stats report	 	 	 	 
+FA1	C1	6k and 4k	50k	40k	 	Purchased amount	Purchased #	Eligible clients #	Eligible amount SOD	Eligible amount EOD
+ 	C2	 	40k	40k	 	30k	2	3	120k	110k
+ 	C3	 	30k	30k	 	 	 	 	 	 
+ 	Exception1-50k	20k	 	 	 	 	 	 	 	 
+ 	 	 	 	 	 	 	 	 	 	 
+DAY2	Eligible clients	Trade	Eligible amount SOD	Eligible amount EOD	 	FA Stats report	 	 	 	 
+FA1	C1	 	40k	40k	 	Purchased amount	Purchased #	Eligible clients #	Eligible amount SOD	Eligible amount EOD
+ 	C2	 	40k	40k	 	30k	2	3	110k	110k
+ 	C3	 	30k	30k	 	 	 	 	 	 
+ 	Exception1	 	 	 	 	 	 	 	 	 
+ 	 	 	 	 	 	 	 	 	 	 
+DAY3	Eligible clients	Trade	Eligible amount SOD	Eligible amount EOD	 	FA Stats report	 	 	 	 
+FA1	C2	 	40k	40k	 	Purchased amount	Purchased #	Eligible clients #	Eligible amount SOD	Eligible amount EOD
+ 	C3	 	30k	30k	 	45k	2	2	70k	70k
+ 	Exception1	15k	 	 	 	 	 	 	 	 
+DAY4	Eligible clients	Trade	Eligible amount SOD	Eligible amount EOD	 	FA Stats report	 	 	 	 
+FA1 – does not have any Eligible and Exceptions accounts	 	Purchased amount	Purchased #	Eligible clients #	Eligible amount SOD	Eligible amount EOD
+ 					 	45k	2	0	0	0
+
+
+•	Frequency: Daily report for all promotion
+•	Where to house: Piper for 7 years
